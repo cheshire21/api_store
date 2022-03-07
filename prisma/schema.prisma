@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  uuid       String    @unique @default(uuid()) @db.Uuid
+  firstName  String    @map("first_name")
+  lastName   String    @map("last_name")
+  userName   String    @map("user_name")
+  address    String
+  email      String    @unique
+  password   String
+  role       String
+  isActive   Boolean   @default(false) @map("is_active")
+  verifiedAt DateTime? @map("verified_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  tokens Token[]
+
+  Cart Cart[]
+
+  Like Like[]
+
+  Order Order[]
+
+  @@map("users")
+}
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(uuid()) @db.Uuid
+
+  name String
+
+  Product Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  uuid        String   @unique @default(uuid()) @db.Uuid
+  name        String
+  description String
+  image       String?
+  price       Float
+  stock       Int
+  isActive    Boolean  @default(false) @map("is_active")
+  category    Category @relation(fields: [categoryId], references: [id])
+  categoryId  Int      @map(name: "category_id")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  Cart Cart[]
+
+  Like Like[]
+
+  Detail Detail[]
+  @@map("products")
+}
+
+model Cart {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int      @map(name: "user_id")
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int      @map(name: "product_id")
+  amount     Int
+  totalPrice Float    @map("total_price")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("carts")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map(name: "user_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int      @map(name: "product_id")
+  like      Boolean
+  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("likes")
+}
+
+model Order {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid()) @db.Uuid
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int      @map(name: "user_id")
+  totalPrice Float    @map("total_price")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  Detail Detail[]
+
+  @@map("orders")
+}
+
+model Detail {
+  id         Int      @id @default(autoincrement())
+  uuid       String   @unique @default(uuid()) @db.Uuid
+  order      Order    @relation(fields: [orderId], references: [id])
+  orderId    Int      @map(name: "order_id")
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int      @map(name: "product_id")
+  amount     Int
+  totalPrice Float    @map("total_price")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@map("details")
+}
+
+model Token {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map(name: "user_id")
+  jti       String   @unique @default(uuid())
+  createdAt DateTime @default(now()) @map(name: "created_at")
+
+  @@map(name: "tokens")
+}
