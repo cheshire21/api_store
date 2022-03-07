@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 
 describe('AppController', () => {
   let appController: AppController;
-
+  console.log(process.env.DATABASE_URL);
   beforeEach(async () => {
     const app: TestingModule = await Test.createTestingModule({
       controllers: [AppController],

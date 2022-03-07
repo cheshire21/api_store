@@ -6,13 +6,10 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt/auth-jwt.guard';
 
-const ENV = process.env.NODE_ENV;
-
-console.log(ENV);
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: !ENV ? '.env' : `env.${process.env.NODE_ENV}`,
+      envFilePath: '.env',
     }),
     AuthModule,
   ],
