@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
-import faker from 'faker';
+import { name, internet, address, datatype } from 'faker';
 import { hashSync } from 'bcryptjs';
 import { Role } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
@@ -21,15 +21,22 @@ describe('AuthService', () => {
 
   let authService: AuthService;
   let prisma: PrismaService;
-  let jwtService: JwtService;
+  // let jwtService: JwtService;
   let userService;
   console.log(process.env.DATABASE_URL);
   beforeEach(async () => {
     const module = await Test.createTestingModule({
+      imports: [
+        JwtModule.register({
+          secret: process.env.JWT_SECRET_KEY,
+          signOptions: {
+            expiresIn: parseInt(process.env.JWT_EXPIRE_TIME, 10),
+          },
+        }),
+      ],
       providers: [
         AuthService,
         PrismaService,
-        JwtService,
         {
           provide: UserService,
           useFactory: MockUserService,
@@ -39,13 +46,14 @@ describe('AuthService', () => {
 
     authService = await module.get<AuthService>(AuthService);
     userService = await module.get<UserService>(UserService);
+    prisma = await module.get<PrismaService>(PrismaService);
 
     mockUser = plainToInstance(SignUpDto, {
-      firstName: faker.name.firstName(),
-      lastName: faker.name.lastName(),
-      userName: faker.internet.userName(),
-      address: faker.address.direction(),
-      email: faker.internet.email(),
+      firstName: name.firstName(),
+      lastName: name.lastName(),
+      userName: internet.userName(),
+      address: address.direction(),
+      email: internet.email(),
       password: '12345678',
       passwordConfirmation: '12345678',
       role: Role.user,
@@ -67,7 +75,7 @@ describe('AuthService', () => {
       await expect(
         authService.signup({
           ...mockUser,
-          passwordConfirmation: faker.internet.password(),
+          passwordConfirmation: internet.password(),
         }),
       ).rejects.toThrow(
         new HttpException(
@@ -78,92 +86,91 @@ describe('AuthService', () => {
     });
 
     it('should create a account successfully', async () => {
-      userService.findOneByEmail.mockResolvedValue(true);
+      userService.findOneByEmail.mockResolvedValue(false);
       userService.create.mockResolvedValue(true);
       expect(await authService.signup(mockUser)).toBeUndefined();
     });
   });
 
-  // describe('login', () => {
-  //   let createdUser: User;
-  //   beforeAll(async () => {
-  //     const { passwordConfirmation, password, ...input } = mockUser;
-  //     createdUser = await prisma.user.create({
-  //       data: {
-  //         ...input,
-  //         password: hashSync(password, 10),
-  //       },
-  //     });
-  //   });
+  describe('login', () => {
+    let createdUser: User;
 
-  //   it("should throw error if sent email doesn't exist", async () => {
-  //     userService.findOneByEmail.mockResolvedValue(null);
+    beforeAll(async () => {
+      const { passwordConfirmation, password, ...input } = mockUser;
+      createdUser = await prisma.user.create({
+        data: {
+          ...input,
+          password: hashSync(password, 10),
+        },
+      });
+    });
 
-  //     await expect(
-  //       authService.login({
-  //         email: faker.internet.email(),
-  //         password: faker.internet.password(),
-  //       }),
-  //     ).rejects.toThrow(
-  //       new HttpException("Email doesn't exist ", HttpStatus.UNAUTHORIZED),
-  //     );
-  //   });
+    it("should throw error if sent email doesn't exist", async () => {
+      userService.findOneByEmail.mockResolvedValue(null);
 
-  //   it('should throw error if password is incorrect', async () => {
-  //     userService.findOneByEmail.mockResolvedValue(createdUser);
+      await expect(
+        authService.login({
+          email: internet.email(),
+          password: internet.password(),
+        }),
+      ).rejects.toThrow(
+        new HttpException("Email doesn't exist ", HttpStatus.UNAUTHORIZED),
+      );
+    });
 
-  //     const { email } = mockUser;
+    it('should throw error if password is incorrect', async () => {
+      userService.findOneByEmail.mockResolvedValue(createdUser);
 
-  //     await expect(
-  //       authService.login({ email, password: faker.internet.password() }),
-  //     ).rejects.toThrow(
-  //       new HttpException('Password is incorrect', HttpStatus.UNAUTHORIZED),
-  //     );
-  //   });
+      const { email } = createdUser;
 
-  //   it('should return a token if user login sucessfully', async () => {
-  //     userService.findOneByEmail.mockResolvedValue(createdUser);
+      await expect(
+        authService.login({ email, password: internet.password() }),
+      ).rejects.toThrow(
+        new HttpException('Password is incorrect', HttpStatus.UNAUTHORIZED),
+      );
+    });
 
-  //     const { email, password } = mockUser;
-  //     const result = await authService.login({ email, password });
+    it('should return a token if user login sucessfully', async () => {
+      userService.findOneByEmail.mockResolvedValue(createdUser);
 
-  //     expect(result).toHaveProperty('accessToken');
-  //   });
-  // });
+      const { email, password } = mockUser;
+      const result = await authService.login({ email, password });
 
-  // describe('createToken', () => {
-  //   let createdUser: User;
+      expect(result).toHaveProperty('accessToken');
+    });
+  });
 
-  //   beforeAll(async () => {
-  //     const { passwordConfirmation, password, ...input } = mockUser;
-  //     createdUser = await prisma.user.create({
-  //       data: {
-  //         ...input,
-  //         password: hashSync(password, 10),
-  //       },
-  //     });
-  //   });
+  describe('createToken', () => {
+    let createdUser: User;
 
-  //   it('should return a token record successfully', async () => {
-  //     const result = await authService.createToken(createdUser.id);
+    beforeAll(async () => {
+      const { passwordConfirmation, password, ...input } = mockUser;
+      createdUser = await prisma.user.create({
+        data: {
+          ...input,
+          password: hashSync(password, 10),
+        },
+      });
+    });
 
-  //     expect(result).toHaveProperty('jti');
-  //   });
+    it('should return a token record successfully', async () => {
+      const result = await authService.createToken(createdUser.id);
 
-  //   it("should throw error if user doesn't exist", async () => {
-  //     await expect(
-  //       authService.createToken(faker.datatype.number()),
-  //     ).rejects.toThrow(
-  //       new HttpException('User no found', HttpStatus.NOT_FOUND),
-  //     );
-  //   });
-  // });
+      expect(result).toHaveProperty('jti');
+    });
 
-  // describe('generateToken', () => {
-  //   it('should return a token successfully', async () => {
-  //     const result = await authService.generateToken(faker.datatype.uuid());
+    it("should throw error if user doesn't exist", async () => {
+      await expect(authService.createToken(datatype.number())).rejects.toThrow(
+        new HttpException('User no found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 
-  //     expect(result).toHaveProperty('accessToken');
-  //   });
-  // });
+  describe('generateToken', () => {
+    it('should return a token successfully', async () => {
+      const result = await authService.generateToken(datatype.uuid());
+
+      expect(result).toHaveProperty('accessToken');
+    });
+  });
 });
