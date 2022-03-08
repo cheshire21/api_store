@@ -16,10 +16,11 @@ export class AuthController {
   @Public()
   @Post('/login')
   login(@Body() loginDto: LoginDto) {
-    console.log(loginDto);
     return this.authService.login(loginDto);
   }
-
+  @Public()
   @Get('/logout')
-  logout(@Query('token') token: string) {}
+  async logout(@Query('token') token: string): Promise<void> {
+    return this.authService.logout(token);
+  }
 }

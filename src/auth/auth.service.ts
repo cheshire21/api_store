@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { plainToInstance } from 'class-transformer';
+import { plainToInstance, TransformationType } from 'class-transformer';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/request/login.dto';
@@ -84,5 +84,17 @@ export class AuthService {
       throw e;
     }
   }
-  logout() {}
+  async logout(token: string): Promise<void> {
+    try {
+      const { sub } = this.jwtService.verify(token);
+
+      await this.prisma.token.delete({
+        where: {
+          jti: sub,
+        },
+      });
+    } catch (e) {
+      throw new HttpException('Token is invalid', HttpStatus.BAD_REQUEST);
+    }
+  }
 }

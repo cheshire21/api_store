@@ -11,7 +11,7 @@ export class UserFactory extends Abstractfactory<User> {
     super();
   }
 
-  async make(data?: any): Promise<User> {
+  async make(data: any = {}): Promise<User> {
     const user = await this.prisma.user.create({
       data: {
         firstName: data.firstName ?? name.firstName(),
@@ -27,7 +27,7 @@ export class UserFactory extends Abstractfactory<User> {
     return user;
   }
 
-  makeMany(quanty: number, data?: unknown): Promise<User[]> {
+  makeMany(quanty: number, data: unknown = {}): Promise<User[]> {
     return Promise.all([...Array(quanty)].map(() => this.make(data)));
   }
 }

@@ -48,6 +48,7 @@ describe('AuthService', () => {
     authService = await module.get<AuthService>(AuthService);
     userService = await module.get<UserService>(UserService);
     prisma = await module.get<PrismaService>(PrismaService);
+
     userFactory = new UserFactory(prisma);
 
     mockUser = plainToInstance(SignUpDto, {
@@ -169,6 +170,22 @@ describe('AuthService', () => {
       const result = await authService.generateToken(datatype.uuid());
 
       expect(result).toHaveProperty('accessToken');
+    });
+  });
+
+  describe('logout', () => {
+    it('should logout successfully', async () => {
+      let createdUser = await userFactory.make();
+      let token = await authService.createToken(createdUser.id);
+      let value = authService.generateToken(token.jti);
+
+      expect(await authService.logout(value.accessToken)).toBeUndefined();
+    });
+
+    it('should return a error if token is invalid', async () => {
+      await expect(authService.logout(datatype.uuid())).rejects.toThrow(
+        new HttpException('Token is invalid', HttpStatus.UNAUTHORIZED),
+      );
     });
   });
 });
