@@ -10,6 +10,7 @@ import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/request/signup.dto';
 import { User } from '@prisma/client';
+import { UserFactory } from '../utils/factories/user.factory';
 
 const MockUserService = () => ({
   create: jest.fn(),
@@ -21,9 +22,9 @@ describe('AuthService', () => {
 
   let authService: AuthService;
   let prisma: PrismaService;
-  // let jwtService: JwtService;
+  let userFactory: UserFactory;
   let userService;
-  console.log(process.env.DATABASE_URL);
+
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
@@ -47,6 +48,7 @@ describe('AuthService', () => {
     authService = await module.get<AuthService>(AuthService);
     userService = await module.get<UserService>(UserService);
     prisma = await module.get<PrismaService>(PrismaService);
+    userFactory = new UserFactory(prisma);
 
     mockUser = plainToInstance(SignUpDto, {
       firstName: name.firstName(),
@@ -63,10 +65,10 @@ describe('AuthService', () => {
   describe('signup', () => {
     it('should throw error if email already exist', async () => {
       userService.findOneByEmail.mockResolvedValue(true);
-
       await expect(authService.signup(mockUser)).rejects.toThrow(
         new HttpException('Email already exists', HttpStatus.BAD_REQUEST),
       );
+      expect(userService.findOneByEmail).toHaveBeenCalled();
     });
 
     it('should throw error if password and confirmation are diferent', async () => {
@@ -83,12 +85,16 @@ describe('AuthService', () => {
           HttpStatus.BAD_REQUEST,
         ),
       );
+      expect(userService.findOneByEmail).toHaveBeenCalled();
     });
 
     it('should create a account successfully', async () => {
       userService.findOneByEmail.mockResolvedValue(false);
       userService.create.mockResolvedValue(true);
+
       expect(await authService.signup(mockUser)).toBeUndefined();
+      expect(userService.findOneByEmail).toHaveBeenCalled();
+      expect(userService.create).toHaveBeenCalled();
     });
   });
 
@@ -96,13 +102,9 @@ describe('AuthService', () => {
     let createdUser: User;
 
     beforeAll(async () => {
-      const { passwordConfirmation, password, ...input } = mockUser;
-      createdUser = await prisma.user.create({
-        data: {
-          ...input,
-          password: hashSync(password, 10),
-        },
-      });
+      const { passwordConfirmation, ...input } = mockUser;
+
+      createdUser = await userFactory.make(input);
     });
 
     it("should throw error if sent email doesn't exist", async () => {
@@ -116,6 +118,7 @@ describe('AuthService', () => {
       ).rejects.toThrow(
         new HttpException("Email doesn't exist ", HttpStatus.UNAUTHORIZED),
       );
+      expect(userService.findOneByEmail).toHaveBeenCalled();
     });
 
     it('should throw error if password is incorrect', async () => {
@@ -144,13 +147,8 @@ describe('AuthService', () => {
     let createdUser: User;
 
     beforeAll(async () => {
-      const { passwordConfirmation, password, ...input } = mockUser;
-      createdUser = await prisma.user.create({
-        data: {
-          ...input,
-          password: hashSync(password, 10),
-        },
-      });
+      const { passwordConfirmation, ...input } = mockUser;
+      createdUser = await userFactory.make(input);
     });
 
     it('should return a token record successfully', async () => {
