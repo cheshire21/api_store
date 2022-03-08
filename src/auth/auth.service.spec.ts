@@ -5,13 +5,13 @@ import { plainToInstance } from 'class-transformer';
 import { name, internet, address, datatype } from 'faker';
 import { Role } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
-import { UserService } from '../user/user.service';
+import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/request/signup.dto';
 import { User } from '@prisma/client';
 import { UserFactory } from '../utils/factories/user.factory';
 
-const MockUserService = () => ({
+const MockUsersService = () => ({
   create: jest.fn(),
   findOneByEmail: jest.fn(),
 });
@@ -38,14 +38,14 @@ describe('AuthService', () => {
         AuthService,
         PrismaService,
         {
-          provide: UserService,
-          useFactory: MockUserService,
+          provide: UsersService,
+          useFactory: MockUsersService,
         },
       ],
     }).compile();
 
     authService = await module.get<AuthService>(AuthService);
-    userService = await module.get<UserService>(UserService);
+    userService = await module.get<UsersService>(UsersService);
     prisma = await module.get<PrismaService>(PrismaService);
 
     userFactory = new UserFactory(prisma);

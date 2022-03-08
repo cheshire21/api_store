@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { plainToInstance, TransformationType } from 'class-transformer';
-import { UserService } from '../user/user.service';
+import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/request/login.dto';
 import { SignUpDto } from './dto/request/signup.dto';
 import { TokenDto } from './dto/response/token.dto';
@@ -15,7 +14,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
-    private userService: UserService,
+    private userService: UsersService,
   ) {}
 
   async signup(signUpDto: SignUpDto): Promise<void> {
