@@ -5,7 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt/auth-jwt.guard';
-import { PrismaService } from './prisma/prisma.service';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -13,6 +13,7 @@ import { PrismaService } from './prisma/prisma.service';
       envFilePath: '.env',
     }),
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
@@ -21,7 +22,6 @@ import { PrismaService } from './prisma/prisma.service';
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
-    PrismaService,
   ],
 })
 export class AppModule {}

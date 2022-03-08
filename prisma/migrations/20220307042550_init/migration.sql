@@ -1,7 +1,7 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
+    "uuid" TEXT NOT NULL,
     "first_name" TEXT NOT NULL,
     "last_name" TEXT NOT NULL,
     "user_name" TEXT NOT NULL,
@@ -20,7 +20,7 @@ CREATE TABLE "users" (
 -- CreateTable
 CREATE TABLE "categories" (
     "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
+    "uuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
 
     CONSTRAINT "categories_pkey" PRIMARY KEY ("id")
@@ -29,7 +29,7 @@ CREATE TABLE "categories" (
 -- CreateTable
 CREATE TABLE "products" (
     "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
+    "uuid" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
     "image" TEXT,
@@ -46,7 +46,7 @@ CREATE TABLE "products" (
 -- CreateTable
 CREATE TABLE "carts" (
     "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
+    "uuid" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
     "product_id" INTEGER NOT NULL,
     "amount" INTEGER NOT NULL,
@@ -72,7 +72,7 @@ CREATE TABLE "likes" (
 -- CreateTable
 CREATE TABLE "orders" (
     "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
+    "uuid" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL,
     "total_price" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -83,7 +83,7 @@ CREATE TABLE "orders" (
 -- CreateTable
 CREATE TABLE "details" (
     "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
+    "uuid" TEXT NOT NULL,
     "order_id" INTEGER NOT NULL,
     "product_id" INTEGER NOT NULL,
     "amount" INTEGER NOT NULL,
