@@ -4,7 +4,6 @@ import { Abstractfactory } from './abstract.factory';
 import { name, internet, address } from 'faker';
 import { Role } from '../enums';
 import { hashSync } from 'bcryptjs';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 export class UserFactory extends Abstractfactory<User> {
   constructor(protected prisma: PrismaService) {

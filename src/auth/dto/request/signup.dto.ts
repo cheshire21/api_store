@@ -35,11 +35,6 @@ export class SignUpDto {
 
   @Expose()
   @IsNotEmpty()
-  @IsString()
-  passwordConfirmation: string;
-
-  @Expose()
-  @IsNotEmpty()
   @IsEnum(Role)
   role: Role;
 }

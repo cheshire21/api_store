@@ -1,8 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
+import { SignUpDto } from 'src/auth/dto/request/signup.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -19,7 +19,7 @@ export class UserService {
     return user;
   }
 
-  async create({ password, ...input }: CreateUserDto): Promise<void> {
+  async create({ password, ...input }: SignUpDto): Promise<void> {
     await this.prisma.user.create({
       data: {
         ...input,

@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToInstance, TransformationType } from 'class-transformer';
-import { CreateUserDto } from '../user/dto/create-user.dto';
 import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/request/login.dto';
 import { SignUpDto } from './dto/request/signup.dto';
@@ -20,20 +19,12 @@ export class AuthService {
   ) {}
 
   async signup(signUpDto: SignUpDto): Promise<void> {
-    const { password, passwordConfirmation, email } = signUpDto;
+    const { password, email } = signUpDto;
 
     if (await this.userService.findOneByEmail(email))
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
 
-    if (password !== passwordConfirmation)
-      throw new HttpException(
-        "Password and Pasword Confirmation don't match",
-        HttpStatus.BAD_REQUEST,
-      );
-
-    const user = plainToInstance(CreateUserDto, signUpDto);
-
-    await this.userService.create(user);
+    await this.userService.create(signUpDto);
   }
 
   async login(loginDto: LoginDto): Promise<TokenDto> {

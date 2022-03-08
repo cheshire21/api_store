@@ -1,9 +1,8 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address, datatype } from 'faker';
-import { hashSync } from 'bcryptjs';
 import { Role } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { UserService } from '../user/user.service';
@@ -58,7 +57,6 @@ describe('AuthService', () => {
       address: address.direction(),
       email: internet.email(),
       password: '12345678',
-      passwordConfirmation: '12345678',
       role: Role.user,
     });
   });
@@ -68,23 +66,6 @@ describe('AuthService', () => {
       userService.findOneByEmail.mockResolvedValue(true);
       await expect(authService.signup(mockUser)).rejects.toThrow(
         new HttpException('Email already exists', HttpStatus.BAD_REQUEST),
-      );
-      expect(userService.findOneByEmail).toHaveBeenCalled();
-    });
-
-    it('should throw error if password and confirmation are diferent', async () => {
-      userService.findOneByEmail.mockResolvedValue(null);
-
-      await expect(
-        authService.signup({
-          ...mockUser,
-          passwordConfirmation: internet.password(),
-        }),
-      ).rejects.toThrow(
-        new HttpException(
-          "Password and Pasword Confirmation don't match",
-          HttpStatus.BAD_REQUEST,
-        ),
       );
       expect(userService.findOneByEmail).toHaveBeenCalled();
     });
@@ -103,9 +84,7 @@ describe('AuthService', () => {
     let createdUser: User;
 
     beforeAll(async () => {
-      const { passwordConfirmation, ...input } = mockUser;
-
-      createdUser = await userFactory.make(input);
+      createdUser = await userFactory.make(mockUser);
     });
 
     it("should throw error if sent email doesn't exist", async () => {
@@ -148,8 +127,7 @@ describe('AuthService', () => {
     let createdUser: User;
 
     beforeAll(async () => {
-      const { passwordConfirmation, ...input } = mockUser;
-      createdUser = await userFactory.make(input);
+      createdUser = await userFactory.make(mockUser);
     });
 
     it('should return a token record successfully', async () => {

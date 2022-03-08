@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address } from 'faker';
 import { Role } from '../utils/enums';
+import { SignUpDto } from '../auth/dto/request/signup.dto';
+import { hashSync } from 'bcryptjs';
 
 describe('UserService', () => {
   let mockUser;
@@ -20,13 +21,13 @@ describe('UserService', () => {
     userService = await module.get<UserService>(UserService);
     prisma = await module.get<PrismaService>(PrismaService);
 
-    mockUser = plainToInstance(CreateUserDto, {
+    mockUser = plainToInstance(SignUpDto, {
       firstName: name.firstName(),
       lastName: name.lastName(),
       userName: internet.userName(),
       address: address.direction(),
       email: internet.email(),
-      password: '12345678',
+      password: hashSync(internet.password(), 10),
       role: Role.user,
     });
   });
