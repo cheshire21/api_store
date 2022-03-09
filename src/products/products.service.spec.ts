@@ -89,8 +89,8 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('stock', product.stock);
       expect(result).toHaveProperty('category');
       expect(result).toHaveProperty('isActive');
-      expect(result).toHaveProperty('updatedAt');
-      expect(result).toHaveProperty('createdAt');
+      expect(result).toHaveProperty('updatedAt', expect.any(Date));
+      expect(result).toHaveProperty('createdAt', expect.any(Date));
     });
 
     it("should throw a error if product's category doesn't exist ", async () => {
@@ -129,8 +129,8 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('stock', product.stock);
       expect(result).toHaveProperty('category');
       expect(result).toHaveProperty('isActive');
-      expect(result).toHaveProperty('updatedAt');
-      expect(result).toHaveProperty('createdAt');
+      expect(result).toHaveProperty('updatedAt', expect.any(Date));
+      expect(result).toHaveProperty('createdAt', expect.any(Date));
     });
 
     it("should throw a error if product's category doesn't exist ", async () => {
@@ -163,29 +163,35 @@ describe('ProductsService', () => {
     });
   });
 
-  // describe('delete', () => {
-  //   it('should  delete a product ', async () => {
-  //     let createdProduct = await productFactory.make();
+  describe('delete', () => {
+    it('should  delete a product ', async () => {
+      let createdProduct = await productFactory.make({
+        category: {
+          connect: {
+            id: categories[random()].id,
+          },
+        },
+      });
 
-  //     const result = await productsService.delete(createdProduct.uuid);
+      const result = await productsService.delete(createdProduct.uuid);
 
-  //     expect(result).toHaveProperty('name', product.name);
-  //     expect(result).toHaveProperty('description', product.description);
-  //     expect(result).toHaveProperty('price', product.price);
-  //     expect(result).toHaveProperty('stock', product.stock);
-  //     expect(result).toHaveProperty('category');
-  //     expect(result).toHaveProperty('isActive');
-  //     expect(result).toHaveProperty('deletedAt', expect.any(String));
-  //     expect(result).toHaveProperty('updatedAt', expect.any(String));
-  //     expect(result).toHaveProperty('createdAt', expect.any(String));
-  //   });
+      expect(result).toHaveProperty('name', createdProduct.name);
+      expect(result).toHaveProperty('description', createdProduct.description);
+      expect(result).toHaveProperty('price', createdProduct.price);
+      expect(result).toHaveProperty('stock', createdProduct.stock);
+      expect(result).toHaveProperty('category');
+      expect(result).toHaveProperty('isActive');
+      expect(result).toHaveProperty('deletedAt', expect.any(Date));
+      expect(result).toHaveProperty('updatedAt', expect.any(Date));
+      expect(result).toHaveProperty('createdAt', expect.any(Date));
+    });
 
-  //   it("should throw a error if product doesn't exist ", async () => {
-  //     expect(await productsService.delete(datatype.uuid())).rejects.toThrow(
-  //       new HttpException('Product no foudn', HttpStatus.NOT_FOUND),
-  //     );
-  //   });
-  // });
+    it("should throw a error if product doesn't exist ", async () => {
+      await expect(productsService.delete(datatype.uuid())).rejects.toThrow(
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 
   // describe('changeStatus', () => {
   //   it('should  change status of a product ', async () => {

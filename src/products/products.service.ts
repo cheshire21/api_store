@@ -135,7 +135,7 @@ export class ProductsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         switch (e.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('Product no found', HttpStatus.NOT_FOUND);
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
           default:
             throw e;
         }
