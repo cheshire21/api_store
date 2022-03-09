@@ -193,26 +193,38 @@ describe('ProductsService', () => {
     });
   });
 
-  // describe('changeStatus', () => {
-  //   it('should  change status of a product ', async () => {
-  //     let createdProduct = await productFactory.make();
-  //     const expected = datatype.boolean();
+  describe('changeStatus', () => {
+    it('should  change status of a product ', async () => {
+      let createdProduct = await productFactory.make({
+        category: {
+          connect: {
+            id: categories[random()].id,
+          },
+        },
+      });
+      const expected = datatype.boolean();
 
-  //     const result = await productsService.changeStatus(
-  //       createdProduct.uuid,
-  //       expected,
-  //     );
+      const result = await productsService.changeStatus(
+        createdProduct.uuid,
+        expected,
+      );
 
-  //     expect(result).toHaveProperty('name', product.name);
-  //     expect(result).toHaveProperty('description', product.description);
-  //     expect(result).toHaveProperty('price', product.price);
-  //     expect(result).toHaveProperty('stock', product.stock);
-  //     expect(result).toHaveProperty('category');
-  //     expect(result).toHaveProperty('isActive', expected);
-  //     expect(result).toHaveProperty('updatedAt');
-  //     expect(result).toHaveProperty('createdAt');
-  //   });
+      expect(result).toHaveProperty('name', createdProduct.name);
+      expect(result).toHaveProperty('description', createdProduct.description);
+      expect(result).toHaveProperty('price', createdProduct.price);
+      expect(result).toHaveProperty('stock', createdProduct.stock);
+      expect(result).toHaveProperty('category');
+      expect(result).toHaveProperty('isActive', expected);
+      expect(result).toHaveProperty('updatedAt');
+      expect(result).toHaveProperty('createdAt');
+    });
 
-  //   it("should throw a error if product doesn't exist ", () => {});
-  // });
+    it("should throw a error if product doesn't exist ", async () => {
+      await expect(
+        productsService.changeStatus(datatype.uuid(), datatype.boolean()),
+      ).rejects.toThrow(
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 });

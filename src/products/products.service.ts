@@ -160,17 +160,17 @@ export class ProductsService {
       });
 
       return plainToInstance(ResponseProductDto, product);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        switch (e.code) {
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            new HttpException('Product no found', HttpStatus.NOT_FOUND);
+            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
           default:
-            throw e;
+            throw error;
         }
       }
 
-      throw e;
+      throw error;
     }
   }
 }
