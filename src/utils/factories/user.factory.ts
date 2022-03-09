@@ -1,16 +1,18 @@
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Abstractfactory } from './abstract.factory';
 import { name, internet, address } from 'faker';
 import { Role } from '../enums';
 import { hashSync } from 'bcryptjs';
 
+type UserInput = Partial<Prisma.UserCreateInput>;
+
 export class UserFactory extends Abstractfactory<User> {
   constructor(protected prisma: PrismaService) {
     super();
   }
 
-  async make(data: any = {}): Promise<User> {
+  async make(data: UserInput = {}): Promise<User> {
     const user = await this.prisma.user.create({
       data: {
         firstName: data.firstName ?? name.firstName(),
@@ -26,7 +28,7 @@ export class UserFactory extends Abstractfactory<User> {
     return user;
   }
 
-  makeMany(quanty: number, data: unknown = {}): Promise<User[]> {
+  makeMany(quanty: number, data: UserInput = {}): Promise<User[]> {
     return Promise.all([...Array(quanty)].map(() => this.make(data)));
   }
 }

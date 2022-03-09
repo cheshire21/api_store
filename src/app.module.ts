@@ -5,7 +5,8 @@ import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt/auth-jwt.guard';
 import { RolesGuard } from './auth/role/role.guard';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { UserModule } from './user/user.module';
       envFilePath: '.env',
     }),
     AuthModule,
-    UserModule,
+    UsersModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [
