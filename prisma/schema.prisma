@@ -56,7 +56,7 @@ model Product {
   image       String?
   price       Float
   stock       Int
-  isActive    Boolean   @default(true) @map("is_active")
+  status      Boolean   @default(true)
   category    Category  @relation(fields: [categoryId], references: [id])
   categoryId  Int       @map(name: "category_id")
   deletedAt   DateTime? @map("deleted_at")

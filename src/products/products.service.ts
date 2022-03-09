@@ -21,7 +21,7 @@ export class ProductsService {
         name: true,
       },
     },
-    isActive: true,
+    status: true,
     deletedAt: true,
     updatedAt: true,
     createdAt: true,
@@ -71,8 +71,6 @@ export class ProductsService {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
             throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
-          default:
-            throw error;
         }
       }
 
@@ -110,8 +108,6 @@ export class ProductsService {
               'Category or product not found',
               HttpStatus.NOT_FOUND,
             );
-          default:
-            throw error;
         }
       }
 
@@ -154,7 +150,7 @@ export class ProductsService {
           uuid,
         },
         data: {
-          isActive: status,
+          status: status,
         },
         select: this.select,
       });
@@ -165,8 +161,6 @@ export class ProductsService {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
             throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-          default:
-            throw error;
         }
       }
 

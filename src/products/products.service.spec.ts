@@ -67,7 +67,7 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('price', createdProduct.price);
       expect(result).toHaveProperty('stock', createdProduct.stock);
       expect(result).toHaveProperty('category');
-      expect(result).toHaveProperty('isActive', createdProduct.isActive);
+      expect(result).toHaveProperty('status', createdProduct.status);
       expect(result).toHaveProperty('updatedAt', createdProduct.updatedAt);
       expect(result).toHaveProperty('createdAt', createdProduct.createdAt);
     });
@@ -88,7 +88,7 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('price', product.price);
       expect(result).toHaveProperty('stock', product.stock);
       expect(result).toHaveProperty('category');
-      expect(result).toHaveProperty('isActive');
+      expect(result).toHaveProperty('status');
       expect(result).toHaveProperty('updatedAt', expect.any(Date));
       expect(result).toHaveProperty('createdAt', expect.any(Date));
     });
@@ -120,7 +120,7 @@ describe('ProductsService', () => {
     it('should update and return a product details', async () => {
       const result = await productsService.update(createdProduct.uuid, {
         ...product,
-        isActive: datatype.boolean(),
+        status: datatype.boolean(),
       });
 
       expect(result).toHaveProperty('name', product.name);
@@ -128,7 +128,7 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('price', product.price);
       expect(result).toHaveProperty('stock', product.stock);
       expect(result).toHaveProperty('category');
-      expect(result).toHaveProperty('isActive');
+      expect(result).toHaveProperty('status');
       expect(result).toHaveProperty('updatedAt', expect.any(Date));
       expect(result).toHaveProperty('createdAt', expect.any(Date));
     });
@@ -137,7 +137,7 @@ describe('ProductsService', () => {
       await expect(
         productsService.update(createdProduct.uuid, {
           ...product,
-          isActive: datatype.boolean(),
+          status: datatype.boolean(),
           categoryId: datatype.uuid(),
         }),
       ).rejects.toThrow(
@@ -152,7 +152,7 @@ describe('ProductsService', () => {
       await expect(
         productsService.update(datatype.uuid(), {
           ...product,
-          isActive: datatype.boolean(),
+          status: datatype.boolean(),
         }),
       ).rejects.toThrow(
         new HttpException(
@@ -180,7 +180,7 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('price', createdProduct.price);
       expect(result).toHaveProperty('stock', createdProduct.stock);
       expect(result).toHaveProperty('category');
-      expect(result).toHaveProperty('isActive');
+      expect(result).toHaveProperty('status');
       expect(result).toHaveProperty('deletedAt', expect.any(Date));
       expect(result).toHaveProperty('updatedAt', expect.any(Date));
       expect(result).toHaveProperty('createdAt', expect.any(Date));
@@ -214,7 +214,7 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('price', createdProduct.price);
       expect(result).toHaveProperty('stock', createdProduct.stock);
       expect(result).toHaveProperty('category');
-      expect(result).toHaveProperty('isActive', expected);
+      expect(result).toHaveProperty('status', expected);
       expect(result).toHaveProperty('updatedAt');
       expect(result).toHaveProperty('createdAt');
     });

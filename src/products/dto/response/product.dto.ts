@@ -21,7 +21,7 @@ export class ResponseProductDto {
   category: { uuid: string; name: string };
 
   @Expose()
-  isActive: boolean;
+  status: boolean;
 
   @Expose()
   deletedAt: string;

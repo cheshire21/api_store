@@ -8,5 +8,5 @@ export class UpdateProductDto extends PartialType(CreateProductDto) {
   @Expose()
   @IsOptional()
   @IsBoolean()
-  isActive: boolean;
+  status: boolean;
 }
