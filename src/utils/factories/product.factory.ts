@@ -23,7 +23,7 @@ export class ProductFactory extends Abstractfactory<Product> {
     return product;
   }
 
-  makeMany(quanty: number, data: Product): Promise<Product[]> {
+  makeMany(quanty: number, data: ProductInput): Promise<Product[]> {
     return Promise.all([...Array(quanty)].map(() => this.make(data)));
   }
 }
