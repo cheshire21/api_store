@@ -1,11 +1,13 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Category, Product } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { commerce, datatype } from 'faker';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
 import { CreateProductDto } from './dto/request/create-product.dto';
+import { PaginationOptionsProduct } from './dto/request/pagination-dto';
 import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {
@@ -17,7 +19,7 @@ describe('ProductsService', () => {
 
   let categories: Category[];
   let product: CreateProductDto;
-  let length: number;
+  let length: number = 3;
 
   let random = () => Math.floor(Math.random() * length);
   beforeAll(async () => {
@@ -31,9 +33,7 @@ describe('ProductsService', () => {
     productFactory = new ProductFactory(prisma);
     categoryFactory = new CategoryFactory(prisma);
 
-    categories = await categoryFactory.makeMany(3);
-
-    length = categories.length;
+    categories = await categoryFactory.makeMany(length);
   });
 
   beforeEach(() => {
@@ -75,6 +75,56 @@ describe('ProductsService', () => {
     it("should throw a error if product doesn't exist", async () => {
       await expect(productsService.getOne(datatype.uuid())).rejects.toThrow(
         new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND),
+      );
+    });
+  });
+
+  describe('getMany', () => {
+    beforeAll(async () => {
+      for (let i = 0; i < length; i++) {
+        await productFactory.makeMany(4, {
+          category: {
+            connect: {
+              id: categories[i].id,
+            },
+          },
+        });
+      }
+    });
+
+    it('should return a page with a specific take and a specific page', async () => {
+      const pagination = plainToInstance(PaginationOptionsProduct, {
+        take: 5,
+        page: 1,
+      });
+
+      const result = await productsService.getMany(pagination);
+
+      expect(result).toHaveProperty('products', expect.any(Array));
+      expect(result).toHaveProperty('pagination');
+    });
+
+    it('should return a page with a specific take, a specific page and a specfic category ', async () => {
+      const pagination = plainToInstance(PaginationOptionsProduct, {
+        take: 5,
+        page: 1,
+        category: categories[random()].name,
+      });
+
+      const result = await productsService.getMany(pagination);
+
+      expect(result).toHaveProperty('products', expect.any(Array));
+      expect(result).toHaveProperty('pagination');
+    });
+
+    it('should return return a error if the page is out of range ', async () => {
+      const pagination = plainToInstance(PaginationOptionsProduct, {
+        take: 10,
+        page: 9999,
+      });
+
+      await expect(productsService.getMany(pagination)).rejects.toThrow(
+        new HttpException('page is out of range', HttpStatus.BAD_REQUEST),
       );
     });
   });
