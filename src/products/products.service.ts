@@ -9,6 +9,8 @@ import { ResponseProductDto } from './dto/response/product.dto';
 
 @Injectable()
 export class ProductsService {
+  constructor(private prisma: PrismaService) {}
+
   private select = {
     uuid: true,
     name: true,
@@ -26,8 +28,6 @@ export class ProductsService {
     updatedAt: true,
     createdAt: true,
   };
-
-  constructor(private prisma: PrismaService) {}
 
   async getOne(uuid: string): Promise<ResponseProductDto> {
     try {
@@ -47,6 +47,9 @@ export class ProductsService {
       throw e;
     }
   }
+
+  async getMany(take: number, skip: number) {}
+
   async create(
     createProductDto: CreateProductDto,
   ): Promise<ResponseProductDto> {
@@ -77,6 +80,7 @@ export class ProductsService {
       throw error;
     }
   }
+
   async update(
     uuid: string,
     updateProductDto: UpdateProductDto,
