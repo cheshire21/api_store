@@ -120,7 +120,7 @@ export class ProductsService {
     status: boolean,
   ): Promise<ResponseProductDto> {
     try {
-      let deletedAt = status ? new Date() : null;
+      let deletedAt = status ? null : new Date();
 
       const product = await this.prisma.product.update({
         where: {

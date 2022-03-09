@@ -5,7 +5,7 @@ import { Role } from './utils/enums';
 @Controller()
 export class AppController {
   @Get()
-  @Roles(Role.admin, Role.user)
+  @Roles(Role.manager, Role.client)
   getHello(@Req() req) {
     return 'Hello world';
   }

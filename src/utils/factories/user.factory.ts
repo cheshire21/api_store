@@ -21,7 +21,7 @@ export class UserFactory extends Abstractfactory<User> {
         address: data.address ?? address.direction(),
         email: data.email ?? internet.email(),
         password: hashSync(data.password ?? internet.password(), 10),
-        role: data.role ?? Role.user,
+        role: data.role ?? Role.client,
       },
     });
 

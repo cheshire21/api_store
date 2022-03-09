@@ -8,6 +8,7 @@ import {
   Param,
   Query,
 } from '@nestjs/common';
+import { Public } from 'src/auth/jwt/is-public.decorator';
 import { Roles } from 'src/auth/role/role.decorator';
 import { Role } from 'src/utils/enums';
 import { CreateProductDto } from './dto/request/create-product.dto';
@@ -19,20 +20,23 @@ import { ProductsService } from './products.service';
 @Controller('products')
 export class ProductsController {
   constructor(private productsService: ProductsService) {}
+
+  @Get()
+  @Public()
   @Get('/:id')
-  @Roles(Role.user, Role.admin)
+  @Roles(Role.client, Role.manager)
   getProduct(@Param() idProductDto: IdProductDto) {
     return this.productsService.getOne(idProductDto.id);
   }
 
   @Post()
-  @Roles(Role.admin)
+  @Roles(Role.manager)
   createProduct(@Body() createProductDto: CreateProductDto) {
     return this.productsService.create(createProductDto);
   }
 
   @Patch('/:id')
-  @Roles(Role.admin)
+  @Roles(Role.manager)
   updateProduct(
     @Param() idProductDto: IdProductDto,
     @Body() updateProductDto: UpdateProductDto,
@@ -40,7 +44,7 @@ export class ProductsController {
     return this.productsService.update(idProductDto.id, updateProductDto);
   }
 
-  @Roles(Role.admin)
+  @Roles(Role.manager)
   @Patch('/:id/status')
   changeProductStatus(
     @Param() idProductDto: IdProductDto,
@@ -51,4 +55,7 @@ export class ProductsController {
       statusProductDto.status,
     );
   }
+  @Roles(Role.manager)
+  @Patch('/:id/image')
+  uploadImage() {}
 }

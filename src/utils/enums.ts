@@ -5,6 +5,6 @@ export enum PrismaErrorEnum {
 }
 
 export enum Role {
-  user = 'U',
-  admin = 'A',
+  client = 'C',
+  manager = 'M',
 }
