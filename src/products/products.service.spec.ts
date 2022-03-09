@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { Category } from '@prisma/client';
+import { Category, Product } from '@prisma/client';
 import { commerce, datatype } from 'faker';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
@@ -18,6 +18,8 @@ describe('ProductsService', () => {
   let categories: Category[];
   let product: CreateProductDto;
   let length: number;
+
+  let random = () => Math.floor(Math.random() * length);
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [ProductsService, PrismaService],
@@ -35,14 +37,12 @@ describe('ProductsService', () => {
   });
 
   beforeEach(() => {
-    const random = Math.floor(Math.random() * length);
-
     product = {
       name: commerce.productName(),
       description: commerce.productDescription(),
       price: datatype.float(),
       stock: datatype.number(),
-      categoryId: categories[random].uuid,
+      categoryId: categories[random()].uuid,
     };
   });
 
@@ -52,12 +52,10 @@ describe('ProductsService', () => {
 
   describe('getOne', () => {
     it('should return a product', async () => {
-      const random = Math.floor(Math.random() * length);
-
       const createdProduct = await productFactory.make({
         category: {
           connect: {
-            id: categories[random].id,
+            id: categories[random()].id,
           },
         },
       });
@@ -102,57 +100,68 @@ describe('ProductsService', () => {
           categoryId: datatype.uuid(),
         }),
       ).rejects.toThrow(
-        new HttpException('Category no found', HttpStatus.UNPROCESSABLE_ENTITY),
+        new HttpException('Category not found', HttpStatus.NOT_FOUND),
       );
     });
   });
 
-  // describe('update', () => {
-  //   it('should update and return a product details', async () => {
-  //     let createdProduct = await productFactory.make();
+  describe('update', () => {
+    let createdProduct: Product;
+    beforeAll(async () => {
+      createdProduct = await productFactory.make({
+        category: {
+          connect: {
+            id: categories[random()].id,
+          },
+        },
+      });
+    });
 
-  //     const result = await productsService.update(createdProduct.uuid, {
-  //       ...product,
-  //       isActive: datatype.boolean(),
-  //     });
+    it('should update and return a product details', async () => {
+      const result = await productsService.update(createdProduct.uuid, {
+        ...product,
+        isActive: datatype.boolean(),
+      });
 
-  //     expect(result).toHaveProperty('name', product.name);
-  //     expect(result).toHaveProperty('description', product.description);
-  //     expect(result).toHaveProperty('price', product.price);
-  //     expect(result).toHaveProperty('stock', product.stock);
-  //     expect(result).toHaveProperty('category');
-  //     expect(result).toHaveProperty('isActive');
-  //     expect(result).toHaveProperty('updatedAt');
-  //     expect(result).toHaveProperty('createdAt');
-  //   });
+      expect(result).toHaveProperty('name', product.name);
+      expect(result).toHaveProperty('description', product.description);
+      expect(result).toHaveProperty('price', product.price);
+      expect(result).toHaveProperty('stock', product.stock);
+      expect(result).toHaveProperty('category');
+      expect(result).toHaveProperty('isActive');
+      expect(result).toHaveProperty('updatedAt');
+      expect(result).toHaveProperty('createdAt');
+    });
 
-  //   it("should throw a error if product's category doesn't exist ", async () => {
-  //     let createdProduct = await productFactory.make();
+    it("should throw a error if product's category doesn't exist ", async () => {
+      await expect(
+        productsService.update(createdProduct.uuid, {
+          ...product,
+          isActive: datatype.boolean(),
+          categoryId: datatype.uuid(),
+        }),
+      ).rejects.toThrow(
+        new HttpException(
+          'Category or product not found',
+          HttpStatus.NOT_FOUND,
+        ),
+      );
+    });
 
-  //     expect(
-  //       productsService.update(createdProduct.uuid, {
-  //         ...product,
-  //         isActive: datatype.boolean(),
-  //         categoryId: datatype.uuid(),
-  //       }),
-  //     ).rejects.toThrow(
-  //       new HttpException('Category no found', HttpStatus.UNPROCESSABLE_ENTITY),
-  //     );
-  //   });
-
-  //   it("should throw a error if product doesn't exist", async () => {
-  //     let createdProduct = await productFactory.make();
-
-  //     expect(
-  //       productsService.update(datatype.uuid(), {
-  //         ...product,
-  //         isActive: datatype.boolean(),
-  //       }),
-  //     ).rejects.toThrow(
-  //       new HttpException('Product no found', HttpStatus.NOT_FOUND),
-  //     );
-  //   });
-  // });
+    it("should throw a error if product doesn't exist", async () => {
+      await expect(
+        productsService.update(datatype.uuid(), {
+          ...product,
+          isActive: datatype.boolean(),
+        }),
+      ).rejects.toThrow(
+        new HttpException(
+          'Category or product not found',
+          HttpStatus.NOT_FOUND,
+        ),
+      );
+    });
+  });
 
   // describe('delete', () => {
   //   it('should  delete a product ', async () => {

@@ -53,34 +53,30 @@ export class ProductsService {
     try {
       const { categoryId, ...input } = createProductDto;
 
-      const category = await this.prisma.category.findUnique({
-        where: {
-          uuid: categoryId,
-        },
-        select: {
-          id: true,
-        },
-        rejectOnNotFound: false,
-      });
-
-      if (!category) {
-        throw new HttpException(
-          'Category no found',
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-
       const product = await this.prisma.product.create({
         data: {
           ...input,
-          categoryId: category.id,
+          category: {
+            connect: {
+              uuid: categoryId,
+            },
+          },
         },
         select: this.select,
       });
 
       return plainToInstance(ResponseProductDto, product);
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
+          case PrismaErrorEnum.NOT_FOUND:
+            throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+          default:
+            throw error;
+        }
+      }
+
+      throw error;
     }
   }
   async update(
@@ -90,46 +86,36 @@ export class ProductsService {
     try {
       const { categoryId, ...input } = updateProductDto;
 
-      const category = await this.prisma.category.findUnique({
-        where: {
-          uuid: categoryId,
-        },
-        select: {
-          id: true,
-        },
-        rejectOnNotFound: false,
-      });
-
-      if (!category) {
-        throw new HttpException(
-          'Category no found',
-          HttpStatus.UNPROCESSABLE_ENTITY,
-        );
-      }
-
       const product = await this.prisma.product.update({
         where: {
           uuid,
         },
         data: {
           ...input,
-          categoryId: category.id,
+          category: {
+            connect: {
+              uuid: categoryId,
+            },
+          },
         },
         select: this.select,
       });
 
       return plainToInstance(ResponseProductDto, product);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        switch (e.code) {
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            new HttpException('Product no found', HttpStatus.NOT_FOUND);
+            throw new HttpException(
+              'Category or product not found',
+              HttpStatus.NOT_FOUND,
+            );
           default:
-            throw e;
+            throw error;
         }
       }
 
-      throw e;
+      throw error;
     }
   }
   async delete(uuid: string): Promise<ResponseProductDto> {
@@ -149,7 +135,7 @@ export class ProductsService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         switch (e.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            new HttpException('Product no found', HttpStatus.NOT_FOUND);
+            throw new HttpException('Product no found', HttpStatus.NOT_FOUND);
           default:
             throw e;
         }
