@@ -114,43 +114,21 @@ export class ProductsService {
       throw error;
     }
   }
-  async delete(uuid: string): Promise<ResponseProductDto> {
-    try {
-      const product = await this.prisma.product.update({
-        where: {
-          uuid,
-        },
-        data: {
-          deletedAt: new Date(),
-        },
-        select: this.select,
-      });
 
-      return plainToInstance(ResponseProductDto, product);
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        switch (e.code) {
-          case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
-          default:
-            throw e;
-        }
-      }
-
-      throw e;
-    }
-  }
   async changeStatus(
     uuid: string,
     status: boolean,
   ): Promise<ResponseProductDto> {
     try {
+      let deletedAt = status ? new Date() : null;
+
       const product = await this.prisma.product.update({
         where: {
           uuid,
         },
         data: {
-          status: status,
+          status,
+          deletedAt,
         },
         select: this.select,
       });
@@ -163,7 +141,6 @@ export class ProductsService {
             throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
         }
       }
-
       throw error;
     }
   }

@@ -6,5 +6,5 @@ export class StatusProductDto {
   @Expose()
   @IsNotEmpty()
   @IsBoolean()
-  isActive: boolean;
+  status: boolean;
 }

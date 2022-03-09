@@ -41,12 +41,6 @@ export class ProductsController {
   }
 
   @Roles(Role.admin)
-  @Delete('/:id')
-  deleteProduct(@Param() idProductDto: IdProductDto) {
-    return this.productsService.delete(idProductDto.id);
-  }
-
-  @Roles(Role.admin)
   @Patch('/:id/status')
   changeProductStatus(
     @Param() idProductDto: IdProductDto,
@@ -54,7 +48,7 @@ export class ProductsController {
   ) {
     return this.productsService.changeStatus(
       idProductDto.id,
-      statusProductDto.isActive,
+      statusProductDto.status,
     );
   }
 }

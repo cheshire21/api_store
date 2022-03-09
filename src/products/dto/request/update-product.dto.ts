@@ -1,12 +1,31 @@
 import { PartialType } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { IsBoolean, IsOptional } from 'class-validator';
-import { CreateProductDto } from './create-product.dto';
+import { IsBoolean, IsOptional, IsNumber, IsString } from 'class-validator';
 
 @Exclude()
-export class UpdateProductDto extends PartialType(CreateProductDto) {
+export class UpdateProductDto {
   @Expose()
   @IsOptional()
-  @IsBoolean()
-  status: boolean;
+  @IsString()
+  name: string;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  description: string;
+
+  @Expose()
+  @IsOptional()
+  @IsNumber()
+  price: number;
+
+  @Expose()
+  @IsOptional()
+  @IsNumber()
+  stock: number;
+
+  @Expose()
+  @IsOptional()
+  @IsString()
+  categoryId: string;
 }

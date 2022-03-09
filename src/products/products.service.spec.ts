@@ -120,7 +120,6 @@ describe('ProductsService', () => {
     it('should update and return a product details', async () => {
       const result = await productsService.update(createdProduct.uuid, {
         ...product,
-        status: datatype.boolean(),
       });
 
       expect(result).toHaveProperty('name', product.name);
@@ -137,7 +136,6 @@ describe('ProductsService', () => {
       await expect(
         productsService.update(createdProduct.uuid, {
           ...product,
-          status: datatype.boolean(),
           categoryId: datatype.uuid(),
         }),
       ).rejects.toThrow(
@@ -152,43 +150,12 @@ describe('ProductsService', () => {
       await expect(
         productsService.update(datatype.uuid(), {
           ...product,
-          status: datatype.boolean(),
         }),
       ).rejects.toThrow(
         new HttpException(
           'Category or product not found',
           HttpStatus.NOT_FOUND,
         ),
-      );
-    });
-  });
-
-  describe('delete', () => {
-    it('should  delete a product ', async () => {
-      let createdProduct = await productFactory.make({
-        category: {
-          connect: {
-            id: categories[random()].id,
-          },
-        },
-      });
-
-      const result = await productsService.delete(createdProduct.uuid);
-
-      expect(result).toHaveProperty('name', createdProduct.name);
-      expect(result).toHaveProperty('description', createdProduct.description);
-      expect(result).toHaveProperty('price', createdProduct.price);
-      expect(result).toHaveProperty('stock', createdProduct.stock);
-      expect(result).toHaveProperty('category');
-      expect(result).toHaveProperty('status');
-      expect(result).toHaveProperty('deletedAt', expect.any(Date));
-      expect(result).toHaveProperty('updatedAt', expect.any(Date));
-      expect(result).toHaveProperty('createdAt', expect.any(Date));
-    });
-
-    it("should throw a error if product doesn't exist ", async () => {
-      await expect(productsService.delete(datatype.uuid())).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
       );
     });
   });
