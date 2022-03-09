@@ -82,6 +82,9 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "coveragePathIgnorePatterns" : [
+      "src/prisma/"
+    ],
     "collectCoverageFrom": [
       "**/*.service.ts"
     ],
