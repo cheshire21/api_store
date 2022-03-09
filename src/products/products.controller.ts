@@ -7,12 +7,18 @@ import {
   Body,
   Param,
   Query,
+  DefaultValuePipe,
+  ParseIntPipe,
+  ParseUUIDPipe,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
+import { query } from 'express';
 import { Public } from 'src/auth/jwt/is-public.decorator';
 import { Roles } from 'src/auth/role/role.decorator';
 import { Role } from 'src/utils/enums';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { IdProductDto } from './dto/request/id-product.dto';
+import { PaginationOptionsProduct } from './dto/request/pagination-dto';
 import { StatusProductDto } from './dto/request/status-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ProductsService } from './products.service';
@@ -23,6 +29,20 @@ export class ProductsController {
 
   @Get()
   @Public()
+  getProducts(
+    @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
+    @Query('category', new DefaultValuePipe(null)) category,
+  ) {
+    let pagination = plainToInstance(PaginationOptionsProduct, {
+      take,
+      page,
+      category,
+    });
+
+    return this.productsService.getMany(pagination);
+  }
+
   @Get('/:id')
   @Roles(Role.client, Role.manager)
   getProduct(@Param() idProductDto: IdProductDto) {
