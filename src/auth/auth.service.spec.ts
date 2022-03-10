@@ -57,7 +57,7 @@ describe('AuthService', () => {
       address: address.direction(),
       email: internet.email(),
       password: '12345678',
-      role: Role.user,
+      role: Role.client,
     });
   });
 
