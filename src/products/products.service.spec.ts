@@ -22,6 +22,7 @@ describe('ProductsService', () => {
   let length: number = 3;
 
   let random = () => Math.floor(Math.random() * length);
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       providers: [ProductsService, PrismaService],
