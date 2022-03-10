@@ -1,8 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaErrorEnum } from '../utils/enums';
-import { LikeDto } from './resquest/like.dto';
+import { LikeDto } from '../products/dto/request/like.dto';
 
 @Injectable()
 export class LikesService {

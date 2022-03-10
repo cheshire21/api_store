@@ -8,25 +8,33 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  Delete,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { GetUser } from 'src/auth/get-user.decorator';
 import { Public } from 'src/auth/jwt/is-public.decorator';
 import { Roles } from 'src/auth/role/role.decorator';
 import { Role } from 'src/utils/enums';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { IdProductDto } from './dto/request/id-product.dto';
+import { LikeDto } from './dto/request/like.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { StatusProductDto } from './dto/request/status-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
+import { LikesService } from './likes.service';
 import { ProductsService } from './products.service';
 
 @ApiTags('products')
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private likesService: LikesService,
+  ) {}
 
   @Get()
   @Public()
@@ -114,4 +122,23 @@ export class ProductsController {
     type: ResponseProductDto,
   })
   uploadImage() {}
+
+  @Patch('/:id/like')
+  @Roles(Role.manager, Role.client)
+  async upsetLike(
+    @GetUser() user: User,
+    @Param('id') productId: string,
+    @Body() likeDto: LikeDto,
+  ): Promise<void> {
+    await this.likesService.upsertLike(user.uuid, productId, likeDto);
+  }
+
+  @Delete('/:id/like')
+  @Roles(Role.manager, Role.client)
+  async deleteLike(
+    @GetUser() user: User,
+    @Param('id') productId: string,
+  ): Promise<void> {
+    await this.likesService.deleteLike(user.uuid, productId);
+  }
 }
