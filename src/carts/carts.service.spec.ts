@@ -19,7 +19,7 @@ describe('CartsService', () => {
   let products: Product[];
   let productstLength: number = 5;
 
-  let random = () => Math.floor(Math.random() * length);
+  let random = (length) => Math.floor(Math.random() * length);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
