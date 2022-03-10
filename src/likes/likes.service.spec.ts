@@ -2,11 +2,11 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CategoryFactory } from 'src/utils/factories/category.factory';
-import { LikeFactory } from 'src/utils/factories/like.factory';
-import { ProductFactory } from 'src/utils/factories/product.factory';
-import { UserFactory } from 'src/utils/factories/user.factory';
+import { PrismaService } from '../prisma/prisma.service';
+import { CategoryFactory } from '../utils/factories/category.factory';
+import { LikeFactory } from '../utils/factories/like.factory';
+import { ProductFactory } from '../utils/factories/product.factory';
+import { UserFactory } from '../utils/factories/user.factory';
 import { LikesService } from './likes.service';
 
 describe('LikesService', () => {
@@ -20,7 +20,7 @@ describe('LikesService', () => {
 
   let categories: Category[];
   let categoriesLength: number = 3;
-  let products: Product[];
+  let products: Product[] = [];
   let productstLength: number = 2;
   let createduser: User;
 
@@ -41,7 +41,7 @@ describe('LikesService', () => {
 
     createduser = await userFactory.make();
 
-    categories = await categoryFactory.makeMany(length);
+    categories = await categoryFactory.makeMany(categoriesLength);
 
     for (let i = 0; i < categoriesLength; i++) {
       const arr = await productFactory.makeMany(productstLength, {
@@ -102,7 +102,7 @@ describe('LikesService', () => {
           },
         ),
       ).rejects.toThrow(
-        new HttpException('User or Product not found', HttpStatus.NOT_FOUND),
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
     });
 
@@ -112,7 +112,7 @@ describe('LikesService', () => {
           like: datatype.boolean(),
         }),
       ).rejects.toThrow(
-        new HttpException('User or Product not found', HttpStatus.NOT_FOUND),
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
       );
     });
   });
@@ -144,7 +144,7 @@ describe('LikesService', () => {
       await expect(
         likesService.deleteLike(createduser.uuid, datatype.uuid()),
       ).rejects.toThrow(
-        new HttpException('User or Product not found', HttpStatus.NOT_FOUND),
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
       );
     });
 
@@ -155,7 +155,7 @@ describe('LikesService', () => {
           products[random(productstLength)].uuid,
         ),
       ).rejects.toThrow(
-        new HttpException('User or Product not found', HttpStatus.NOT_FOUND),
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
     });
   });
