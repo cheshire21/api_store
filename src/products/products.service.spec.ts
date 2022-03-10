@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
 import { CreateProductDto } from './dto/request/create-product.dto';
-import { PaginationOptionsProduct } from './dto/request/pagination-dto';
+import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ProductsService } from './products.service';
 
 describe('ProductsService', () => {

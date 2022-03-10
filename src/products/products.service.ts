@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
-import { PaginationOptionsProduct } from './dto/request/pagination-dto';
+import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 
 @Injectable()
@@ -71,8 +71,6 @@ export class ProductsService {
     if (page > totalPages) {
       throw new HttpException('page is out of range', HttpStatus.BAD_REQUEST);
     }
-
-    console.log(`totalpages: ${totalPages} pages: ${page}`);
 
     const products = await this.prisma.product.findMany({
       skip: take * (page - 1),
