@@ -28,7 +28,7 @@ describe('UsersService', () => {
       address: address.direction(),
       email: internet.email(),
       password: hashSync(internet.password(), 10),
-      role: Role.user,
+      role: Role.client,
     });
   });
 
