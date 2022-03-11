@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { commerce, datatype, name } from 'faker';
+import { datatype, name } from 'faker';
+import { CategoryDetails } from './category-details.dto';
 
 @Exclude()
 export class ResponseProductDto {
@@ -34,14 +35,9 @@ export class ResponseProductDto {
   @Expose()
   stock: number;
 
-  @ApiProperty({
-    example: {
-      uuid: datatype.uuid(),
-      name: commerce.productName(),
-    },
-  })
+  @ApiProperty()
   @Expose()
-  category: { uuid: string; name: string };
+  category: CategoryDetails;
 
   @ApiProperty({
     example: datatype.boolean(),

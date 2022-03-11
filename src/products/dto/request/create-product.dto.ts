@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { commerce, datatype, name } from 'faker';
+import { commerce, datatype } from 'faker';
 
 @Exclude()
 export class CreateProductDto {
   @ApiProperty({
-    example: name.firstName(),
+    example: commerce.productName(),
   })
   @Expose()
   @IsNotEmpty()
@@ -14,7 +14,7 @@ export class CreateProductDto {
   name: string;
 
   @ApiProperty({
-    example: name.lastName(),
+    example: commerce.productDescription(),
   })
   @Expose()
   @IsNotEmpty()

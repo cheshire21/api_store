@@ -1,13 +1,13 @@
-import { ApiProperty, PartialType } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { IsBoolean, IsOptional, IsNumber, IsString } from 'class-validator';
-import { commerce, datatype, name } from 'faker';
+import { IsOptional, IsNumber, IsString } from 'class-validator';
+import { commerce, datatype } from 'faker';
 
 @Exclude()
 export class UpdateProductDto {
   @ApiProperty({
     required: false,
-    example: name.firstName(),
+    example: commerce.productName(),
   })
   @Expose()
   @IsOptional()
@@ -16,7 +16,7 @@ export class UpdateProductDto {
 
   @ApiProperty({
     required: false,
-    example: name.lastName(),
+    example: commerce.productDescription(),
   })
   @Expose()
   @IsOptional()
