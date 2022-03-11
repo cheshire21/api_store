@@ -21,6 +21,7 @@ async function bootstrap() {
     .setTitle('Api Store')
     .setDescription('Api Store for products, carts and orders')
     .setVersion('1.0')
+    .addBearerAuth()
     .addTag('auth')
     .addTag('products')
     .addTag('cart')

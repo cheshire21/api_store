@@ -11,7 +11,7 @@ import {
   Delete,
   HttpCode,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -65,6 +65,7 @@ export class ProductsController {
     description: 'return a specific product details',
     type: ResponseProductDto,
   })
+  @ApiBearerAuth()
   async getProduct(
     @Param() idProductDto: IdProductDto,
   ): Promise<ResponseProductDto> {
@@ -78,6 +79,7 @@ export class ProductsController {
     description: 'create a product',
     type: ResponseProductDto,
   })
+  @ApiBearerAuth()
   async createProduct(
     @Body() createProductDto: CreateProductDto,
   ): Promise<ResponseProductDto> {
@@ -91,6 +93,7 @@ export class ProductsController {
     description: 'update a product',
     type: ResponseProductDto,
   })
+  @ApiBearerAuth()
   updateProduct(
     @Param() idProductDto: IdProductDto,
     @Body() updateProductDto: UpdateProductDto,
@@ -105,6 +108,7 @@ export class ProductsController {
     description: 'change product status',
     type: ResponseProductDto,
   })
+  @ApiBearerAuth()
   changeProductStatus(
     @Param() idProductDto: IdProductDto,
     @Body() statusProductDto: StatusProductDto,
@@ -122,6 +126,7 @@ export class ProductsController {
     description: 'upload a product image',
     type: ResponseProductDto,
   })
+  @ApiBearerAuth()
   uploadImage() {}
 
   @Patch('/:id/like')
@@ -131,6 +136,7 @@ export class ProductsController {
     description: 'user put like to a product',
   })
   @Roles(Role.manager, Role.client)
+  @ApiBearerAuth()
   async upsetLike(
     @GetUser() user: User,
     @Param('id') productId: string,
@@ -146,6 +152,7 @@ export class ProductsController {
     description: 'user put dislike to a product',
   })
   @Roles(Role.manager, Role.client)
+  @ApiBearerAuth()
   async deleteLike(
     @GetUser() user: User,
     @Param('id') productId: string,
