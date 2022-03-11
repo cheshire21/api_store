@@ -61,6 +61,10 @@ describe('AuthService', () => {
     });
   });
 
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
   describe('signup', () => {
     it('should throw error if email already exist', async () => {
       userService.findOneByEmail.mockResolvedValue(true);

@@ -64,12 +64,26 @@ export class CartsService {
           id: true,
           stock: true,
           price: true,
+          deletedAt: true,
         },
         rejectOnNotFound: false,
       });
 
       if (!product)
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+
+      if (product.deletedAt)
+        throw new HttpException(
+          'Product is in disable status',
+          HttpStatus.UNAUTHORIZED,
+        );
+
+      if (quantity > product.stock) {
+        throw new HttpException(
+          'Quantity is bigger than stock',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
 
       const user = await this.prisma.user.findUnique({
         where: {
@@ -84,13 +98,6 @@ export class CartsService {
 
       if (!user)
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-
-      if (quantity > product.stock) {
-        throw new HttpException(
-          'Quantity is bigger than stock',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
 
       const cartItem = await this.prisma.cartItem.findUnique({
         where: {

@@ -57,6 +57,10 @@ describe('CartsService', () => {
     createduser = await userFactory.make({});
   });
 
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
   describe('getCart', () => {
     it("should return a list of products in user's cart", async () => {
       const cart = await prisma.cart.findFirst({
@@ -156,6 +160,31 @@ describe('CartsService', () => {
         }),
       ).rejects.toThrow(
         new HttpException('Product not found', HttpStatus.NOT_FOUND),
+      );
+    });
+
+    it('should return a error if product is disable', async () => {
+      const pos = random(productstLength);
+      await prisma.product.update({
+        where: {
+          id: products[pos].id,
+        },
+        data: {
+          status: false,
+          deletedAt: new Date(),
+        },
+      });
+
+      await expect(
+        cartsService.upsertItem(createduser.uuid, {
+          productId: products[pos].uuid,
+          quantity: 5,
+        }),
+      ).rejects.toThrow(
+        new HttpException(
+          'Product is in disable status',
+          HttpStatus.UNAUTHORIZED,
+        ),
       );
     });
   });

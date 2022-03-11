@@ -19,7 +19,7 @@ describe('LikesService', () => {
   let likeFactory: LikeFactory;
 
   let categories: Category[];
-  let categoriesLength: number = 3;
+  let categoriesLength: number = 2;
   let products: Product[] = [];
   let productstLength: number = 2;
   let createduser: User;
@@ -53,6 +53,10 @@ describe('LikesService', () => {
       });
       products.push(...arr);
     }
+  });
+
+  afterAll(async () => {
+    await prisma.$disconnect();
   });
 
   describe('create or update like', () => {

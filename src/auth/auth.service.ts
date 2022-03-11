@@ -66,8 +66,6 @@ export class AuthService {
         switch (e.code) {
           case PrismaErrorEnum.FOREIGN_KEY_CONSTRAINT:
             throw new HttpException('User no found', HttpStatus.NOT_FOUND);
-          default:
-            throw e;
         }
       }
 
