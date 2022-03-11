@@ -27,7 +27,7 @@ describe('CartsService', () => {
 
   let random = (length) => Math.floor(Math.random() * length);
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [CartsService, PrismaService],
     }).compile();
@@ -57,6 +57,57 @@ describe('CartsService', () => {
     createduser = await userFactory.make({});
   });
 
+  describe('getCart', () => {
+    it("should return a list of products in user's cart", async () => {
+      const cart = await prisma.cart.findFirst({
+        where: {
+          userId: createduser.id,
+        },
+      });
+      await cartItemFactory.make({
+        cart: {
+          connect: {
+            id: cart.id,
+          },
+        },
+        product: {
+          connect: {
+            id: products[0].id,
+          },
+        },
+        quantity: datatype.number(),
+        unitPrice: datatype.float(),
+        totalPrice: datatype.float(),
+      });
+      await cartItemFactory.make({
+        cart: {
+          connect: {
+            id: cart.id,
+          },
+        },
+        product: {
+          connect: {
+            id: products[1].id,
+          },
+        },
+        quantity: datatype.number(),
+        unitPrice: datatype.float(),
+        totalPrice: datatype.float(),
+      });
+
+      const result = await cartsService.getItems(createduser.uuid);
+
+      expect(result).toHaveProperty('items', expect.any(Array));
+      expect(result).toHaveProperty('totalPrice', expect.any(Number));
+      expect(result).toHaveProperty('updatedAt', expect.any(Date));
+      expect(result).toHaveProperty('createdAt', expect.any(Date));
+    });
+
+    it("should throw a error if user doesn't exist", async () => {
+      await expect(cartsService.getItems(datatype.uuid())).rejects.toThrow();
+    });
+  });
+
   describe('upsert', () => {
     it("should create a cart's item successfully", async () => {
       const pos = random(productstLength);
@@ -65,6 +116,7 @@ describe('CartsService', () => {
         productId: products[pos].uuid,
         quantity: stock,
       });
+
       expect(result).toHaveProperty('product');
       expect(result).toHaveProperty('quantity', stock);
       expect(result).toHaveProperty('unitPrice', products[pos].price);
@@ -110,6 +162,8 @@ describe('CartsService', () => {
 
   describe('delete', () => {
     it("should create a cart's item successfully", async () => {
+      const pos = random(productstLength);
+
       const cart = await prisma.cart.findFirst({
         where: {
           userId: createduser.id,
@@ -123,14 +177,14 @@ describe('CartsService', () => {
         },
         product: {
           connect: {
-            id: products[random(productstLength)].id,
+            id: products[pos].id,
           },
         },
         quantity: datatype.number(),
         unitPrice: datatype.float(),
         totalPrice: datatype.float(),
       });
-      const pos = random(productstLength);
+
       expect(
         await cartsService.delete(createduser.uuid, products[pos].uuid),
       ).toBeUndefined();

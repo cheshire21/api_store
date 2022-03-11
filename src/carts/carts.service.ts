@@ -1,12 +1,55 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { PrismaErrorEnum } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateCartItem } from './dto/request/create-cart-item.dto';
+import { CartItemsDto } from './dto/response/cart-items.dto';
 import { ResponseCartDto } from './dto/response/response-cart.dto';
 
 @Injectable()
 export class CartsService {
   constructor(private prisma: PrismaService) {}
+
+  async getItems(userId: string) {
+    try {
+      const cart = await this.prisma.cart.findFirst({
+        where: {
+          user: {
+            uuid: userId,
+          },
+        },
+        select: {
+          CartItem: {
+            select: {
+              product: {
+                select: {
+                  uuid: true,
+                  name: true,
+                },
+              },
+              quantity: true,
+              unitPrice: true,
+              totalPrice: true,
+            },
+          },
+          totalPrice: true,
+          updatedAt: true,
+          createdAt: true,
+        },
+        rejectOnNotFound: true,
+      });
+
+      return plainToInstance(CartItemsDto, {
+        items: cart.CartItem,
+        totalPrice: cart.totalPrice,
+        updatedAt: cart.updatedAt,
+        createdAt: cart.createdAt,
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async upsertItem(
     userId: string,
