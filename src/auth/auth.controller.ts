@@ -33,8 +33,9 @@ export class AuthController {
   }
   @Public()
   @Get('/logout')
+  @HttpCode(204)
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'log out successfully',
   })
   async logout(@Query('token') token: string): Promise<void> {
