@@ -3,7 +3,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { datatype } from 'faker';
 
 @Exclude()
-export class PaginationDto {
+export class Pagination {
   @ApiProperty({
     example: 3,
   })

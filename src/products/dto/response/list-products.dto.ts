@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { PaginationDto } from '../../../dto/response/pagination.dto';
+import { Pagination } from '../../../dto/response/pagination.dto';
 import { ResponseProductDto } from './product.dto';
 
 @Exclude()
@@ -12,8 +12,8 @@ export class ListProductsDto {
   products: ResponseProductDto[];
 
   @ApiProperty({
-    example: PaginationDto,
+    example: Pagination,
   })
   @Expose()
-  pagination: PaginationDto;
+  pagination: Pagination;
 }
