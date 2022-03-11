@@ -124,4 +124,45 @@ export class CartsService {
       throw error;
     }
   }
+
+  async delete(userId: string, productId: string): Promise<void> {
+    try {
+      const product = await this.prisma.product.findUnique({
+        where: {
+          uuid: productId,
+        },
+        select: {
+          id: true,
+        },
+        rejectOnNotFound: false,
+      });
+
+      if (!product)
+        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+
+      const user = await this.prisma.user.findUnique({
+        where: {
+          uuid: userId,
+        },
+        select: {
+          Cart: true,
+        },
+        rejectOnNotFound: false,
+      });
+
+      if (!user)
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+      await this.prisma.cartItem.delete({
+        where: {
+          cartId_productId: {
+            cartId: user.Cart[0].id,
+            productId: product.id,
+          },
+        },
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 }
