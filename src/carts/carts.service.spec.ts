@@ -1,9 +1,11 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { Category, Product } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CategoryFactory } from 'src/utils/factories/category.factory';
-import { ProductFactory } from 'src/utils/factories/product.factory';
-import { UserFactory } from 'src/utils/factories/user.factory';
+import { Category, Product, User } from '@prisma/client';
+import { datatype } from 'faker';
+import { PrismaService } from '../prisma/prisma.service';
+import { CategoryFactory } from '../utils/factories/category.factory';
+import { ProductFactory } from '../utils/factories/product.factory';
+import { UserFactory } from '../utils/factories/user.factory';
 import { CartsService } from './carts.service';
 
 describe('CartsService', () => {
@@ -15,9 +17,11 @@ describe('CartsService', () => {
   let categoryFactory: CategoryFactory;
 
   let categories: Category[];
-  let categoriesLength: number = 3;
-  let products: Product[];
-  let productstLength: number = 5;
+  let categoriesLength: number = 2;
+  let products: Product[] = [];
+  let productstLength: number = 2;
+  let createduser: User;
+  let stock: number = 4;
 
   let random = (length) => Math.floor(Math.random() * length);
 
@@ -33,10 +37,11 @@ describe('CartsService', () => {
     productFactory = new ProductFactory(prisma);
     categoryFactory = new CategoryFactory(prisma);
 
-    categories = await categoryFactory.makeMany(length);
+    categories = await categoryFactory.makeMany(categoriesLength);
 
     for (let i = 0; i < categoriesLength; i++) {
       const arr = await productFactory.makeMany(productstLength, {
+        stock,
         category: {
           connect: {
             id: categories[i].id,
@@ -45,11 +50,60 @@ describe('CartsService', () => {
       });
       products.push(...arr);
     }
+
+    createduser = await userFactory.make({});
   });
 
-  describe('create', () => {});
+  describe('upsert', () => {
+    it("should create a cart's item successfully", async () => {
+      const pos = random(productstLength);
 
-  describe('update', () => {});
+      const result = await cartsService.upsertItem(createduser.uuid, {
+        productId: products[pos].uuid,
+        quantity: stock,
+      });
+      expect(result).toHaveProperty('product');
+      expect(result).toHaveProperty('quantity', stock);
+      expect(result).toHaveProperty('unitPrice', products[pos].price);
+      expect(result).toHaveProperty('totalPrice', products[pos].price * stock);
+    });
+
+    it("should return a error if quantity is out of product's stock range ", async () => {
+      await expect(
+        cartsService.upsertItem(createduser.uuid, {
+          productId: products[random(productstLength)].uuid,
+          quantity: 6,
+        }),
+      ).rejects.toThrow(
+        new HttpException(
+          'Quantity is bigger than stock',
+          HttpStatus.BAD_REQUEST,
+        ),
+      );
+    });
+
+    it("should throw a error if user doesn't exist", async () => {
+      await expect(
+        cartsService.upsertItem(datatype.uuid(), {
+          productId: products[random(productstLength)].uuid,
+          quantity: stock,
+        }),
+      ).rejects.toThrow(
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
+      );
+    });
+
+    it("should throw a error if product doesn't exist", async () => {
+      await expect(
+        cartsService.upsertItem(createduser.uuid, {
+          productId: datatype.uuid(),
+          quantity: stock,
+        }),
+      ).rejects.toThrow(
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
 
   describe('delete', () => {});
 });
