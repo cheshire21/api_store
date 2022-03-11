@@ -1,6 +1,6 @@
 import { OmitType } from '@nestjs/swagger';
-import { CreateCartItem } from './create-cart-item.dto';
+import { CreateCartItemDto } from './create-cart-item.dto';
 
-export class DeleteCartItemDto extends OmitType(CreateCartItem, [
+export class DeleteCartItemDto extends OmitType(CreateCartItemDto, [
   'quantity',
 ] as const) {}
