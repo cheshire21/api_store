@@ -94,12 +94,13 @@ model CartItem {
   cartId     Int      @map(name: "cart_id")
   product    Product  @relation(fields: [productId], references: [id])
   productId  Int      @map("product_id")
-  quanty     Int
+  quantity   Int
   unitPrice  Float    @map("unit_price")
   totalPrice Float    @map("total_price")
   updatedAt  DateTime @updatedAt @map("updated_at")
   createdAt  DateTime @default(now()) @map("created_at")
 
+  @@unique([cartId, productId])
   @@map("cart_items")
 }
 
