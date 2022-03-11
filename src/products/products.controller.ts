@@ -9,6 +9,7 @@ import {
   DefaultValuePipe,
   ParseIntPipe,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
@@ -124,6 +125,11 @@ export class ProductsController {
   uploadImage() {}
 
   @Patch('/:id/like')
+  @HttpCode(204)
+  @ApiResponse({
+    status: 204,
+    description: 'user put like to a product',
+  })
   @Roles(Role.manager, Role.client)
   async upsetLike(
     @GetUser() user: User,
@@ -134,6 +140,11 @@ export class ProductsController {
   }
 
   @Delete('/:id/like')
+  @HttpCode(204)
+  @ApiResponse({
+    status: 204,
+    description: 'user put dislike to a product',
+  })
   @Roles(Role.manager, Role.client)
   async deleteLike(
     @GetUser() user: User,
