@@ -23,7 +23,7 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('auth')
     .addTag('products')
-    .addTag('carts')
+    .addTag('cart')
     .addTag('orders')
     .build();
 
