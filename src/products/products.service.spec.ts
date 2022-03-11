@@ -158,7 +158,7 @@ describe('ProductsService', () => {
 
   describe('update', () => {
     let createdProduct: Product;
-    beforeAll(async () => {
+    beforeEach(async () => {
       createdProduct = await productFactory.make({
         category: {
           connect: {
@@ -183,17 +183,22 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('createdAt', expect.any(Date));
     });
 
-    it("should throw a error if product's category doesn't exist ", async () => {
+    it('should throw a error if product is disable', async () => {
+      await prisma.product.update({
+        where: {
+          id: createdProduct.id,
+        },
+        data: {
+          status: true,
+          deletedAt: new Date(),
+        },
+      });
       await expect(
         productsService.update(createdProduct.uuid, {
           ...product,
-          categoryId: datatype.uuid(),
         }),
       ).rejects.toThrow(
-        new HttpException(
-          'Category or product not found',
-          HttpStatus.NOT_FOUND,
-        ),
+        new HttpException('Product is disable ', HttpStatus.UNAUTHORIZED),
       );
     });
 
@@ -203,10 +208,18 @@ describe('ProductsService', () => {
           ...product,
         }),
       ).rejects.toThrow(
-        new HttpException(
-          'Category or product not found',
-          HttpStatus.NOT_FOUND,
-        ),
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
+      );
+    });
+
+    it("should throw a error if product's category doesn't exist ", async () => {
+      await expect(
+        productsService.update(createdProduct.uuid, {
+          ...product,
+          categoryId: datatype.uuid(),
+        }),
+      ).rejects.toThrow(
+        new HttpException('Category not found', HttpStatus.NOT_FOUND),
       );
     });
   });

@@ -132,6 +132,25 @@ export class ProductsService {
   ): Promise<ResponseProductDto> {
     try {
       const { categoryId, ...input } = updateProductDto;
+      const oldpProduct = await this.prisma.product.findUnique({
+        where: {
+          uuid,
+        },
+        select: {
+          id: true,
+          status: true,
+          deletedAt: true,
+        },
+        rejectOnNotFound: false,
+      });
+
+      if (!oldpProduct) {
+        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      }
+
+      if (oldpProduct.deletedAt) {
+        throw new HttpException('Product is disable ', HttpStatus.UNAUTHORIZED);
+      }
 
       const product = await this.prisma.product.update({
         where: {
@@ -153,10 +172,7 @@ export class ProductsService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException(
-              'Category or product not found',
-              HttpStatus.NOT_FOUND,
-            );
+            throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
         }
       }
 
