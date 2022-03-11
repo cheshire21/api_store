@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Patch } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -12,6 +12,12 @@ import { DeleteCartItemDto } from './dto/request/delete-cart-item.dto';
 @Controller('cart')
 export class CartsController {
   constructor(private cartsService: CartsService) {}
+
+  @Get()
+  @Roles(Role.client)
+  async getItems(@GetUser() user: User) {
+    return this.cartsService.getItems(user.uuid);
+  }
 
   @Patch()
   @Roles(Role.client)
