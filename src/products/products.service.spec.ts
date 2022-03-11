@@ -48,6 +48,7 @@ describe('ProductsService', () => {
   });
 
   afterAll(async () => {
+    await prisma.clearDB();
     await prisma.$disconnect();
   });
 

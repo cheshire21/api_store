@@ -33,6 +33,7 @@ describe('UsersService', () => {
   });
 
   afterAll(async () => {
+    await prisma.clearDB();
     await prisma.$disconnect();
   });
 

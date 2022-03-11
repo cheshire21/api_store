@@ -18,15 +18,13 @@ describe('LikesService', () => {
   let categoryFactory: CategoryFactory;
   let likeFactory: LikeFactory;
 
-  let categories: Category[];
-  let categoriesLength: number = 2;
-  let products: Product[] = [];
-  let productstLength: number = 2;
+  let category: Category;
+  let product: Product;
   let createduser: User;
 
   let random = (length) => Math.floor(Math.random() * length);
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [LikesService, PrismaService],
     }).compile();
@@ -41,21 +39,21 @@ describe('LikesService', () => {
 
     createduser = await userFactory.make();
 
-    categories = await categoryFactory.makeMany(categoriesLength);
+    category = await categoryFactory.make();
+  });
 
-    for (let i = 0; i < categoriesLength; i++) {
-      const arr = await productFactory.makeMany(productstLength, {
-        category: {
-          connect: {
-            id: categories[i].id,
-          },
+  beforeEach(async () => {
+    product = await productFactory.make({
+      category: {
+        connect: {
+          id: category.id,
         },
-      });
-      products.push(...arr);
-    }
+      },
+    });
   });
 
   afterAll(async () => {
+    await prisma.clearDB();
     await prisma.$disconnect();
   });
 
@@ -63,7 +61,7 @@ describe('LikesService', () => {
     it('should create a like', async () => {
       const result = await likesService.upsertLike(
         createduser.uuid,
-        products[random(productstLength)].uuid,
+        product.uuid,
         { like: datatype.boolean() },
       );
 
@@ -71,8 +69,6 @@ describe('LikesService', () => {
     });
 
     it('should update a like', async () => {
-      const pos = random(productstLength);
-
       await likeFactory.make({
         user: {
           connect: {
@@ -81,7 +77,7 @@ describe('LikesService', () => {
         },
         product: {
           connect: {
-            id: products[pos].id,
+            id: product.id,
           },
         },
         like: datatype.boolean(),
@@ -89,7 +85,7 @@ describe('LikesService', () => {
 
       const result = await likesService.upsertLike(
         createduser.uuid,
-        products[pos].uuid,
+        product.uuid,
         { like: datatype.boolean() },
       );
 
@@ -98,13 +94,9 @@ describe('LikesService', () => {
 
     it("should return a error if user doesn't exist", async () => {
       await expect(
-        likesService.upsertLike(
-          datatype.uuid(),
-          products[random(productstLength)].uuid,
-          {
-            like: datatype.boolean(),
-          },
-        ),
+        likesService.upsertLike(datatype.uuid(), product.uuid, {
+          like: datatype.boolean(),
+        }),
       ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );
@@ -123,8 +115,6 @@ describe('LikesService', () => {
 
   describe('deleteLike', () => {
     it('should delete like sucessfully', async () => {
-      const pos = random(productstLength);
-
       await likeFactory.make({
         user: {
           connect: {
@@ -133,14 +123,14 @@ describe('LikesService', () => {
         },
         product: {
           connect: {
-            id: products[pos].id,
+            id: product.id,
           },
         },
         like: datatype.boolean(),
       });
 
       expect(
-        await likesService.deleteLike(createduser.uuid, products[pos].uuid),
+        await likesService.deleteLike(createduser.uuid, product.uuid),
       ).toBeUndefined();
     });
 
@@ -154,10 +144,7 @@ describe('LikesService', () => {
 
     it('should return a error if the user doesnt exist', async () => {
       await expect(
-        likesService.deleteLike(
-          datatype.uuid(),
-          products[random(productstLength)].uuid,
-        ),
+        likesService.deleteLike(datatype.uuid(), product.uuid),
       ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.NOT_FOUND),
       );

@@ -24,7 +24,7 @@ describe('AuthService', () => {
   let userFactory: UserFactory;
   let userService;
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
         JwtModule.register({
@@ -62,6 +62,7 @@ describe('AuthService', () => {
   });
 
   afterAll(async () => {
+    await prisma.clearDB();
     await prisma.$disconnect();
   });
 
@@ -131,7 +132,10 @@ describe('AuthService', () => {
     let createdUser: User;
 
     beforeAll(async () => {
-      createdUser = await userFactory.make(mockUser);
+      createdUser = await userFactory.make({
+        ...mockUser,
+        email: internet.email(),
+      });
     });
 
     it('should return a token record successfully', async () => {
