@@ -133,6 +133,8 @@ export class CartsService {
         },
         select: {
           id: true,
+          stock: true,
+          price: true,
         },
         rejectOnNotFound: false,
       });
@@ -153,14 +155,39 @@ export class CartsService {
       if (!user)
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-      await this.prisma.cartItem.delete({
+      const cartItem = await this.prisma.cartItem.findUnique({
         where: {
           cartId_productId: {
-            cartId: user.Cart[0].id,
             productId: product.id,
+            cartId: user.Cart[0].id,
           },
         },
+        select: {
+          totalPrice: true,
+        },
+        rejectOnNotFound: false,
       });
+
+      const totalPrice = user.Cart[0].totalPrice - cartItem.totalPrice;
+
+      const [s, d] = await this.prisma.$transaction([
+        this.prisma.cart.update({
+          where: {
+            id: user.Cart[0].id,
+          },
+          data: {
+            totalPrice: totalPrice,
+          },
+        }),
+        this.prisma.cartItem.delete({
+          where: {
+            cartId_productId: {
+              cartId: user.Cart[0].id,
+              productId: product.id,
+            },
+          },
+        }),
+      ]);
     } catch (error) {
       throw error;
     }
