@@ -8,8 +8,8 @@ import { CartsService } from './carts.service';
 import { CreateCartItem } from './dto/request/create-cart-item.dto';
 import { DeleteCartItemDto } from './dto/request/delete-cart-item.dto';
 
-@ApiTags('carts')
-@Controller('carts')
+@ApiTags('cart')
+@Controller('cart')
 export class CartsController {
   constructor(private cartsService: CartsService) {}
 
