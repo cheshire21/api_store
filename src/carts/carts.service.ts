@@ -1,11 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { PrismaErrorEnum } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateCartItem } from './dto/request/create-cart-item.dto';
+import { CreateCartItemDto } from './dto/request/create-cart-item.dto';
 import { CartItemsDto } from './dto/response/cart-items.dto';
-import { ResponseCartDto } from './dto/response/response-cart.dto';
+import { ResponseCartDto } from './dto/response/response-cart-item.dto';
 
 @Injectable()
 export class CartsService {
@@ -53,7 +51,7 @@ export class CartsService {
 
   async upsertItem(
     userId: string,
-    createCartItem: CreateCartItem,
+    createCartItem: CreateCartItemDto,
   ): Promise<ResponseCartDto> {
     try {
       const { productId, quantity } = createCartItem;
