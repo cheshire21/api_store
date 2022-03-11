@@ -7,7 +7,7 @@ export class ResponseCartDto {
   product: ProductDetails;
 
   @Expose()
-  quanty: number;
+  quantity: number;
 
   @Expose()
   unitPrice: number;

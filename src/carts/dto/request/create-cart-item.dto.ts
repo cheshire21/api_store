@@ -11,8 +11,4 @@ export class CreateCartItem {
   @IsPositive()
   @IsInt()
   quantity: number;
-
-  @Expose()
-  @IsNumber()
-  unitPrice: number;
 }
