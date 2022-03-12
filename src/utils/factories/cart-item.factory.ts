@@ -9,11 +9,11 @@ export class CartItemFactory extends Abstractfactory<CartItem> {
   constructor(protected prisma: PrismaService) {
     super();
   }
-  async make(data: CartItemInput): Promise<CartItem> {
+  async make(data: CartItemInput, product?: any): Promise<CartItem> {
     const cartItem = await this.prisma.cartItem.create({
       data: {
         cart: data.cart,
-        product: data.product,
+        product: product ?? data.product,
         quantity: data.quantity,
         unitPrice: data.unitPrice,
         totalPrice: data.totalPrice,
@@ -22,7 +22,11 @@ export class CartItemFactory extends Abstractfactory<CartItem> {
     return cartItem;
   }
 
-  async makeMany(quanty: number, data: CartItemInput): Promise<CartItem[]> {
-    return Promise.all([...Array(quanty)].map(() => this.make(data)));
+  async makeMany(
+    quanty: number,
+    data: CartItemInput,
+    product?: any,
+  ): Promise<CartItem[]> {
+    return Promise.all([...product].map((prod) => this.make(data, prod)));
   }
 }

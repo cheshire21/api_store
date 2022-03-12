@@ -1,5 +1,7 @@
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CartItem, Category, Product, User } from '@prisma/client';
+import { Cart, CartItem, Category, Product, User } from '@prisma/client';
+import { datatype } from 'faker';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CartItemFactory } from 'src/utils/factories/cart-item.factory';
 import { CategoryFactory } from 'src/utils/factories/category.factory';
@@ -18,8 +20,12 @@ describe('OrdersService', () => {
 
   let createdUser: User;
   let createdCategories: Category[];
-  let createdProducts: Product[];
-  let createdcartItem: CartItem[];
+  let categoryLength = 2;
+  let productsLength = 3;
+  let createdCart: Cart;
+  let idproducts = [];
+  let stock = 5;
+  let price = 51;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -29,18 +35,100 @@ describe('OrdersService', () => {
     ordersService = module.get<OrdersService>(OrdersService);
     prisma = module.get<PrismaService>(PrismaService);
 
+    userFactory = new UserFactory(prisma);
+    categoryFactory = new CategoryFactory(prisma);
+    productFactory = new ProductFactory(prisma);
+    cartItemFactory = new CartItemFactory(prisma);
+
+    createdCategories = await categoryFactory.makeMany(categoryLength);
+  });
+
+  beforeEach(async () => {
     createdUser = await userFactory.make();
-    createdCategories = await categoryFactory.makeMany(2);
-    createdCategories.forEach((category) => {});
+
+    createdCart = await prisma.cart.findFirst({
+      where: {
+        userId: createdUser.id,
+      },
+    });
+
+    idproducts = [];
+
+    for (let i = 0; i < categoryLength; i++) {
+      const arr = await productFactory.makeMany(productsLength, {
+        stock,
+        category: {
+          connect: {
+            id: createdCategories[i].id,
+          },
+        },
+      });
+
+      idproducts.push(
+        ...arr.map((prod) => {
+          return {
+            connect: {
+              id: prod.id,
+            },
+          };
+        }),
+      );
+    }
   });
 
   describe('create', () => {
-    it("should create a order successfully and user's cart should be empty and total price equals to 0", () => {});
+    it("should create a order successfully and user's cart should be empty and total price equals to 0", async () => {
+      await cartItemFactory.makeMany(
+        5,
+        {
+          cart: {
+            connect: {
+              id: createdCart.id,
+            },
+          },
+          product: null,
+          quantity: stock,
+          unitPrice: price,
+          totalPrice: stock * price,
+        },
+        idproducts,
+      );
 
-    it("should return a error if user doesn't exist", () => {});
+      expect(await ordersService.create(createdUser.uuid)).toBeUndefined();
+    });
 
-    it("should return a error it user's cart don't have items", () => {});
+    it("should return a error if user doesn't exist", async () => {
+      await expect(ordersService.create(datatype.uuid())).rejects.toThrow(
+        new HttpException('User not found', HttpStatus.NOT_FOUND),
+      );
+    });
 
-    it('should return a error if some products or one of them have a quantity out of stock range', () => {});
+    it("should return a error it user's cart don't have items", async () => {
+      await expect(ordersService.create(createdUser.uuid)).rejects.toThrow(
+        new HttpException('Cart is empty', HttpStatus.BAD_REQUEST),
+      );
+    });
+
+    it('should return a error if some products or one of them have a quantity out of stock range', async () => {
+      await cartItemFactory.makeMany(
+        5,
+        {
+          cart: {
+            connect: {
+              id: createdCart.id,
+            },
+          },
+          product: null,
+          quantity: 6,
+          unitPrice: price,
+          totalPrice: stock * price,
+        },
+        idproducts,
+      );
+
+      await expect(ordersService.create(createdUser.uuid)).rejects.toThrow(
+        new HttpException('Stock is out of range', HttpStatus.BAD_REQUEST),
+      );
+    });
   });
 });
