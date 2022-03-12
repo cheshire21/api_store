@@ -21,12 +21,26 @@ describe('OrdersService', () => {
   let createdProducts: Product[];
   let createdcartItem: CartItem[];
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [OrdersService, PrismaService],
     }).compile();
 
     ordersService = module.get<OrdersService>(OrdersService);
     prisma = module.get<PrismaService>(PrismaService);
+
+    createdUser = await userFactory.make();
+    createdCategories = await categoryFactory.makeMany(2);
+    createdCategories.forEach((category) => {});
+  });
+
+  describe('create', () => {
+    it("should create a order successfully and user's cart should be empty and total price equals to 0", () => {});
+
+    it("should return a error if user doesn't exist", () => {});
+
+    it("should return a error it user's cart don't have items", () => {});
+
+    it('should return a error if some products or one of them have a quantity out of stock range', () => {});
   });
 });
