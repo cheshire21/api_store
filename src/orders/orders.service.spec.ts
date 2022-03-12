@@ -21,7 +21,7 @@ describe('OrdersService', () => {
   let createdProducts: Product[];
   let createdcartItem: CartItem[];
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [OrdersService, PrismaService],
     }).compile();
@@ -29,4 +29,8 @@ describe('OrdersService', () => {
     ordersService = module.get<OrdersService>(OrdersService);
     prisma = module.get<PrismaService>(PrismaService);
   });
+
+  describe(('create')=>{
+    it('',()=>{})
+  })
 });
