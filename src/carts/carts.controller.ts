@@ -1,5 +1,13 @@
 import { Body, Controller, Delete, Get, HttpCode, Patch } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/get-user.decorator';
 import { Roles } from 'src/auth/role/role.decorator';
@@ -22,6 +30,7 @@ export class CartsController {
     description: 'get all items on the cart',
     type: CartItemsDto,
   })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async getItems(@GetUser() user: User): Promise<CartItemsDto> {
     return await this.cartsService.getItems(user.uuid);
@@ -34,6 +43,10 @@ export class CartsController {
     description: "create or update a cart't item",
     type: ResponseCartDto,
   })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiBadRequestResponse({ description: 'Product is in disable status' })
+  @ApiUnauthorizedResponse({ description: 'Quantity is bigger than stock' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async createOrUpdate(
     @GetUser() user: User,
@@ -47,8 +60,10 @@ export class CartsController {
   @HttpCode(204)
   @ApiResponse({
     status: 204,
-    description: "delete a cart't item",
+    description: "delete a cart's item",
   })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async delete(
     @GetUser() user: User,
