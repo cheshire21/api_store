@@ -36,13 +36,7 @@ export class OrdersService {
       let where = {};
       let orderselect = {};
 
-      if (user.role == Role.client) {
-        where = {
-          user: {
-            id: foundUser.id,
-          },
-        };
-
+      if (user.role === Role.manager) {
         orderselect = {
           user: {
             select: {
@@ -51,6 +45,12 @@ export class OrdersService {
               lastName: true,
               email: true,
             },
+          },
+        };
+      } else {
+        where = {
+          user: {
+            id: foundUser.id,
           },
         };
       }
