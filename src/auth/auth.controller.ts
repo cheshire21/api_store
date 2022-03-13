@@ -1,5 +1,11 @@
 import { Body, Controller, Get, HttpCode, Post, Query } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiInternalServerErrorResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/request/login.dto';
 import { SignUpDto } from './dto/request/signup.dto';
@@ -13,10 +19,10 @@ export class AuthController {
 
   @Public()
   @Post('/signup')
-  @ApiResponse({
-    status: 201,
-    description: 'created a account successfully',
-  })
+  @ApiResponse({ status: 201, description: 'created a account successfully' })
+  @ApiBadRequestResponse({ description: 'Email already exists' })
+  @ApiUnauthorizedResponse({ description: "Email doesn't exist " })
+  @ApiInternalServerErrorResponse()
   async signup(@Body() signUpDto: SignUpDto) {
     await this.authService.signup(signUpDto);
   }
@@ -28,9 +34,12 @@ export class AuthController {
     description: 'login successfully',
     type: TokenDto,
   })
+  @ApiUnauthorizedResponse({ description: "Email doesn't exist " })
+  @ApiInternalServerErrorResponse()
   async login(@Body() loginDto: LoginDto): Promise<TokenDto> {
     return await this.authService.login(loginDto);
   }
+
   @Public()
   @Get('/logout')
   @HttpCode(204)
@@ -38,6 +47,8 @@ export class AuthController {
     status: 204,
     description: 'log out successfully',
   })
+  @ApiBadRequestResponse({ description: 'Token is invalid' })
+  @ApiInternalServerErrorResponse()
   async logout(@Query('token') token: string): Promise<void> {
     return await this.authService.logout(token);
   }
