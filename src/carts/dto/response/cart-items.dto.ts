@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { datatype } from 'faker';
-import { ItemDto } from './item.dto';
+import { ItemDto } from '../../../dto/response/item.dto';
 
 @Exclude()
 export class CartItemsDto {
@@ -23,7 +23,9 @@ export class CartItemsDto {
   @Expose()
   createdAt: Date;
 
-  @ApiProperty()
+  @ApiProperty({
+    type: [ItemDto],
+  })
   @Expose()
   items: ItemDto[];
 }

@@ -20,6 +20,7 @@ export class CartsController {
   @ApiResponse({
     status: 200,
     description: 'get all items on the cart',
+    type: CartItemsDto,
   })
   @ApiBearerAuth()
   async getItems(@GetUser() user: User): Promise<CartItemsDto> {
