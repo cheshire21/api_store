@@ -83,7 +83,7 @@ describe('OrdersService', () => {
     await prisma.$disconnect();
   });
   describe('getOrders', () => {
-    it("should return only user's orders if user's role is client", async () => {
+    let createdOrder = async () => {
       const order = await prisma.order.create({
         data: {
           userId: createdUser.id,
@@ -115,6 +115,10 @@ describe('OrdersService', () => {
           totalPrice: categoryLength * productsLength * stock * price,
         },
       });
+    };
+
+    it("should return only user's orders if user's role is client", async () => {
+      await createdOrder();
 
       const result = await ordersService.getMany(createdUser, {
         take: 5,
@@ -140,7 +144,20 @@ describe('OrdersService', () => {
       expect(result).toHaveProperty('pagination', expect.any(Object));
     });
 
+    it('should return a empty list', async () => {
+      const result = await ordersService.getMany(createdUser, {
+        take: 5,
+        page: 1,
+      });
+
+      expect(result).toHaveProperty('orders', expect.any(Array));
+      expect(result.orders).toHaveLength(0);
+      expect(result).toHaveProperty('pagination', expect.any(Object));
+    });
+
     it('should throw a error if the page is out of range', async () => {
+      await createdOrder();
+
       await expect(
         ordersService.getMany(createdUser, {
           take: 5,

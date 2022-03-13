@@ -59,6 +59,20 @@ export class OrdersService {
 
       const totalPages = Math.ceil(count / take);
 
+      if (!totalPages) {
+        return plainToInstance(ListOrdersDto, {
+          orders: [],
+          pagination: {
+            totalPages,
+            itemsPerPage: take,
+            totalItems: count,
+            currentPage: 1,
+            nextPage: null,
+            previousPage: null,
+          },
+        });
+      }
+
       if (page > totalPages) {
         throw new HttpException('Page is out of range', HttpStatus.BAD_REQUEST);
       }
