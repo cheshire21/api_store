@@ -27,8 +27,11 @@ export class OrdersService {
         select: {
           id: true,
         },
-        rejectOnNotFound: true,
+        rejectOnNotFound: false,
       });
+
+      if (!foundUser)
+        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
       let where = {};
       let orderselect = {};
@@ -52,12 +55,12 @@ export class OrdersService {
         };
       }
 
-      const count = await this.prisma.product.count({ where });
+      const count = await this.prisma.order.count({ where });
 
       const totalPages = Math.ceil(count / take);
 
       if (page > totalPages) {
-        throw new HttpException('page is out of range', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Page is out of range', HttpStatus.BAD_REQUEST);
       }
 
       const orders = await this.prisma.order.findMany({
@@ -98,12 +101,6 @@ export class OrdersService {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        switch (error.code) {
-          case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-        }
-      }
       throw error;
     }
   }
@@ -138,8 +135,6 @@ export class OrdersService {
       if (!cart) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
-
-      console.log(`cart: length ${cart.CartItem.length} \t ${cart.CartItem}`);
 
       if (!cart.CartItem || !cart.CartItem.length) {
         throw new HttpException('Cart is empty', HttpStatus.BAD_REQUEST);
