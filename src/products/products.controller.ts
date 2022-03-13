@@ -11,7 +11,15 @@ import {
   Delete,
   HttpCode,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiNotFoundResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -44,6 +52,8 @@ export class ProductsController {
     description: 'return a list of product, search by category ',
     type: ListProductsDto,
   })
+  @ApiBadRequestResponse({ description: 'page is out of range' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async getProducts(
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
@@ -65,6 +75,8 @@ export class ProductsController {
     description: 'return a specific product details',
     type: ResponseProductDto,
   })
+  @ApiNotFoundResponse({ description: "Product doesn't exist" })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async getProduct(
     @Param() idProductDto: IdProductDto,
@@ -79,6 +91,8 @@ export class ProductsController {
     description: 'create a product',
     type: ResponseProductDto,
   })
+  @ApiNotFoundResponse({ description: 'Category not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async createProduct(
     @Body() createProductDto: CreateProductDto,
@@ -93,6 +107,9 @@ export class ProductsController {
     description: 'update a product',
     type: ResponseProductDto,
   })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiUnauthorizedResponse({ description: 'Product is disable ' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   updateProduct(
     @Param() idProductDto: IdProductDto,
@@ -108,6 +125,8 @@ export class ProductsController {
     description: 'change product status',
     type: ResponseProductDto,
   })
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   changeProductStatus(
     @Param() idProductDto: IdProductDto,
@@ -131,11 +150,13 @@ export class ProductsController {
 
   @Patch('/:id/like')
   @HttpCode(204)
+  @Roles(Role.manager, Role.client)
   @ApiResponse({
     status: 204,
     description: 'user put like to a product',
   })
-  @Roles(Role.manager, Role.client)
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async upsetLike(
     @GetUser() user: User,
@@ -147,11 +168,13 @@ export class ProductsController {
 
   @Delete('/:id/like')
   @HttpCode(204)
+  @Roles(Role.manager, Role.client)
   @ApiResponse({
     status: 204,
     description: 'user put dislike to a product',
   })
-  @Roles(Role.manager, Role.client)
+  @ApiNotFoundResponse({ description: 'Product not found' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async deleteLike(
     @GetUser() user: User,
