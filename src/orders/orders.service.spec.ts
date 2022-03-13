@@ -9,6 +9,7 @@ import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
 import { UserFactory } from '../utils/factories/user.factory';
 import { OrdersService } from './orders.service';
+import { OrderItemFactory } from '../utils/factories/order-item.factory';
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
@@ -18,7 +19,7 @@ describe('OrdersService', () => {
   let categoryFactory: CategoryFactory;
   let productFactory: ProductFactory;
   let cartItemFactory: CartItemFactory;
-
+  let orderItemFactory: OrderItemFactory;
   let createdUser: User;
   let createdCategories: Category[];
   let categoryLength = 2;
@@ -40,6 +41,7 @@ describe('OrdersService', () => {
     categoryFactory = new CategoryFactory(prisma);
     productFactory = new ProductFactory(prisma);
     cartItemFactory = new CartItemFactory(prisma);
+    orderItemFactory = new OrderItemFactory(prisma);
 
     createdCategories = await categoryFactory.makeMany(categoryLength);
   });
@@ -82,9 +84,41 @@ describe('OrdersService', () => {
   });
   describe('getOrders', () => {
     it("should return only user's orders if user's role is client", async () => {
+      const order = await prisma.order.create({
+        data: {
+          userId: createdUser.id,
+          totalPrice: 0,
+        },
+      });
+
+      await orderItemFactory.makeMany(
+        categoryLength * productsLength,
+        {
+          order: {
+            connect: {
+              id: order.id,
+            },
+          },
+          product: null,
+          quantity: stock,
+          unitPrice: price,
+          totalPrice: stock * price,
+        },
+        idproducts,
+      );
+
+      await prisma.order.update({
+        where: {
+          id: order.id,
+        },
+        data: {
+          totalPrice: categoryLength * productsLength * stock * price,
+        },
+      });
+
       const result = await ordersService.getMany(createdUser, {
-        take: 1,
-        page: 5,
+        take: 5,
+        page: 1,
       });
 
       expect(result).toHaveProperty('orders', expect.any(Array));
@@ -92,14 +126,14 @@ describe('OrdersService', () => {
     });
 
     it("should return a list of clients with their orders if user's role is manager", async () => {
-      await prisma.user.update({
+      createdUser = await prisma.user.update({
         where: { id: createdUser.id },
         data: { role: Role.manager },
       });
 
       const result = await ordersService.getMany(createdUser, {
-        take: 1,
-        page: 5,
+        take: 5,
+        page: 1,
       });
 
       expect(result).toHaveProperty('orders', expect.any(Array));
@@ -109,7 +143,7 @@ describe('OrdersService', () => {
     it('should throw a error if the page is out of range', async () => {
       await expect(
         ordersService.getMany(createdUser, {
-          take: 1,
+          take: 5,
           page: 5,
         }),
       ).rejects.toThrow(
@@ -121,8 +155,8 @@ describe('OrdersService', () => {
       const user = { uuid: datatype.uuid(), role: createdUser.role } as User;
       await expect(
         ordersService.getMany(user, {
-          take: 1,
-          page: 5,
+          take: 5,
+          page: 1,
         }),
       ).rejects.toThrow(
         new HttpException('User not found', HttpStatus.BAD_REQUEST),
