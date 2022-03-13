@@ -7,7 +7,13 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiInternalServerErrorResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { GetUser } from 'src/auth/get-user.decorator';
@@ -29,6 +35,8 @@ export class OrdersController {
     description: "gets a list of client's or clients' orders",
     type: ListOrdersDto,
   })
+  @ApiBadRequestResponse({ description: 'Page is out of range' })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async getOrders(
     @GetUser() user: User,
@@ -50,6 +58,10 @@ export class OrdersController {
     status: 204,
     description: "create a order with the cart's items",
   })
+  @ApiBadRequestResponse({
+    description: 'Quantity of some product is out of range',
+  })
+  @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
   async createOrder(@GetUser() user: User): Promise<void> {
     return await this.ordersService.create(user.uuid);
