@@ -2,11 +2,11 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Cart, CartItem, Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
-import { PrismaService } from 'src/prisma/prisma.service';
-import { CartItemFactory } from 'src/utils/factories/cart-item.factory';
-import { CategoryFactory } from 'src/utils/factories/category.factory';
-import { ProductFactory } from 'src/utils/factories/product.factory';
-import { UserFactory } from 'src/utils/factories/user.factory';
+import { PrismaService } from '../prisma/prisma.service';
+import { CartItemFactory } from '../utils/factories/cart-item.factory';
+import { CategoryFactory } from '../utils/factories/category.factory';
+import { ProductFactory } from '../utils/factories/product.factory';
+import { UserFactory } from '../utils/factories/user.factory';
 import { OrdersService } from './orders.service';
 
 describe('OrdersService', () => {
@@ -76,10 +76,14 @@ describe('OrdersService', () => {
     }
   });
 
+  afterAll(async () => {
+    await prisma.$disconnect();
+  });
+
   describe('create', () => {
     it("should create a order successfully and user's cart should be empty and total price equals to 0", async () => {
       await cartItemFactory.makeMany(
-        5,
+        categoryLength * productsLength,
         {
           cart: {
             connect: {
@@ -93,6 +97,17 @@ describe('OrdersService', () => {
         },
         idproducts,
       );
+
+      const cartTotalPrice = categoryLength * productsLength * stock * price;
+
+      await prisma.cart.update({
+        where: {
+          id: createdCart.id,
+        },
+        data: {
+          totalPrice: cartTotalPrice,
+        },
+      });
 
       expect(await ordersService.create(createdUser.uuid)).toBeUndefined();
     });
@@ -111,7 +126,7 @@ describe('OrdersService', () => {
 
     it('should return a error if some products or one of them have a quantity out of stock range', async () => {
       await cartItemFactory.makeMany(
-        5,
+        categoryLength * productsLength,
         {
           cart: {
             connect: {
@@ -127,7 +142,10 @@ describe('OrdersService', () => {
       );
 
       await expect(ordersService.create(createdUser.uuid)).rejects.toThrow(
-        new HttpException('Stock is out of range', HttpStatus.BAD_REQUEST),
+        new HttpException(
+          'Quantity of some product is out of range',
+          HttpStatus.BAD_REQUEST,
+        ),
       );
     });
   });
