@@ -80,6 +80,7 @@ describe('OrdersService', () => {
   });
 
   afterAll(async () => {
+    await prisma.clearDB();
     await prisma.$disconnect();
   });
   describe('getOrders', () => {
