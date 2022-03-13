@@ -1,11 +1,112 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
+import { PaginationOptionsDto } from '../dto/request/pagination-option.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaErrorEnum } from '../utils/enums';
+import { PrismaErrorEnum, Role } from '../utils/enums';
+import { ListOrdersDto } from './dto/response/list-orders.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
+
+  itemsData = {
+    quantity: true,
+    unitPrice: true,
+    totalPrice: true,
+  };
+
+  async getMany(user: User, paginationOptionsDto: PaginationOptionsDto) {
+    try {
+      const { take, page } = paginationOptionsDto;
+
+      const foundUser = await this.prisma.user.findUnique({
+        where: {
+          uuid: user.uuid,
+        },
+        select: {
+          id: true,
+        },
+        rejectOnNotFound: true,
+      });
+
+      let where = {};
+      let orderselect = {};
+
+      if (user.role == Role.client) {
+        where = {
+          user: {
+            id: foundUser.id,
+          },
+        };
+
+        orderselect = {
+          user: {
+            select: {
+              uuid: true,
+              firstName: true,
+              lastName: true,
+              email: true,
+            },
+          },
+        };
+      }
+
+      const count = await this.prisma.product.count({ where });
+
+      const totalPages = Math.ceil(count / take);
+
+      if (page > totalPages) {
+        throw new HttpException('page is out of range', HttpStatus.BAD_REQUEST);
+      }
+
+      const orders = await this.prisma.order.findMany({
+        skip: take * (page - 1),
+        take: take,
+        where,
+        select: {
+          uuid: true,
+          totalPrice: true,
+          createdAt: true,
+          ...orderselect,
+          OrderItem: {
+            select: {
+              product: {
+                select: {
+                  uuid: true,
+                  name: true,
+                },
+              },
+              ...this.itemsData,
+            },
+          },
+        },
+      });
+
+      const nextPage = page === totalPages ? null : page + 1;
+      const previousPage = page === 1 ? null : page - 1;
+
+      return plainToInstance(ListOrdersDto, {
+        orders,
+        pagination: {
+          totalPages,
+          itemsPerPage: take,
+          totalItems: count,
+          currentPage: page,
+          nextPage,
+          previousPage,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
+          case PrismaErrorEnum.NOT_FOUND:
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        }
+      }
+      throw error;
+    }
+  }
 
   async create(userId: string) {
     try {
@@ -27,21 +128,23 @@ export class OrdersService {
                   stock: true,
                 },
               },
-              quantity: true,
-              unitPrice: true,
-              totalPrice: true,
+              ...this.itemsData,
             },
           },
         },
         rejectOnNotFound: false,
       });
+
       if (!cart) {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
+
       console.log(`cart: length ${cart.CartItem.length} \t ${cart.CartItem}`);
+
       if (!cart.CartItem || !cart.CartItem.length) {
         throw new HttpException('Cart is empty', HttpStatus.BAD_REQUEST);
       }
+
       let cartItemLength = cart.CartItem.length;
 
       for (let i = 0; i < cartItemLength; i++) {
@@ -71,15 +174,32 @@ export class OrdersService {
         skipDuplicates: true,
       };
 
-      const order = await this.prisma.order.create({
-        data: {
-          userId: cart.userId,
-          totalPrice: cart.totalPrice,
-          OrderItem: {
-            createMany: records,
+      await this.prisma.$transaction([
+        this.prisma.order.create({
+          data: {
+            userId: cart.userId,
+            totalPrice: cart.totalPrice,
+            OrderItem: {
+              createMany: records,
+            },
           },
-        },
-      });
+        }),
+
+        this.prisma.cart.update({
+          where: {
+            id: cart.id,
+          },
+          data: {
+            totalPrice: 0,
+          },
+        }),
+
+        this.prisma.cartItem.deleteMany({
+          where: {
+            cartId: cart.id,
+          },
+        }),
+      ]);
     } catch (error) {
       throw error;
     }
