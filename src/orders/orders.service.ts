@@ -6,6 +6,7 @@ import { PrismaErrorEnum } from '../utils/enums';
 @Injectable()
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
+
   async create(userId: string) {
     try {
       const cart = await this.prisma.cart.findFirst({

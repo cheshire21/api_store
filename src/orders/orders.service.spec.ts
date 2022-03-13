@@ -2,6 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Cart, CartItem, Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
+import { Role } from 'src/utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartItemFactory } from '../utils/factories/cart-item.factory';
 import { CategoryFactory } from '../utils/factories/category.factory';
@@ -78,6 +79,62 @@ describe('OrdersService', () => {
 
   afterAll(async () => {
     await prisma.$disconnect();
+  });
+  describe('getOrders', () => {
+    it("should return only user's orders if user's role is client", async () => {
+      const result = await ordersService.getMany({
+        uuid: createdUser.uuid,
+        role: createdUser.role,
+        take: 1,
+        page: 5,
+      });
+
+      expect(result).toHaveProperty('orders', expect.any(Array));
+      expect(result).toHaveProperty('pagination', expect.any(Object));
+    });
+
+    it("should return a list of clients with their orders if user's role is manager", async () => {
+      await prisma.user.update({
+        where: { id: createdUser.id },
+        data: { role: Role.manager },
+      });
+
+      const result = await ordersService.getMany({
+        uuid: createdUser.uuid,
+        role: createdUser.role,
+        take: 1,
+        page: 5,
+      });
+
+      expect(result).toHaveProperty('clients', expect.any(Array));
+      expect(result).toHaveProperty('pagination', expect.any(Object));
+    });
+
+    it('should throw a error if the page is out of range', async () => {
+      await expect(
+        ordersService.getMany({
+          uuid: createdUser.uuid,
+          role: createdUser.role,
+          take: 1,
+          page: 5,
+        }),
+      ).rejects.toThrow(
+        new HttpException('Page is out of range', HttpStatus.BAD_REQUEST),
+      );
+    });
+
+    it("should throw a error if user doesn't exist", async () => {
+      await expect(
+        ordersService.getMany({
+          uuid: datatype.uuid(),
+          role: createdUser.role,
+          take: 1,
+          page: 5,
+        }),
+      ).rejects.toThrow(
+        new HttpException('Page is out of range', HttpStatus.BAD_REQUEST),
+      );
+    });
   });
 
   describe('create', () => {
