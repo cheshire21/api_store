@@ -27,7 +27,7 @@ export class FilesService {
     return s3.getSignedUrlPromise('getObject', {
       Bucket: this.configService.get('AWS_BUCKET_NAME'),
       Key: key,
-      Expires: 1800,
+      Expires: parseInt(this.configService.get('AWS_EXPIRE_TIME'), 10),
     });
   }
 }

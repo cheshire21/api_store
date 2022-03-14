@@ -36,6 +36,7 @@ import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { StatusProductDto } from './dto/request/status-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
+import { ResponseProductImgDto } from './dto/response/product-img.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
 import { LikesService } from './likes.service';
 import { ProductsService } from './products.service';
@@ -72,7 +73,7 @@ export class ProductsController {
   }
 
   @Get('/:id')
-  @Roles(Role.client, Role.manager)
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'return a specific product details',
@@ -80,10 +81,9 @@ export class ProductsController {
   })
   @ApiNotFoundResponse({ description: "Product doesn't exist" })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
-  @ApiBearerAuth()
   async getProduct(
     @Param() idProductDto: IdProductDto,
-  ): Promise<ResponseProductDto> {
+  ): Promise<ResponseProductImgDto> {
     return await this.productsService.getOne(idProductDto.id);
   }
 
@@ -142,12 +142,12 @@ export class ProductsController {
   }
 
   @Patch('/:id/image')
+  @HttpCode(204)
   @Roles(Role.manager)
   @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({
-    status: 200,
+    status: 204,
     description: 'upload a product image',
-    type: ResponseProductDto,
   })
   @ApiBearerAuth()
   async uploadImage(

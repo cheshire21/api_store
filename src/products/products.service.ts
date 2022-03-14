@@ -9,6 +9,7 @@ import { ResponseProductDto } from './dto/response/product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 import { FilesService } from './file.service';
+import { ResponseProductImgDto } from './dto/response/product-img.dto';
 
 @Injectable()
 export class ProductsService {
@@ -35,20 +36,28 @@ export class ProductsService {
     createdAt: true,
   };
 
-  async getOne(uuid: string): Promise<ResponseProductDto> {
+  async getOne(uuid: string): Promise<ResponseProductImgDto> {
     try {
       const product = await this.prisma.product.findUnique({
         where: {
           uuid,
         },
-        select: this.select,
+        select: {
+          ...this.select,
+          image: true,
+        },
         rejectOnNotFound: false,
       });
 
       if (!product)
         throw new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND);
 
-      return plainToInstance(ResponseProductDto, product);
+      const url = await this.fileService.generatePresignedUrl(product.image);
+
+      return plainToInstance(ResponseProductImgDto, {
+        ...product,
+        image: url,
+      });
     } catch (e) {
       throw e;
     }
