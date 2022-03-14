@@ -21,6 +21,7 @@
     "test:e2e": "dotenv -e .env.test -- jest --config ./test/jest-e2e.json",
     "prisma:migrate:save": "prisma migrate dev",
     "prisma:migrate:run": "prisma migrate deploy ",
+    "prisma:generate":"prisma generate",
     "prisma:migrate:test:save": "dotenv -e .env.test -- prisma migrate dev",
     "prisma:migrate:test:run": "dotenv -e .env.test -- prisma migrate deploy"
   },
