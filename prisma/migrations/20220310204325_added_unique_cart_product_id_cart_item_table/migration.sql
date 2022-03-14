@@ -17,6 +17,11 @@ INSERT INTO "users"("uuid", "first_name", "last_name", "user_name", "address", "
  INSERT INTO "users"("uuid", "first_name", "last_name", "user_name", "address", "email", "password", "role", "is_active","verified_at", "updated_at", "created_at" ) VALUES
 ('57be8001-27a5-409d-bc4f-ff5630ee88b2', 'Other','Other', 'client', '12 de octubre', 'client@gmail.com', '$2a$10$KDHEOJPKSutumha6Cf8IqO3HtpvsofApQ.eKj1rB5p0mGOiBFskWa', 'C', false, NOW(), NOW(),NOW());
 
+-- client cart 
+
+INSERT INTO "carts"("uuid", "user_id", "total_price", "updated_at", "created_at")
+VALUES ('57be8001-27a5-409d-bc4f-aa5630ee00b2', 2, 0, NOW(), NOW());
+
 -- categories
 
 INSERT INTO "categories"("uuid", "name", "created_at", "updated_at") VALUES 
