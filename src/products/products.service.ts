@@ -252,7 +252,7 @@ export class ProductsService {
 
       const [name, type] = originalname.split('.');
 
-      const nameImage = `${productId}-${product.name}.${type}`;
+      const nameImage = `${productId}.${type}`;
 
       const image = await this.fileService.uploadFile(buffer, nameImage);
 
