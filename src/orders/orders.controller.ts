@@ -43,7 +43,6 @@ export class OrdersController {
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
   ): Promise<ListOrdersDto> {
-    console.log(user);
     const paginationOptionsDto = plainToInstance(PaginationOptionsDto, {
       take,
       page,

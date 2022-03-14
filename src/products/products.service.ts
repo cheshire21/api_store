@@ -52,7 +52,10 @@ export class ProductsService {
       if (!product)
         throw new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND);
 
-      const url = await this.fileService.generatePresignedUrl(product.image);
+      let url = null;
+      if (product.image) {
+        url = await this.fileService.generatePresignedUrl(product.image);
+      }
 
       return plainToInstance(ResponseProductImgDto, {
         ...product,
@@ -157,6 +160,17 @@ export class ProductsService {
         rejectOnNotFound: false,
       });
 
+      let category = {};
+      if (categoryId) {
+        category = {
+          category: {
+            connect: {
+              uuid: categoryId,
+            },
+          },
+        };
+      }
+
       if (!oldpProduct) {
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
       }
@@ -171,11 +185,7 @@ export class ProductsService {
         },
         data: {
           ...input,
-          category: {
-            connect: {
-              uuid: categoryId,
-            },
-          },
+          ...category,
         },
         select: this.select,
       });

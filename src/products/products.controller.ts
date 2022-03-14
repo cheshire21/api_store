@@ -155,7 +155,6 @@ export class ProductsController {
     @Param('id') productId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(file);
     const { originalname, buffer } = file;
     await this.productsService.uploadImage(productId, buffer, originalname);
   }
