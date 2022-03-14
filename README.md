@@ -11,7 +11,7 @@ Generic Api Store
 3. Install the dependencies with `npm install`
 4. Do migrations with `npm run prisma:migrate:run`
 5. Run the command if the models wasn't generated: `npm run prisma:generate`
-6. Run the aplication with `npm run dev`
+6. Run the aplication with `npm run start:dev`
 7. To see swagger documentation use this link `http://localhost:3000/api`
 8. create a user with signup or use these users to login
 
