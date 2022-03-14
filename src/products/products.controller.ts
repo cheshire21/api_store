@@ -10,7 +10,10 @@ import {
   ParseIntPipe,
   Delete,
   HttpCode,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -140,13 +143,21 @@ export class ProductsController {
 
   @Patch('/:id/image')
   @Roles(Role.manager)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({
     status: 200,
     description: 'upload a product image',
     type: ResponseProductDto,
   })
   @ApiBearerAuth()
-  uploadImage() {}
+  async uploadImage(
+    @Param('id') productId: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log(file);
+
+    await this.productsService.uploadImage(productId, file);
+  }
 
   @Patch('/:id/like')
   @HttpCode(204)

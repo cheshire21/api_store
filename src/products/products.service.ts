@@ -8,10 +8,14 @@ import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
+import { FilesService } from './file.service';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FilesService,
+  ) {}
 
   private select = {
     uuid: true,
@@ -206,6 +210,42 @@ export class ProductsService {
             throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
         }
       }
+      throw error;
+    }
+  }
+
+  async uploadImage(productId: string, file: Express.Multer.File) {
+    try {
+      const product = await this.prisma.product.findUnique({
+        where: {
+          uuid: productId,
+        },
+        select: {
+          id: true,
+          name: true,
+        },
+        rejectOnNotFound: false,
+      });
+
+      if (!product) {
+        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      }
+
+      const [name, type] = file.originalname.split('.');
+
+      const nameImage = `${productId}-${product.name}.${type}`;
+
+      const image = await this.fileService.uploadFile(file.buffer, nameImage);
+
+      await this.prisma.product.update({
+        where: {
+          id: product.id,
+        },
+        data: {
+          image: image.key,
+        },
+      });
+    } catch (error) {
       throw error;
     }
   }

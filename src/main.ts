@@ -1,6 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+import { config } from 'aws-sdk';
+
 import { AppModule } from './app.module';
 import { PrismaService } from './prisma/prisma.service';
 
@@ -17,7 +20,14 @@ async function bootstrap() {
 
   prismaService.enableShutdownHook(app);
 
-  const config = new DocumentBuilder()
+  const configService = app.get(ConfigService);
+  config.update({
+    accessKeyId: configService.get('AWS_ACCESS_KEY_ID'),
+    secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
+    region: configService.get('AWS_REGION'),
+  });
+
+  const config1 = new DocumentBuilder()
     .setTitle('Api Store')
     .setDescription('Api Store for products, carts and orders')
     .setVersion('1.0')
@@ -28,7 +38,7 @@ async function bootstrap() {
     .addTag('orders')
     .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  const document = SwaggerModule.createDocument(app, config1);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(3000);
