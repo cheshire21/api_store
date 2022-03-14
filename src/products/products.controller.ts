@@ -149,14 +149,15 @@ export class ProductsController {
     status: 204,
     description: 'upload a product image',
   })
+  @ApiNotFoundResponse({ description: 'Product not found' })
   @ApiBearerAuth()
   async uploadImage(
     @Param('id') productId: string,
     @UploadedFile() file: Express.Multer.File,
   ) {
     console.log(file);
-
-    await this.productsService.uploadImage(productId, file);
+    const { originalname, buffer } = file;
+    await this.productsService.uploadImage(productId, buffer, originalname);
   }
 
   @Patch('/:id/like')

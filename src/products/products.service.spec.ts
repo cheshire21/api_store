@@ -8,11 +8,18 @@ import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
+import { FilesService } from './file.service';
 import { ProductsService } from './products.service';
+
+const MockFilesService = () => ({
+  uploadFile: jest.fn(),
+  generatePresignedUrl: jest.fn(),
+});
 
 describe('ProductsService', () => {
   let productsService: ProductsService;
   let prisma: PrismaService;
+  let filesService;
 
   let productFactory: ProductFactory;
   let categoryFactory: CategoryFactory;
@@ -25,10 +32,18 @@ describe('ProductsService', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
-      providers: [ProductsService, PrismaService],
+      providers: [
+        ProductsService,
+        PrismaService,
+        {
+          provide: FilesService,
+          useFactory: MockFilesService,
+        },
+      ],
     }).compile();
 
     productsService = module.get<ProductsService>(ProductsService);
+    filesService = module.get<FilesService>(FilesService);
     prisma = module.get<PrismaService>(PrismaService);
 
     productFactory = new ProductFactory(prisma);
@@ -62,12 +77,17 @@ describe('ProductsService', () => {
         },
       });
 
+      filesService.uploadFile.mockResolvedValue({
+        key: `${createdProduct.uuid}-${createdProduct.name}`,
+      });
+
       const result = await productsService.getOne(createdProduct.uuid);
 
       expect(result).toHaveProperty('name', createdProduct.name);
       expect(result).toHaveProperty('description', createdProduct.description);
       expect(result).toHaveProperty('price', createdProduct.price);
       expect(result).toHaveProperty('stock', createdProduct.stock);
+      expect(result).toHaveProperty('image');
       expect(result).toHaveProperty('category');
       expect(result).toHaveProperty('status', createdProduct.status);
       expect(result).toHaveProperty('updatedAt', createdProduct.updatedAt);
@@ -254,6 +274,39 @@ describe('ProductsService', () => {
     it("should throw a error if product doesn't exist ", async () => {
       await expect(
         productsService.changeStatus(datatype.uuid(), datatype.boolean()),
+      ).rejects.toThrow(
+        new HttpException('Product not found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
+
+  describe('uploadImage', () => {
+    it('should upload a image sucessfully', async () => {
+      const createdProduct = await productFactory.make({
+        category: {
+          connect: {
+            id: categories[random()].id,
+          },
+        },
+      });
+
+      filesService.generatePresignedUrl.mockResolvedValue('http://example.com');
+
+      const buffer = new Buffer('file');
+      expect(
+        await productsService.uploadImage(
+          createdProduct.uuid,
+          buffer,
+          'file.png',
+        ),
+      ).toBeUndefined();
+    });
+
+    it("should throw a error if the product doesn't exist", async () => {
+      const buffer = new Buffer('file');
+
+      await expect(
+        productsService.uploadImage(datatype.uuid(), buffer, 'file.png'),
       ).rejects.toThrow(
         new HttpException('Product not found', HttpStatus.NOT_FOUND),
       );

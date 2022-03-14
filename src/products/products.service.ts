@@ -223,7 +223,7 @@ export class ProductsService {
     }
   }
 
-  async uploadImage(productId: string, file: Express.Multer.File) {
+  async uploadImage(productId: string, buffer: Buffer, originalname: string) {
     try {
       const product = await this.prisma.product.findUnique({
         where: {
@@ -240,11 +240,11 @@ export class ProductsService {
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
       }
 
-      const [name, type] = file.originalname.split('.');
+      const [name, type] = originalname.split('.');
 
       const nameImage = `${productId}-${product.name}.${type}`;
 
-      const image = await this.fileService.uploadFile(file.buffer, nameImage);
+      const image = await this.fileService.uploadFile(buffer, nameImage);
 
       await this.prisma.product.update({
         where: {
