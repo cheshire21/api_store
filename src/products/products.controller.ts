@@ -19,6 +19,7 @@ import {
   ApiBearerAuth,
   ApiInternalServerErrorResponse,
   ApiNotFoundResponse,
+  ApiQuery,
   ApiResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -58,6 +59,24 @@ export class ProductsController {
   })
   @ApiBadRequestResponse({ description: 'page is out of range' })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
+  @ApiQuery({
+    name: 'take',
+    description: 'quantity of items',
+    required: false,
+    example: 10,
+  })
+  @ApiQuery({
+    name: 'page',
+    description: 'page number',
+    required: false,
+    example: 1,
+  })
+  @ApiQuery({
+    name: 'category',
+    description: 'category of products',
+    required: false,
+    example: 'snack',
+  })
   async getProducts(
     @Query('take', new DefaultValuePipe(10), ParseIntPipe) take,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
