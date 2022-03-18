@@ -16,9 +16,9 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { Roles } from 'src/auth/role/role.decorator';
-import { PaginationOptionsDto } from 'src/dto/request/pagination-option.dto';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { Roles } from 'src/auth/decorators/role.decorator';
+import { PaginationOptionsDto } from 'src/common/dto/request/pagination-option.dto';
 import { Role } from 'src/utils/enums';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
 import { OrdersService } from './orders.service';

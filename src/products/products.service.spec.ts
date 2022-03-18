@@ -8,7 +8,7 @@ import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
-import { FilesService } from './file.service';
+import { FilesService } from '../files/file.service';
 import { ProductsService } from './products.service';
 
 const MockFilesService = () => ({

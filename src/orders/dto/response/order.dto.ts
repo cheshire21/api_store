@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { datatype } from 'faker';
-import { ItemDto } from '../../../dto/response/item.dto';
+import { ItemDto } from '../../../products/dto/response/item.dto';
 
 @Exclude()
 export class ResponseOrderDto {

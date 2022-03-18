@@ -1,5 +1,5 @@
 import { Controller, Get, Req } from '@nestjs/common';
-import { Roles } from './auth/role/role.decorator';
+import { Roles } from './auth/decorators/role.decorator';
 import { Role } from './utils/enums';
 
 @Controller()

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { Pagination } from '../../../dto/response/pagination.dto';
+import { Pagination } from '../../../common/dto/response/pagination.dto';
 import { ResponseProductDto } from './product.dto';
 
 @Exclude()

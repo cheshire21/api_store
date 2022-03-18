@@ -8,7 +8,7 @@ import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
-import { FilesService } from './file.service';
+import { FilesService } from '../files/file.service';
 import { ResponseProductImgDto } from './dto/response/product-img.dto';
 
 @Injectable()

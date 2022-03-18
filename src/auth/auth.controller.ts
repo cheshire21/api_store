@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/request/login.dto';
 import { SignUpDto } from './dto/request/signup.dto';
 import { TokenDto } from './dto/response/token.dto';
-import { Public } from './jwt/is-public.decorator';
+import { Public } from './decorators/is-public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')

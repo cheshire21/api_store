@@ -26,9 +26,9 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { GetUser } from 'src/auth/get-user.decorator';
-import { Public } from 'src/auth/jwt/is-public.decorator';
-import { Roles } from 'src/auth/role/role.decorator';
+import { GetUser } from 'src/auth/decorators/get-user.decorator';
+import { Public } from 'src/auth/decorators/is-public.decorator';
+import { Roles } from 'src/auth/decorators/role.decorator';
 import { Role } from 'src/utils/enums';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { IdProductDto } from './dto/request/id-product.dto';
@@ -39,7 +39,7 @@ import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 import { ResponseProductImgDto } from './dto/response/product-img.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
-import { LikesService } from './likes.service';
+import { LikesService } from '../likes/likes.service';
 import { ProductsService } from './products.service';
 
 @ApiTags('products')
