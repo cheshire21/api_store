@@ -5,7 +5,7 @@ import { datatype } from 'faker';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
 import { LikeFactory } from '../utils/factories/like.factory';
-import { ProductFactory } from '../utils/factories/product.factory';
+import { ProductFactory } from '../products/factories/product.factory';
 import { UserFactory } from '../users/factories/user.factory';
 import { LikesService } from './likes.service';
 
@@ -21,8 +21,6 @@ describe('LikesService', () => {
   let category: Category;
   let product: Product;
   let createduser: User;
-
-  const random = (length) => Math.floor(Math.random() * length);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({

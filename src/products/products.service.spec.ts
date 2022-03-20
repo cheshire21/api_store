@@ -5,7 +5,7 @@ import { plainToInstance } from 'class-transformer';
 import { commerce, datatype, internet } from 'faker';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
-import { ProductFactory } from '../utils/factories/product.factory';
+import { ProductFactory } from './factories/product.factory';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { FilesService } from '../files/file.service';
