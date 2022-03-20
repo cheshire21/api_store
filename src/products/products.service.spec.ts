@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Category, Product } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { commerce, datatype } from 'faker';
+import { commerce, datatype, internet } from 'faker';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
@@ -10,6 +10,7 @@ import { CreateProductDto } from './dto/request/create-product.dto';
 import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { FilesService } from '../files/file.service';
 import { ProductsService } from './products.service';
+import { ImageType } from '../utils/enums';
 
 const MockFilesService = () => ({
   uploadFile: jest.fn(),
@@ -26,9 +27,9 @@ describe('ProductsService', () => {
 
   let categories: Category[];
   let product: CreateProductDto;
-  let length: number = 3;
+  const length = 3;
 
-  let random = () => Math.floor(Math.random() * length);
+  const random = () => Math.floor(Math.random() * length);
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -77,9 +78,7 @@ describe('ProductsService', () => {
         },
       });
 
-      filesService.uploadFile.mockResolvedValue({
-        key: `${createdProduct.uuid}-${createdProduct.name}`,
-      });
+      filesService.generatePresignedUrl.mockResolvedValue(internet.url());
 
       const result = await productsService.getOne(createdProduct.uuid);
 
@@ -87,7 +86,7 @@ describe('ProductsService', () => {
       expect(result).toHaveProperty('description', createdProduct.description);
       expect(result).toHaveProperty('price', createdProduct.price);
       expect(result).toHaveProperty('stock', createdProduct.stock);
-      expect(result).toHaveProperty('image');
+      expect(result).toHaveProperty('images');
       expect(result).toHaveProperty('category');
       expect(result).toHaveProperty('status', createdProduct.status);
       expect(result).toHaveProperty('updatedAt', createdProduct.updatedAt);
@@ -247,7 +246,7 @@ describe('ProductsService', () => {
 
   describe('changeStatus', () => {
     it('should  change status of a product ', async () => {
-      let createdProduct = await productFactory.make({
+      const createdProduct = await productFactory.make({
         category: {
           connect: {
             id: categories[random()].id,
@@ -289,24 +288,22 @@ describe('ProductsService', () => {
           },
         },
       });
+      const url = 'http://example.com';
+      filesService.uploadFile.mockResolvedValue(url);
 
-      filesService.generatePresignedUrl.mockResolvedValue('http://example.com');
-
-      const buffer = new Buffer('file');
-      expect(
-        await productsService.uploadImage(
-          createdProduct.uuid,
-          buffer,
-          'file.png',
-        ),
-      ).toBeUndefined();
+      const result = await productsService.uploadImage(createdProduct.uuid, {
+        type: ImageType.jpg,
+      });
+      expect(result).toHaveProperty('productId');
+      expect(result).toHaveProperty('type');
+      expect(result).toHaveProperty('url', url);
     });
 
     it("should throw a error if the product doesn't exist", async () => {
-      const buffer = new Buffer('file');
-
       await expect(
-        productsService.uploadImage(datatype.uuid(), buffer, 'file.png'),
+        productsService.uploadImage(datatype.uuid(), {
+          type: ImageType.jpg,
+        }),
       ).rejects.toThrow(
         new HttpException('Product not found', HttpStatus.NOT_FOUND),
       );

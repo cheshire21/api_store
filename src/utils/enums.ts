@@ -8,3 +8,9 @@ export enum Role {
   client = 'C',
   manager = 'M',
 }
+
+export enum ImageType {
+  jpg = 'jpg',
+  png = 'png',
+  svg = 'svg',
+}

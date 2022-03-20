@@ -53,7 +53,6 @@ model Product {
   uuid        String    @unique @default(uuid())
   name        String
   description String
-  image       String?
   price       Float
   stock       Int
   status      Boolean   @default(true)
@@ -66,8 +65,20 @@ model Product {
   like      Like[]
   orderItem OrderItem[]
   cartItem  CartItem[]
+  image     Image[]
 
   @@map("products")
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique @default(uuid())
+  product   Product  @relation(fields: [productId], references: [id])
+  type      String
+  productId Int      @map("product_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("images")
 }
 
 model Cart {

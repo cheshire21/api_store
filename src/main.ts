@@ -25,6 +25,7 @@ async function bootstrap() {
     accessKeyId: configService.get('AWS_ACCESS_KEY_ID'),
     secretAccessKey: configService.get('AWS_SECRET_ACCESS_KEY'),
     region: configService.get('AWS_REGION'),
+    signatureVersion: 'v4',
   });
 
   const config1 = new DocumentBuilder()

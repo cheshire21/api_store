@@ -11,7 +11,6 @@ import {
   Delete,
   HttpCode,
   UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -41,6 +40,8 @@ import { ResponseProductImgDto } from './dto/response/product-img.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
 import { LikesService } from '../likes/likes.service';
 import { ProductsService } from './products.service';
+import { ImageDto } from './dto/request/image.dto';
+import { ResponseImageUrlDto } from './dto/response/image-url.dto';
 
 @ApiTags('products')
 @Controller('products')
@@ -161,21 +162,20 @@ export class ProductsController {
   }
 
   @Patch('/:id/image')
-  @HttpCode(204)
   @Roles(Role.manager)
   @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({
-    status: 204,
+    status: 200,
     description: 'upload a product image',
+    type: ResponseImageUrlDto,
   })
   @ApiNotFoundResponse({ description: 'Product not found' })
   @ApiBearerAuth()
   async uploadImage(
     @Param('id') productId: string,
-    @UploadedFile() file: Express.Multer.File,
+    @Body() imageDto: ImageDto,
   ) {
-    const { originalname, buffer } = file;
-    await this.productsService.uploadImage(productId, buffer, originalname);
+    return await this.productsService.uploadImage(productId, imageDto);
   }
 
   @Patch('/:id/like')

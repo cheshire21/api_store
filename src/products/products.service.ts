@@ -10,6 +10,8 @@ import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 import { FilesService } from '../files/file.service';
 import { ResponseProductImgDto } from './dto/response/product-img.dto';
+import { ImageDto } from './dto/request/image.dto';
+import { ResponseImageUrlDto } from './dto/response/image-url.dto';
 
 @Injectable()
 export class ProductsService {
@@ -52,14 +54,22 @@ export class ProductsService {
       if (!product)
         throw new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND);
 
-      let url = null;
-      if (product.image) {
-        url = await this.fileService.generatePresignedUrl(product.image);
+      let urls;
+
+      if (product.image?.length) {
+        urls = await Promise.all(
+          product.image.map(
+            async (img) =>
+              await this.fileService.generatePresignedUrl(
+                `${img.uuid}.${img.type}`,
+              ),
+          ),
+        );
       }
 
       return plainToInstance(ResponseProductImgDto, {
         ...product,
-        image: url,
+        images: urls,
       });
     } catch (e) {
       throw e;
@@ -233,7 +243,7 @@ export class ProductsService {
     }
   }
 
-  async uploadImage(productId: string, buffer: Buffer, originalname: string) {
+  async uploadImage(productId: string, imageDto: ImageDto) {
     try {
       const product = await this.prisma.product.findUnique({
         where: {
@@ -250,19 +260,22 @@ export class ProductsService {
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
       }
 
-      const [name, type] = originalname.split('.');
-
-      const nameImage = `${productId}.${type}`;
-
-      const image = await this.fileService.uploadFile(buffer, nameImage);
-
-      await this.prisma.product.update({
-        where: {
-          id: product.id,
-        },
+      const createdImage = await this.prisma.image.create({
         data: {
-          image: image.key,
+          productId: product.id,
+          ...imageDto,
         },
+      });
+
+      const image = await this.fileService.uploadFile(
+        createdImage.uuid,
+        imageDto.type,
+      );
+
+      return plainToInstance(ResponseImageUrlDto, {
+        productId: productId,
+        type: createdImage.type,
+        url: image,
       });
     } catch (error) {
       throw error;

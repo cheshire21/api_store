@@ -6,19 +6,14 @@ import { S3 } from 'aws-sdk';
 export class FilesService {
   constructor(private configService: ConfigService) {}
 
-  async uploadFile(dataBuffer: Buffer, key: string) {
+  async uploadFile(name: string, format: string) {
     const s3 = new S3();
-    const uploadResult = await s3
-      .upload({
-        Bucket: this.configService.get('AWS_BUCKET_NAME'),
-        Body: dataBuffer,
-        Key: key,
-      })
-      .promise();
 
-    return {
-      key: uploadResult.Key,
-    };
+    return s3.getSignedUrlPromise('putObject', {
+      Bucket: this.configService.get('AWS_BUCKET_NAME'),
+      Key: `${name}.${format}`,
+      Expires: parseInt(this.configService.get('AWS_EXPIRE_TIME'), 10),
+    });
   }
 
   public async generatePresignedUrl(key: string) {
