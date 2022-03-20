@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CartItemFactory } from '../utils/factories/cart-item.factory';
 import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
-import { UserFactory } from '../utils/factories/user.factory';
+import { UserFactory } from '../users/factories/user.factory';
 import { OrdersService } from './orders.service';
 import { OrderItemFactory } from '../utils/factories/order-item.factory';
 

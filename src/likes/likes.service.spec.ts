@@ -6,7 +6,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../utils/factories/category.factory';
 import { LikeFactory } from '../utils/factories/like.factory';
 import { ProductFactory } from '../utils/factories/product.factory';
-import { UserFactory } from '../utils/factories/user.factory';
+import { UserFactory } from '../users/factories/user.factory';
 import { LikesService } from './likes.service';
 
 describe('LikesService', () => {

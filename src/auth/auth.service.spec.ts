@@ -9,7 +9,7 @@ import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/request/sign-up.dto';
 import { User } from '@prisma/client';
-import { UserFactory } from '../utils/factories/user.factory';
+import { UserFactory } from '../users/factories/user.factory';
 
 const MockUsersService = () => ({
   create: jest.fn(),
