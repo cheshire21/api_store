@@ -24,7 +24,7 @@ export class AuthController {
   @ApiUnauthorizedResponse({ description: "Email doesn't exist " })
   @ApiInternalServerErrorResponse()
   async signup(@Body() signUpDto: SignUpDto) {
-    await this.authService.signup(signUpDto);
+    return this.authService.signup(signUpDto);
   }
 
   @Public()

@@ -76,10 +76,14 @@ describe('AuthService', () => {
     });
 
     it('should create a account successfully', async () => {
+      const email = internet.email();
+      const createdUser = await userFactory.make({ ...mockUser, email });
       userService.findOneByEmail.mockResolvedValue(false);
-      userService.create.mockResolvedValue(true);
+      userService.create.mockResolvedValue(createdUser);
 
-      expect(await authService.signup(mockUser)).toBeUndefined();
+      const result = await authService.signup({ ...mockUser, email });
+
+      expect(result).toHaveProperty('accessToken', expect.any(String));
       expect(userService.findOneByEmail).toHaveBeenCalled();
       expect(userService.create).toHaveBeenCalled();
     });

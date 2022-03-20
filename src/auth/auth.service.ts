@@ -5,7 +5,7 @@ import { SignUpDto } from './dto/request/sign-up.dto';
 import { TokenDto } from './dto/response/token.dto';
 import { compareSync } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaErrorEnum, Role } from '../utils/enums';
+import { PrismaErrorEnum } from '../utils/enums';
 import { Prisma, Token } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 
@@ -17,13 +17,17 @@ export class AuthService {
     private userService: UsersService,
   ) {}
 
-  async signup(signUpDto: SignUpDto): Promise<void> {
-    const { password, email } = signUpDto;
+  async signup(signUpDto: SignUpDto): Promise<TokenDto> {
+    const { email } = signUpDto;
 
     if (await this.userService.findOneByEmail(email))
       throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
 
-    await this.userService.create(signUpDto);
+    const user = await this.userService.create(signUpDto);
+
+    const token = await this.createToken(user.id);
+
+    return await this.generateToken(token.jti);
   }
 
   async login(loginDto: LoginDto): Promise<TokenDto> {

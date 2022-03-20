@@ -39,22 +39,30 @@ describe('UsersService', () => {
 
   describe('create', () => {
     it('should create a user', async () => {
-      expect(await userService.create(mockUser)).toBeUndefined();
+      const result = await userService.create(mockUser);
+
+      expect(result).toHaveProperty('firstName', mockUser.firstName);
+      expect(result).toHaveProperty('lastName', mockUser.lastName);
+      expect(result).toHaveProperty('email', mockUser.email);
     });
   });
 
   describe('findOneByEmail', () => {
     it('should return a existent user ', async () => {
-      const user = await prisma.user.create({
+      const createdUser = await prisma.user.create({
         data: {
           ...mockUser,
           email: internet.email(),
         },
       });
 
-      const result = await userService.findOneByEmail(mockUser.email);
+      const result = await userService.findOneByEmail(createdUser.email);
 
-      expect(result).toBeDefined();
+      expect(result).toHaveProperty('id', createdUser.id);
+      expect(result).toHaveProperty('uuid', createdUser.uuid);
+      expect(result).toHaveProperty('firstName', createdUser.firstName);
+      expect(result).toHaveProperty('lastName', createdUser.lastName);
+      expect(result).toHaveProperty('email', createdUser.email);
     });
 
     it("should return null if user doesn't exist", async () => {

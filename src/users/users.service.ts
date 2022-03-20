@@ -19,8 +19,8 @@ export class UsersService {
     return user;
   }
 
-  async create({ password, ...input }: SignUpDto): Promise<void> {
-    await this.prisma.user.create({
+  async create({ password, ...input }: SignUpDto): Promise<User> {
+    return await this.prisma.user.create({
       data: {
         ...input,
         password: hashSync(password, 10),
