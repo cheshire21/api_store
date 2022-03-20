@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { LoginDto } from './dto/request/login.dto';
-import { SignUpDto } from './dto/request/signup.dto';
+import { SignUpDto } from './dto/request/sign-up.dto';
 import { TokenDto } from './dto/response/token.dto';
 import { compareSync } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';

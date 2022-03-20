@@ -7,7 +7,7 @@ import { Role } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/request/signup.dto';
+import { SignUpDto } from './dto/request/sign-up.dto';
 import { User } from '@prisma/client';
 import { UserFactory } from '../utils/factories/user.factory';
 

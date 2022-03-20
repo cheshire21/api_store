@@ -8,7 +8,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/request/login.dto';
-import { SignUpDto } from './dto/request/signup.dto';
+import { SignUpDto } from './dto/request/sign-up.dto';
 import { TokenDto } from './dto/response/token.dto';
 import { Public } from './decorators/is-public.decorator';
 

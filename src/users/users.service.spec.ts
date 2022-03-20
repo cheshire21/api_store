@@ -4,7 +4,7 @@ import { UsersService } from './users.service';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address } from 'faker';
 import { Role } from '../utils/enums';
-import { SignUpDto } from '../auth/dto/request/signup.dto';
+import { SignUpDto } from '../auth/dto/request/sign-up.dto';
 import { hashSync } from 'bcryptjs';
 
 describe('UsersService', () => {
