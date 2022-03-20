@@ -5,7 +5,7 @@ import { datatype } from 'faker';
 import { Role } from '../utils/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartItemFactory } from '../utils/factories/cart-item.factory';
-import { CategoryFactory } from '../utils/factories/category.factory';
+import { CategoryFactory } from '../products/factories/category.factory';
 import { ProductFactory } from '../products/factories/product.factory';
 import { UserFactory } from '../users/factories/user.factory';
 import { OrdersService } from './orders.service';

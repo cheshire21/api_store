@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
 import { PrismaService } from '../prisma/prisma.service';
-import { CategoryFactory } from '../utils/factories/category.factory';
+import { CategoryFactory } from '../products/factories/category.factory';
 import { LikeFactory } from '../utils/factories/like.factory';
 import { ProductFactory } from '../products/factories/product.factory';
 import { UserFactory } from '../users/factories/user.factory';

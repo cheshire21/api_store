@@ -1,7 +1,7 @@
 import { Category, Prisma } from '@prisma/client';
 import { commerce } from 'faker';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Abstractfactory } from './abstract.factory';
+import { Abstractfactory } from '../../utils/factories/abstract.factory';
 
 type CategoryInput = Partial<Prisma.CategoryCreateInput>;
 
