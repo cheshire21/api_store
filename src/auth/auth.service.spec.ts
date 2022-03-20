@@ -161,9 +161,9 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should logout successfully', async () => {
-      let createdUser = await userFactory.make();
-      let token = await authService.createToken(createdUser.id);
-      let value = authService.generateToken(token.jti);
+      const createdUser = await userFactory.make();
+      const token = await authService.createToken(createdUser.id);
+      const value = authService.generateToken(token.jti);
 
       expect(await authService.logout(value.accessToken)).toBeUndefined();
     });

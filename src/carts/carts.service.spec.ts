@@ -19,13 +19,13 @@ describe('CartsService', () => {
   let cartItemFactory: CartItemFactory;
 
   let categories: Category[];
-  let categoriesLength: number = 2;
+  const categoriesLength = 2;
   let products: Product[] = [];
-  let productstLength: number = 2;
+  const productstLength = 2;
   let createduser: User;
-  let stock: number = 4;
+  const stock = 4;
 
-  let random = (length) => Math.floor(Math.random() * length);
+  const random = (length) => Math.floor(Math.random() * length);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -82,7 +82,7 @@ describe('CartsService', () => {
         },
       });
 
-      let cartItems: CartItem[] = [];
+      const cartItems: CartItem[] = [];
       for (let i = 0; i < productstLength; i++) {
         const newcartItem = await cartItemFactory.make({
           cart: {

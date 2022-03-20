@@ -67,7 +67,7 @@ export class ProductsService {
   }
 
   async getMany(pagination: PaginationOptionsProduct) {
-    let { page, take, category } = pagination;
+    const { page, take, category } = pagination;
 
     let where = {};
     if (category) {
@@ -208,7 +208,7 @@ export class ProductsService {
     status: boolean,
   ): Promise<ResponseProductDto> {
     try {
-      let deletedAt = status ? null : new Date();
+      const deletedAt = status ? null : new Date();
 
       const product = await this.prisma.product.update({
         where: {

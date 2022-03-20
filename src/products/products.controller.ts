@@ -82,7 +82,7 @@ export class ProductsController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page,
     @Query('category', new DefaultValuePipe(null)) category,
   ): Promise<ListProductsDto> {
-    let pagination = plainToInstance(PaginationOptionsProduct, {
+    const pagination = plainToInstance(PaginationOptionsProduct, {
       take,
       page,
       category,

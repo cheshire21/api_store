@@ -22,12 +22,12 @@ describe('OrdersService', () => {
   let orderItemFactory: OrderItemFactory;
   let createdUser: User;
   let createdCategories: Category[];
-  let categoryLength = 2;
-  let productsLength = 3;
+  const categoryLength = 2;
+  const productsLength = 3;
   let createdCart: Cart;
   let idproducts = [];
-  let stock = 5;
-  let price = 51;
+  const stock = 5;
+  const price = 51;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -84,7 +84,7 @@ describe('OrdersService', () => {
     await prisma.$disconnect();
   });
   describe('getOrders', () => {
-    let createdOrder = async () => {
+    const createdOrder = async () => {
       const order = await prisma.order.create({
         data: {
           userId: createdUser.id,

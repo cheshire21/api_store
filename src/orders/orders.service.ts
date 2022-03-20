@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { Role } from '../utils/enums';
 import { PaginationOptionsDto } from '../common/dto/request/pagination-option.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaErrorEnum, Role } from '../utils/enums';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
 
 @Injectable()
@@ -154,7 +154,7 @@ export class OrdersService {
         throw new HttpException('Cart is empty', HttpStatus.BAD_REQUEST);
       }
 
-      let cartItemLength = cart.cartItem.length;
+      const cartItemLength = cart.cartItem.length;
 
       for (let i = 0; i < cartItemLength; i++) {
         if (cart.cartItem[i].quantity > cart.cartItem[i].product.stock) {

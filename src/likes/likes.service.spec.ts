@@ -22,7 +22,7 @@ describe('LikesService', () => {
   let product: Product;
   let createduser: User;
 
-  let random = (length) => Math.floor(Math.random() * length);
+  const random = (length) => Math.floor(Math.random() * length);
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
