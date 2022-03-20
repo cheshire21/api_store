@@ -27,11 +27,11 @@ model User {
 
   tokens Token[]
 
-  Cart Cart[]
+  cart Cart[]
 
-  Like Like[]
+  like Like[]
 
-  Order Order[]
+  order Order[]
 
   @@map("users")
 }
@@ -43,7 +43,7 @@ model Category {
   updatedAt DateTime @updatedAt @map("updated_at")
   createdAt DateTime @default(now()) @map("created_at")
 
-  Product Product[]
+  product Product[]
 
   @@map("categories")
 }
@@ -63,12 +63,9 @@ model Product {
   updatedAt   DateTime  @updatedAt @map("updated_at")
   createdAt   DateTime  @default(now()) @map("created_at")
 
-
-  Like Like[]
-
-  OrderItem OrderItem[]
-
-  CartItem CartItem[]
+  like      Like[]
+  orderItem OrderItem[]
+  cartItem  CartItem[]
 
   @@map("products")
 }
@@ -82,7 +79,7 @@ model Cart {
   updatedAt  DateTime @updatedAt @map("updated_at")
   createdAt  DateTime @default(now()) @map("created_at")
 
-  CartItem CartItem[]
+  cartItem CartItem[]
 
   @@map("carts")
 }
@@ -114,8 +111,6 @@ model Like {
   updatedAt DateTime @updatedAt @map("updated_at")
   createdAt DateTime @default(now()) @map("created_at")
 
-
-
   @@unique([userId, productId])
   @@map("likes")
 }
@@ -128,7 +123,7 @@ model Order {
   totalPrice Float    @map("total_price")
   createdAt  DateTime @default(now()) @map("created_at")
 
-  OrderItem OrderItem[]
+  orderItem OrderItem[]
 
   @@map("orders")
 }

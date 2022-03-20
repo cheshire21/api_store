@@ -18,7 +18,7 @@ export class CartsService {
           },
         },
         select: {
-          CartItem: {
+          cartItem: {
             select: {
               product: {
                 select: {
@@ -39,10 +39,8 @@ export class CartsService {
       });
 
       return plainToInstance(CartItemsDto, {
-        items: cart.CartItem,
-        totalPrice: cart.totalPrice,
-        updatedAt: cart.updatedAt,
-        createdAt: cart.createdAt,
+        ...cart,
+        items: cart.cartItem,
       });
     } catch (error) {
       throw error;
@@ -90,7 +88,7 @@ export class CartsService {
           uuid: userId,
         },
         select: {
-          Cart: true,
+          cart: true,
           id: true,
         },
         rejectOnNotFound: false,
@@ -103,7 +101,7 @@ export class CartsService {
         where: {
           cartId_productId: {
             productId: product.id,
-            cartId: user.Cart[0].id,
+            cartId: user.cart[0].id,
           },
         },
         rejectOnNotFound: false,
@@ -114,12 +112,12 @@ export class CartsService {
       const previousProductTotalPrice = !cartItem ? 0 : cartItem.totalPrice;
 
       const totalPrice =
-        user.Cart[0].totalPrice + productTotalPrice - previousProductTotalPrice;
+        user.cart[0].totalPrice + productTotalPrice - previousProductTotalPrice;
 
       const [cart, newCartItem] = await this.prisma.$transaction([
         this.prisma.cart.update({
           where: {
-            id: user.Cart[0].id,
+            id: user.cart[0].id,
           },
           data: {
             totalPrice: totalPrice,
@@ -130,7 +128,7 @@ export class CartsService {
           where: {
             cartId_productId: {
               productId: product.id,
-              cartId: user.Cart[0].id,
+              cartId: user.cart[0].id,
             },
           },
           update: {
@@ -146,7 +144,7 @@ export class CartsService {
             },
             cart: {
               connect: {
-                id: user.Cart[0].id,
+                id: user.cart[0].id,
               },
             },
             unitPrice: product.price,
@@ -195,7 +193,7 @@ export class CartsService {
           uuid: userId,
         },
         select: {
-          Cart: true,
+          cart: true,
         },
         rejectOnNotFound: false,
       });
@@ -207,7 +205,7 @@ export class CartsService {
         where: {
           cartId_productId: {
             productId: product.id,
-            cartId: user.Cart[0].id,
+            cartId: user.cart[0].id,
           },
         },
         select: {
@@ -216,12 +214,12 @@ export class CartsService {
         rejectOnNotFound: false,
       });
 
-      const totalPrice = user.Cart[0].totalPrice - cartItem.totalPrice;
+      const totalPrice = user.cart[0].totalPrice - cartItem.totalPrice;
 
       const [s, d] = await this.prisma.$transaction([
         this.prisma.cart.update({
           where: {
-            id: user.Cart[0].id,
+            id: user.cart[0].id,
           },
           data: {
             totalPrice: totalPrice,
@@ -230,7 +228,7 @@ export class CartsService {
         this.prisma.cartItem.delete({
           where: {
             cartId_productId: {
-              cartId: user.Cart[0].id,
+              cartId: user.cart[0].id,
               productId: product.id,
             },
           },

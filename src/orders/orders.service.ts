@@ -86,7 +86,7 @@ export class OrdersService {
           totalPrice: true,
           createdAt: true,
           ...orderselect,
-          OrderItem: {
+          orderItem: {
             select: {
               product: {
                 select: {
@@ -131,7 +131,7 @@ export class OrdersService {
           id: true,
           userId: true,
           totalPrice: true,
-          CartItem: {
+          cartItem: {
             select: {
               product: {
                 select: {
@@ -150,14 +150,14 @@ export class OrdersService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
       }
 
-      if (!cart.CartItem || !cart.CartItem.length) {
+      if (!cart.cartItem?.length) {
         throw new HttpException('Cart is empty', HttpStatus.BAD_REQUEST);
       }
 
-      let cartItemLength = cart.CartItem.length;
+      let cartItemLength = cart.cartItem.length;
 
       for (let i = 0; i < cartItemLength; i++) {
-        if (cart.CartItem[i].quantity > cart.CartItem[i].product.stock) {
+        if (cart.cartItem[i].quantity > cart.cartItem[i].product.stock) {
           throw new HttpException(
             'Quantity of some product is out of range',
             HttpStatus.BAD_REQUEST,
@@ -165,31 +165,34 @@ export class OrdersService {
         }
       }
 
-      const records: Prisma.OrderItemCreateManyOrderInputEnvelope = {
-        data: await Promise.all(
-          cart.CartItem.map(async (item) => {
-            await this.prisma.product.update({
-              where: { id: item.product.id },
-              data: { stock: item.product.stock - item.quantity },
-            });
-            return {
-              productId: item.product.id,
-              quantity: item.quantity,
-              unitPrice: item.unitPrice,
-              totalPrice: item.totalPrice,
-            };
-          }),
-        ),
-        skipDuplicates: true,
-      };
+      const records =
+        async (): Promise<Prisma.OrderItemCreateManyOrderInputEnvelope> => {
+          return {
+            data: await Promise.all(
+              cart.cartItem.map(async (item) => {
+                await this.prisma.product.update({
+                  where: { id: item.product.id },
+                  data: { stock: item.product.stock - item.quantity },
+                });
+                return {
+                  productId: item.product.id,
+                  quantity: item.quantity,
+                  unitPrice: item.unitPrice,
+                  totalPrice: item.totalPrice,
+                };
+              }),
+            ),
+            skipDuplicates: true,
+          };
+        };
 
       await this.prisma.$transaction([
         this.prisma.order.create({
           data: {
             userId: cart.userId,
             totalPrice: cart.totalPrice,
-            OrderItem: {
-              createMany: records,
+            orderItem: {
+              createMany: await records(),
             },
           },
         }),

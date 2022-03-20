@@ -24,7 +24,7 @@ export class UsersService {
       data: {
         ...input,
         password: hashSync(password, 10),
-        Cart: {
+        cart: {
           create: {
             totalPrice: 0,
           },

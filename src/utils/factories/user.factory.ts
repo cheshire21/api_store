@@ -22,7 +22,7 @@ export class UserFactory extends Abstractfactory<User> {
         email: data.email ?? internet.email(),
         password: hashSync(data.password ?? internet.password(), 10),
         role: data.role ?? Role.client,
-        Cart: {
+        cart: {
           create: {
             totalPrice: 0,
           },
