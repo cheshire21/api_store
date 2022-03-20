@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CartItem, Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
-import { CartItemFactory } from '../utils/factories/cart-item.factory';
+import { CartItemFactory } from './factories/cart-item.factory';
 import { PrismaService } from '../prisma/prisma.service';
 import { CategoryFactory } from '../products/factories/category.factory';
 import { ProductFactory } from '../products/factories/product.factory';

@@ -1,7 +1,6 @@
 import { CartItem, Prisma } from '@prisma/client';
-import { datatype } from 'faker';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Abstractfactory } from './abstract.factory';
+import { Abstractfactory } from '../../utils/factories/abstract.factory';
 
 type CartItemInput = Prisma.CartItemCreateInput;
 
