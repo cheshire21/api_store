@@ -9,7 +9,7 @@ import { CategoryFactory } from '../utils/factories/category.factory';
 import { ProductFactory } from '../products/factories/product.factory';
 import { UserFactory } from '../users/factories/user.factory';
 import { OrdersService } from './orders.service';
-import { OrderItemFactory } from '../utils/factories/order-item.factory';
+import { OrderItemFactory } from './factories/order-item.factory';
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
