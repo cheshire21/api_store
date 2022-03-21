@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { ImageType } from '../../../utils/enums';
+import { ImageType } from '../../../common/enums';
 
 @Exclude()
 export class ResponseImageUrlDto {

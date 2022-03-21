@@ -1,8 +1,8 @@
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import { Abstractfactory } from '../../utils/factories/abstract.factory';
+import { Abstractfactory } from '../../common/factories/abstract.factory';
 import { name, internet, address } from 'faker';
-import { Role } from '../../utils/enums';
+import { Role } from '../../common/enums';
 import { hashSync } from 'bcryptjs';
 
 type UserInput = Partial<Prisma.UserCreateInput>;

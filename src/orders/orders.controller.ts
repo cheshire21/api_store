@@ -22,7 +22,7 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/auth-jwt.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { PaginationOptionsDto } from 'src/common/dto/request/pagination-option.dto';
-import { Role } from 'src/utils/enums';
+import { Role } from 'src/common/enums';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
 import { OrdersService } from './orders.service';
 

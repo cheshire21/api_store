@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
 import { IsEnum } from 'class-validator';
-import { ImageType } from '../../../utils/enums';
+import { ImageType } from '../../../common/enums';
 
 @Exclude()
 export class ImageDto {

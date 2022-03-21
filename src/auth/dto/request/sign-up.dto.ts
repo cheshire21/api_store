@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
 import { address, internet, name } from 'faker';
-import { Role } from '../../../utils/enums';
+import { Role } from '../../../common/enums';
 
 @Exclude()
 export class SignUpDto {

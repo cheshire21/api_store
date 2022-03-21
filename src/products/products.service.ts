@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { PrismaErrorEnum } from '../utils/enums';
+import { PrismaErrorEnum } from '../common/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';

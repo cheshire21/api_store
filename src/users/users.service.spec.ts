@@ -3,7 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from './users.service';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address } from 'faker';
-import { Role } from '../utils/enums';
+import { Role } from '../common/enums';
 import { SignUpDto } from '../auth/dto/request/sign-up.dto';
 import { hashSync } from 'bcryptjs';
 

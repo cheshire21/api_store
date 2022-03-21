@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { Role } from '../utils/enums';
+import { Role } from '../common/enums';
 import { PaginationOptionsDto } from '../common/dto/request/pagination-option.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ListOrdersDto } from './dto/response/list-orders.dto';

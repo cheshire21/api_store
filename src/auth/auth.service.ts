@@ -5,7 +5,7 @@ import { SignUpDto } from './dto/request/sign-up.dto';
 import { TokenDto } from './dto/response/token.dto';
 import { compareSync } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
-import { PrismaErrorEnum } from '../utils/enums';
+import { PrismaErrorEnum } from '../common/enums';
 import { Prisma, Token } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 

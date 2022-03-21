@@ -3,7 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address, datatype } from 'faker';
-import { Role } from '../utils/enums';
+import { Role } from '../common/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
