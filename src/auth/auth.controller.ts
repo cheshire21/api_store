@@ -10,16 +10,18 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/request/login.dto';
 import { SignUpDto } from './dto/request/sign-up.dto';
 import { TokenDto } from './dto/response/token.dto';
-import { Public } from './decorators/is-public.decorator';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Public()
   @Post('/signup')
-  @ApiResponse({ status: 201, description: 'created a account successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'created a account successfully',
+    type: TokenDto,
+  })
   @ApiBadRequestResponse({ description: 'Email already exists' })
   @ApiUnauthorizedResponse({ description: "Email doesn't exist " })
   @ApiInternalServerErrorResponse()
@@ -27,7 +29,6 @@ export class AuthController {
     return this.authService.signup(signUpDto);
   }
 
-  @Public()
   @Post('/login')
   @ApiResponse({
     status: 201,
@@ -40,7 +41,6 @@ export class AuthController {
     return await this.authService.login(loginDto);
   }
 
-  @Public()
   @Get('/logout')
   @HttpCode(204)
   @ApiResponse({

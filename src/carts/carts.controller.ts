@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -11,6 +19,8 @@ import {
 import { User } from '@prisma/client';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/auth-jwt.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from 'src/utils/enums';
 import { CartsService } from './carts.service';
 import { CreateCartItemDto } from './dto/request/create-cart-item.dto';
@@ -20,11 +30,12 @@ import { ResponseCartDto } from './dto/response/response-cart-item.dto';
 
 @ApiTags('cart')
 @Controller('cart')
+@Roles(Role.client)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class CartsController {
   constructor(private cartsService: CartsService) {}
 
   @Get()
-  @Roles(Role.client)
   @ApiResponse({
     status: 200,
     description: 'get all items on the cart',
@@ -37,7 +48,6 @@ export class CartsController {
   }
 
   @Patch()
-  @Roles(Role.client)
   @ApiResponse({
     status: 200,
     description: "create or update a cart't item",
@@ -56,7 +66,6 @@ export class CartsController {
   }
 
   @Delete()
-  @Roles(Role.client)
   @HttpCode(204)
   @ApiResponse({
     status: 204,

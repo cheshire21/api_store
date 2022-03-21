@@ -6,6 +6,7 @@ import {
   ParseIntPipe,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -18,6 +19,8 @@ import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/auth-jwt.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 import { PaginationOptionsDto } from 'src/common/dto/request/pagination-option.dto';
 import { Role } from 'src/utils/enums';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
@@ -25,11 +28,13 @@ import { OrdersService } from './orders.service';
 
 @ApiTags('orders')
 @Controller('orders')
+@Roles(Role.client)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Get()
-  @Roles(Role.manager, Role.client)
+  @Roles(Role.manager)
   @ApiResponse({
     status: 200,
     description: "gets a list of client's or clients' orders",
@@ -51,7 +56,6 @@ export class OrdersController {
   }
 
   @Post()
-  @Roles(Role.client)
   @HttpCode(204)
   @ApiResponse({
     status: 204,

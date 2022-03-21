@@ -11,6 +11,7 @@ import {
   Delete,
   HttpCode,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -26,7 +27,6 @@ import {
 import { User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { GetUser } from 'src/auth/decorators/get-user.decorator';
-import { Public } from 'src/auth/decorators/is-public.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { Role } from 'src/utils/enums';
 import { CreateProductDto } from './dto/request/create-product.dto';
@@ -42,6 +42,8 @@ import { LikesService } from '../likes/likes.service';
 import { ProductsService } from './products.service';
 import { ImageDto } from './dto/request/image.dto';
 import { ResponseImageUrlDto } from './dto/response/image-url.dto';
+import { JwtAuthGuard } from 'src/auth/guards/auth-jwt.guard';
+import { RolesGuard } from 'src/auth/guards/role.guard';
 
 @ApiTags('products')
 @Controller('products')
@@ -52,7 +54,6 @@ export class ProductsController {
   ) {}
 
   @Get()
-  @Public()
   @ApiResponse({
     status: 200,
     description: 'return a list of product, search by category ',
@@ -93,7 +94,6 @@ export class ProductsController {
   }
 
   @Get('/:id')
-  @Public()
   @ApiResponse({
     status: 200,
     description: 'return a specific product details',
@@ -109,6 +109,8 @@ export class ProductsController {
 
   @Post()
   @Roles(Role.manager)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 201,
     description: 'create a product',
@@ -125,6 +127,8 @@ export class ProductsController {
 
   @Patch('/:id')
   @Roles(Role.manager)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: 'update a product',
@@ -141,8 +145,10 @@ export class ProductsController {
     return this.productsService.update(idProductDto.id, updateProductDto);
   }
 
-  @Roles(Role.manager)
   @Patch('/:id/status')
+  @Roles(Role.manager)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 200,
     description: 'change product status',
@@ -163,6 +169,8 @@ export class ProductsController {
 
   @Patch('/:id/image')
   @Roles(Role.manager)
+  @UseGuards(RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('file'))
   @ApiResponse({
     status: 200,
@@ -180,7 +188,7 @@ export class ProductsController {
 
   @Patch('/:id/like')
   @HttpCode(204)
-  @Roles(Role.manager, Role.client)
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 204,
     description: 'user put like to a product',
@@ -198,7 +206,7 @@ export class ProductsController {
 
   @Delete('/:id/like')
   @HttpCode(204)
-  @Roles(Role.manager, Role.client)
+  @UseGuards(JwtAuthGuard)
   @ApiResponse({
     status: 204,
     description: 'user put dislike to a product',
