@@ -33,10 +33,6 @@ async function bootstrap() {
     .setDescription('Api Store for products, carts and orders')
     .setVersion('1.0')
     .addBearerAuth()
-    .addTag('auth')
-    .addTag('products')
-    .addTag('cart')
-    .addTag('orders')
     .build();
 
   const document = SwaggerModule.createDocument(app, config1);
