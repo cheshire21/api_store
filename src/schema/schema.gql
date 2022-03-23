@@ -18,6 +18,10 @@ type Image {
   uuid: String!
 }
 
+type Mutation {
+  ProductCreate(productInput: ProductInput!): Product!
+}
+
 type Product {
   category: Category!
   createdAt: DateTime!
@@ -34,6 +38,14 @@ type Product {
   uuid: String!
 }
 
+input ProductInput {
+  categoryId: String!
+  description: String!
+  name: String!
+  price: Float!
+  stock: Int!
+}
+
 type Query {
-  getProduct(id: String!): Product!
+  ProductGet(id: String!): Product!
 }

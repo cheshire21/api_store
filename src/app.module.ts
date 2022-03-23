@@ -21,10 +21,9 @@ import { GraphQLError } from 'graphql';
       sortSchema: true,
       playground: true,
       formatError: (error) => {
-        const { message } = error.originalError as HttpException;
         const graphQLFormattedError = {
           name: error.name,
-          message: message || error.message,
+          message: error.message,
         };
         return graphQLFormattedError;
       },
