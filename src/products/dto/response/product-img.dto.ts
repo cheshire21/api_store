@@ -5,5 +5,8 @@ import { ResponseProductDto } from './product.dto';
 @Exclude()
 export class ResponseProductImgDto extends PartialType(ResponseProductDto) {
   @Expose()
-  images: string[];
+  images: {
+    uuid: string;
+    url: string;
+  };
 }

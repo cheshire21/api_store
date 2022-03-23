@@ -40,6 +40,18 @@ export class ResponseProductDto {
   category: CategoryDetails;
 
   @ApiProperty({
+    example: datatype.number(),
+  })
+  @Expose()
+  likes: number;
+
+  @ApiProperty({
+    example: datatype.number(),
+  })
+  @Expose()
+  dislikes: number;
+
+  @ApiProperty({
     example: datatype.boolean(),
   })
   @Expose()

@@ -45,6 +45,7 @@ export class ProductsService {
           uuid,
         },
         select: {
+          id: true,
           ...this.select,
           image: true,
         },
@@ -54,21 +55,37 @@ export class ProductsService {
       if (!product)
         throw new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND);
 
-      let urls;
+      let urls = [];
 
       if (product.image?.length) {
         urls = await Promise.all(
-          product.image.map(
-            async (img) =>
-              await this.fileService.generatePresignedUrl(
+          product.image.map(async (img) => {
+            return {
+              uuid: img.uuid,
+              url: await this.fileService.generatePresignedUrl(
                 `${img.uuid}.${img.type}`,
               ),
-          ),
+            };
+          }),
         );
       }
+      const likes = await this.prisma.like.count({
+        where: {
+          productId: product.id,
+          like: true,
+        },
+      });
 
+      const dislikes = await this.prisma.like.count({
+        where: {
+          productId: product.id,
+          like: true,
+        },
+      });
       return plainToInstance(ResponseProductImgDto, {
         ...product,
+        likes,
+        dislikes,
         images: urls,
       });
     } catch (e) {
