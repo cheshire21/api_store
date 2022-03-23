@@ -53,9 +53,7 @@ export class SignUpDto {
   @IsString()
   password: string;
 
-  @ApiProperty({
-    example: 'M',
-  })
+  @ApiProperty()
   @Expose()
   @IsNotEmpty()
   @IsEnum(Role)
