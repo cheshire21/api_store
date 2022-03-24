@@ -18,10 +18,15 @@ type Image {
   uuid: String!
 }
 
+input ImageInput {
+  type: String!
+}
+
 type Mutation {
   productChangeStatus(id: String!, statusInput: StatusInput!): Product!
   productCreate(productInput: ProductInput!): Product!
   productUpdate(id: String!, updateProductInput: UpdateProductInput!): Product!
+  productUploadImage(id: String!, imageInput: ImageInput!): Image!
 }
 
 type Product {
