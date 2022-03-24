@@ -6,9 +6,9 @@ import { RolesGuard } from 'src/auth/guards/role.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { FilesService } from '../files/file.service';
 import { LikesService } from '../likes/likes.service';
-import { ImagesResolver } from './image.resolver';
+import { ImagesResolver } from './resolvers/image.resolver';
 import { ProductsController } from './products.controller';
-import { ProductsResolver } from './products.resolver';
+import { ProductsResolver } from './resolvers/products.resolver';
 import { ProductsService } from './products.service';
 
 @Module({

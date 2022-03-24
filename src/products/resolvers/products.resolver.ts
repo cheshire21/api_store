@@ -5,13 +5,13 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
 import { Role } from 'src/common/enums';
 import { LikesService } from 'src/likes/likes.service';
-import { ProductInput } from './dto/input/create-product.input';
-import { ImageInput } from './dto/input/image.input';
-import { StatusInput } from './dto/input/status-product.input';
-import { UpdateProductInput } from './dto/input/update-product.input';
-import { Image } from './models/image.model';
-import { Product } from './models/product.model';
-import { ProductsService } from './products.service';
+import { ProductInput } from '../dto/input/create-product.input';
+import { ImageInput } from '../dto/input/image.input';
+import { StatusInput } from '../dto/input/status-product.input';
+import { UpdateProductInput } from '../dto/input/update-product.input';
+import { Image } from '../models/image.model';
+import { Product } from '../models/product.model';
+import { ProductsService } from '../products.service';
 
 @Resolver(() => Product)
 export class ProductsResolver {
