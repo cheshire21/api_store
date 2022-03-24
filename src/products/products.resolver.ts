@@ -9,22 +9,22 @@ import { ProductInput } from './dto/input/create-product.input';
 import { Product } from './models/product.model';
 import { ProductsService } from './products.service';
 
-@Resolver((of) => Product)
+@Resolver(() => Product)
 export class ProductsResolver {
   constructor(
     private productService: ProductsService,
     private likesService: LikesService,
   ) {}
 
-  @Query((returns) => Product)
-  async ProductGet(@Args('id') id: string) {
+  @Query(() => Product)
+  async productGet(@Args('id') id: string) {
     return await this.productService.getOne(id);
   }
 
-  @Mutation((returns) => Product)
+  @Mutation(() => Product)
   @Roles(Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
-  async ProductCreate(@Args('productInput') productInput: ProductInput) {
+  async productCreate(@Args('productInput') productInput: ProductInput) {
     return await this.productService.create(productInput);
   }
 }

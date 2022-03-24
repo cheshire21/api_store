@@ -13,22 +13,22 @@ export class Product {
   @Field()
   description: string;
 
-  @Field((type) => Float)
+  @Field(() => Float)
   price: number;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   stock: number;
 
-  @Field((type) => Category)
+  @Field(() => Category)
   category: Category;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   likes: number;
 
-  @Field((type) => Int)
+  @Field(() => Int)
   dislikes: number;
 
-  @Field((type) => [Image], {
+  @Field(() => [Image], {
     nullable: 'items',
   })
   images: Image[];

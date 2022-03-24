@@ -19,7 +19,7 @@ type Image {
 }
 
 type Mutation {
-  ProductCreate(productInput: ProductInput!): Product!
+  productCreate(productInput: ProductInput!): Product!
 }
 
 type Product {
@@ -47,5 +47,5 @@ input ProductInput {
 }
 
 type Query {
-  ProductGet(id: String!): Product!
+  productGet(id: String!): Product!
 }

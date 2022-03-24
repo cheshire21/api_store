@@ -120,7 +120,7 @@ export class ProductsController {
   @ApiBearerAuth()
   async createProduct(
     @Body() createProductDto: CreateProductDto,
-  ): Promise<ResponseProductDto> {
+  ): Promise<ResponseProductImgDto> {
     return await this.productsService.create(createProductDto);
   }
 
