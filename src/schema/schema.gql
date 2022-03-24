@@ -19,7 +19,7 @@ type Image {
 }
 
 type Mutation {
-  ProductCreate(productInput: ProductInput!): Product!
+  ProductCreate(data: ProductInput!): String!
 }
 
 type Product {
@@ -43,7 +43,7 @@ input ProductInput {
   description: String!
   name: String!
   price: Float!
-  stock: Int!
+  stock: Float!
 }
 
 type Query {

@@ -21,10 +21,9 @@ export class ProductsResolver {
     return await this.productService.getOne(id);
   }
 
-  @Mutation((returns) => Product)
-  @Roles(Role.manager)
-  @UseGuards(GqlJwtGuard, GqlRolesGuard)
-  async ProductCreate(@Args('productInput') productInput: ProductInput) {
-    return await this.productService.create(productInput);
+  @Mutation((returns) => String)
+  async ProductCreate(@Args('data') data: ProductInput) {
+    console.log(data);
+    return 'fff';
   }
 }

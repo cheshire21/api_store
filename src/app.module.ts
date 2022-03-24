@@ -8,7 +8,6 @@ import { OrdersModule } from './orders/orders.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
-import { GraphQLError } from 'graphql';
 
 @Module({
   imports: [
@@ -20,13 +19,14 @@ import { GraphQLError } from 'graphql';
       autoSchemaFile: join(process.cwd(), 'src/schema/schema.gql'),
       sortSchema: true,
       playground: true,
-      formatError: (error) => {
-        const graphQLFormattedError = {
-          name: error.name,
-          message: error.message,
-        };
-        return graphQLFormattedError;
-      },
+
+      // formatError: (error) => {
+      //   const graphQLFormattedError = {
+      //     name: error.name,
+      //     message: error.message,
+      //   };
+      //   return graphQLFormattedError;
+      // },
     }),
     AuthModule,
     UsersModule,

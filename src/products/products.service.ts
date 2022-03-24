@@ -156,7 +156,12 @@ export class ProductsService {
         select: this.select,
       });
 
-      return plainToInstance(ResponseProductDto, product);
+      return plainToInstance(ResponseProductDto, {
+        ...product,
+        likes: 0,
+        dislikes: 0,
+        images: [],
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
