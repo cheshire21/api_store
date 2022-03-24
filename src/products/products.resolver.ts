@@ -52,4 +52,17 @@ export class ProductsResolver {
     const { status } = statusInput;
     return await this.productService.changeStatus(id, status);
   }
+
+  @Mutation(() => String)
+  @Roles(Role.manager)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
+  async productUploadImage(
+    @Args('id') id: string,
+    @Args('imageInput') imageInput: ImageInput,
+  ) {
+    console.log(id);
+    console.log(imageInput);
+
+    return 'dddd';
+  }
 }

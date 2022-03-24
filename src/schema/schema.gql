@@ -19,7 +19,9 @@ type Image {
 }
 
 type Mutation {
+  productChangeStatus(id: String!, statusInput: StatusInput!): Product!
   productCreate(productInput: ProductInput!): Product!
+  productUpdate(id: String!, updateProductInput: UpdateProductInput!): Product!
 }
 
 type Product {
@@ -48,4 +50,16 @@ input ProductInput {
 
 type Query {
   productGet(id: String!): Product!
+}
+
+input StatusInput {
+  status: Boolean!
+}
+
+input UpdateProductInput {
+  categoryId: String
+  description: String
+  name: String
+  price: Float
+  stock: Int
 }
