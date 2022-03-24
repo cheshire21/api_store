@@ -11,4 +11,7 @@ export class ResponseImageUrlDto {
 
   @Expose()
   url: string;
+
+  @Expose()
+  uuid: string;
 }
