@@ -14,6 +14,6 @@ export class ProductInput {
   @Field()
   stock: number;
 
-  @Field()
+  @Field({ description: 'hola' })
   categoryId: string;
 }

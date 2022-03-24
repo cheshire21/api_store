@@ -39,6 +39,7 @@ type Product {
 }
 
 input ProductInput {
+  """hola"""
   categoryId: String!
   description: String!
   name: String!
