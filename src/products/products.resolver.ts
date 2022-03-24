@@ -6,6 +6,10 @@ import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
 import { Role } from 'src/common/enums';
 import { LikesService } from 'src/likes/likes.service';
 import { ProductInput } from './dto/input/create-product.input';
+import { ImageInput } from './dto/input/image.input';
+import { StatusInput } from './dto/input/status-product.input';
+import { UpdateProductInput } from './dto/input/update-product.input';
+import { Image } from './models/image.model';
 import { Product } from './models/product.model';
 import { ProductsService } from './products.service';
 
@@ -26,5 +30,15 @@ export class ProductsResolver {
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productCreate(@Args('productInput') productInput: ProductInput) {
     return await this.productService.create(productInput);
+  }
+
+  @Mutation(() => Product)
+  @Roles(Role.manager)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
+  async productUpdate(
+    @Args('id') id: string,
+    @Args('updateProductInput') updateProductInput: UpdateProductInput,
+  ) {
+    return await this.productService.update(id, updateProductInput);
   }
 }

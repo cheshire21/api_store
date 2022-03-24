@@ -177,7 +177,7 @@ export class ProductsService {
   async update(
     uuid: string,
     updateProductDto: UpdateProductDto,
-  ): Promise<ResponseProductDto> {
+  ): Promise<ResponseProductImgDto> {
     try {
       const { categoryId, ...input } = updateProductDto;
       const oldpProduct = await this.prisma.product.findUnique({
@@ -219,10 +219,48 @@ export class ProductsService {
           ...input,
           ...category,
         },
-        select: this.select,
+        select: {
+          ...this.select,
+          id: true,
+          image: true,
+        },
       });
 
-      return plainToInstance(ResponseProductDto, product);
+      let urls = [];
+
+      if (product.image?.length) {
+        urls = await Promise.all(
+          product.image.map(async (img) => {
+            return {
+              uuid: img.uuid,
+              url: await this.fileService.generatePresignedUrl(
+                `${img.uuid}.${img.type}`,
+              ),
+            };
+          }),
+        );
+      }
+
+      const likes = await this.prisma.like.count({
+        where: {
+          productId: product.id,
+          like: true,
+        },
+      });
+
+      const dislikes = await this.prisma.like.count({
+        where: {
+          productId: product.id,
+          like: true,
+        },
+      });
+
+      return plainToInstance(ResponseProductImgDto, {
+        ...product,
+        likes,
+        dislikes,
+        images: urls,
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
@@ -238,7 +276,7 @@ export class ProductsService {
   async changeStatus(
     uuid: string,
     status: boolean,
-  ): Promise<ResponseProductDto> {
+  ): Promise<ResponseProductImgDto> {
     try {
       const deletedAt = status ? null : new Date();
 
@@ -250,10 +288,48 @@ export class ProductsService {
           status,
           deletedAt,
         },
-        select: this.select,
+        select: {
+          ...this.select,
+          id: true,
+          image: true,
+        },
       });
 
-      return plainToInstance(ResponseProductDto, product);
+      let urls = [];
+
+      if (product.image?.length) {
+        urls = await Promise.all(
+          product.image.map(async (img) => {
+            return {
+              uuid: img.uuid,
+              url: await this.fileService.generatePresignedUrl(
+                `${img.uuid}.${img.type}`,
+              ),
+            };
+          }),
+        );
+      }
+
+      const likes = await this.prisma.like.count({
+        where: {
+          productId: product.id,
+          like: true,
+        },
+      });
+
+      const dislikes = await this.prisma.like.count({
+        where: {
+          productId: product.id,
+          like: true,
+        },
+      });
+
+      return plainToInstance(ResponseProductImgDto, {
+        ...product,
+        likes,
+        dislikes,
+        images: urls,
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
