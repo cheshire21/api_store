@@ -374,6 +374,7 @@ export class ProductsService {
         productId: productId,
         type: createdImage.type,
         url: image,
+        uuid: createdImage.uuid,
       });
     } catch (error) {
       throw error;
