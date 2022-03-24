@@ -41,4 +41,15 @@ export class ProductsResolver {
   ) {
     return await this.productService.update(id, updateProductInput);
   }
+
+  @Mutation(() => Product)
+  @Roles(Role.manager)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
+  async productChangeStatus(
+    @Args('id') id: string,
+    @Args('statusInput') statusInput: StatusInput,
+  ) {
+    const { status } = statusInput;
+    return await this.productService.changeStatus(id, status);
+  }
 }
