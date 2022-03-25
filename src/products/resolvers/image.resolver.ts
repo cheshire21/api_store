@@ -8,6 +8,7 @@ export class ImagesResolver {
   @ResolveField()
   async product(@Parent() image) {
     const { productId } = image;
+
     return await this.productsService.getOne(productId);
   }
 }

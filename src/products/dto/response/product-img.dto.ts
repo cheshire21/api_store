@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { ImageDto } from '../request/image.dto';
+import { ImageDto } from '../response/image.dto';
 import { ResponseProductDto } from './product.dto';
 
 @Exclude()

@@ -24,5 +24,6 @@ import { ProductsService } from './products.service';
     ProductsResolver,
     ImagesResolver,
   ],
+  exports: [ProductsService],
 })
 export class ProductsModule {}

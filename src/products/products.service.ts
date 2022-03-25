@@ -65,6 +65,8 @@ export class ProductsService {
               url: await this.fileService.generatePresignedUrl(
                 `${img.uuid}.${img.type}`,
               ),
+              type: img.type,
+              productId: product.uuid,
             };
           }),
         );
@@ -236,6 +238,8 @@ export class ProductsService {
               url: await this.fileService.generatePresignedUrl(
                 `${img.uuid}.${img.type}`,
               ),
+              type: img.type,
+              productId: product.uuid,
             };
           }),
         );
@@ -305,6 +309,8 @@ export class ProductsService {
               url: await this.fileService.generatePresignedUrl(
                 `${img.uuid}.${img.type}`,
               ),
+              type: img.type,
+              productId: product.uuid,
             };
           }),
         );
