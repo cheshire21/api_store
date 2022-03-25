@@ -171,7 +171,7 @@ export class CartsService {
     }
   }
 
-  async delete(userId: string, productId: string): Promise<void> {
+  async delete(userId: string, productId: string): Promise<Boolean> {
     try {
       const product = await this.prisma.product.findUnique({
         where: {
@@ -216,7 +216,7 @@ export class CartsService {
 
       const totalPrice = user.cart[0].totalPrice - cartItem.totalPrice;
 
-      const [s, d] = await this.prisma.$transaction([
+      await this.prisma.$transaction([
         this.prisma.cart.update({
           where: {
             id: user.cart[0].id,
@@ -234,6 +234,8 @@ export class CartsService {
           },
         }),
       ]);
+
+      return true;
     } catch (error) {
       throw error;
     }
