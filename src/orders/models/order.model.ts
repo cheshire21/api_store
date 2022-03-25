@@ -3,6 +3,9 @@ import { OrderItem } from './order-item.model';
 
 @ObjectType()
 export class Order {
+  @Field()
+  uuid: string;
+
   @Field(() => Float)
   totalPrice: number;
 
