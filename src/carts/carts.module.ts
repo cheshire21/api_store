@@ -6,9 +6,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { CartsController } from './carts.controller';
 import { CartsService } from './carts.service';
 import { CartsResolver } from './carts.resolver';
+import { CartItemsResolver } from './cart-item.resolver';
+import { ProductsService } from 'src/products/products.service';
+import { ProductsModule } from 'src/products/products.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, ProductsModule],
   controllers: [CartsController],
   providers: [
     CartsService,
@@ -16,6 +19,7 @@ import { CartsResolver } from './carts.resolver';
     JwtAuthGuard,
     RolesGuard,
     CartsResolver,
+    CartItemsResolver,
   ],
 })
 export class CartsModule {}
