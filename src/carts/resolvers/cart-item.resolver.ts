@@ -9,7 +9,7 @@ export class CartItemsResolver {
   @ResolveField()
   async product(@Parent() cartItem) {
     const { product } = cartItem;
-    console.log(cartItem);
+
     return this.productsService.getOne(product.uuid);
   }
 }

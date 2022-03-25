@@ -16,6 +16,10 @@ type CartItem {
   unitPrice: Float!
 }
 
+input CartItemDeleteInput {
+  productId: String!
+}
+
 input CartItemInput {
   productId: String!
   quantity: Int!
@@ -52,6 +56,7 @@ type Message {
 
 type Mutation {
   cartItemCreateorUpdate(cartItemInput: CartItemInput!): CartItem!
+  cartItemDelete(cartItemDeleteInput: CartItemDeleteInput!): Message!
   productChangeStatus(id: String!, statusInput: StatusInput!): Product!
   productCreate(productInput: ProductInput!): Product!
   productCreateOrUpdateLike(id: String!, likeInput: LikeInput!): Message!

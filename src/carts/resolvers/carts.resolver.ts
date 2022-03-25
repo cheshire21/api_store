@@ -4,9 +4,11 @@ import { GqlGetUser } from 'src/auth/decorators/gql-get-user.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
+import { Message } from 'src/common/dto/input/message.model';
 import { Role } from 'src/common/enums';
 import { CartsService } from '../carts.service';
 import { CartItemInput } from '../dto/input/create-cart-item.input';
+import { CartItemDeleteInput } from '../dto/input/delete-item.input';
 import { CartItem } from '../models/cart-item.model';
 import { Cart } from '../models/cart.model';
 
@@ -29,5 +31,24 @@ export class CartsResolver {
     @Args('cartItemInput') cartItemInput: CartItemInput,
   ) {
     return await this.cartsService.upsertItem(user.uuid, cartItemInput);
+  }
+  @Mutation(() => Message)
+  @Roles(Role.client)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
+  async cartItemDelete(
+    @GqlGetUser() user,
+    @Args('cartItemDeleteInput') cartItemDeleteInput: CartItemDeleteInput,
+  ) {
+    const itemWasDeleted = await this.cartsService.delete(
+      user.uuid,
+      cartItemDeleteInput.productId,
+    );
+
+    if (itemWasDeleted) {
+      return {
+        message: 'Cart Item was Deleted',
+        time: new Date(),
+      };
+    }
   }
 }

@@ -79,6 +79,6 @@ export class CartsController {
     @Body() deleteCartItemDto: DeleteCartItemDto,
   ): Promise<void> {
     const { productId } = deleteCartItemDto;
-    return await this.cartsService.delete(user.uuid, productId);
+    await this.cartsService.delete(user.uuid, productId);
   }
 }
