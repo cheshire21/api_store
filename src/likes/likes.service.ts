@@ -1,4 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
+import { PrismaErrorEnum } from 'src/common/enums';
 import { PrismaService } from '../prisma/prisma.service';
 import { LikeDto } from '../products/dto/request/like.dto';
 
@@ -59,7 +61,7 @@ export class LikesService {
     }
   }
 
-  async deleteLike(userId: string, productId: string): Promise<void> {
+  async deleteLike(userId: string, productId: string): Promise<Boolean> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { uuid: userId },
@@ -77,7 +79,7 @@ export class LikesService {
       if (!product)
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
-      await this.prisma.like.delete({
+      const like = await this.prisma.like.delete({
         where: {
           userId_productId: {
             userId: user.id,
@@ -85,7 +87,15 @@ export class LikesService {
           },
         },
       });
+
+      return true;
     } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        switch (error.code) {
+          case PrismaErrorEnum.NOT_FOUND:
+            throw new HttpException('Like no found', HttpStatus.NOT_FOUND);
+        }
+      }
       throw error;
     }
   }

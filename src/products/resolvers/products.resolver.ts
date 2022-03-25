@@ -81,7 +81,21 @@ export class ProductsResolver {
     );
     if (likeExist) {
       return {
-        message: 'Like was Created of Updated',
+        message: 'Like was Created or Updated',
+        time: new Date(),
+      };
+    }
+  }
+
+  @Mutation(() => Message)
+  @Roles(Role.manager, Role.client)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
+  async productDeleteLike(@GqlGetUser() user, @Args('id') id: string) {
+    const likeWasDeleted = await this.likesService.deleteLike(user.uuid, id);
+
+    if (likeWasDeleted) {
+      return {
+        message: 'Like was Deleted',
         time: new Date(),
       };
     }
