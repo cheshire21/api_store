@@ -57,12 +57,28 @@ type Message {
 type Mutation {
   cartItemCreateorUpdate(cartItemInput: CartItemInput!): CartItem!
   cartItemDelete(cartItemDeleteInput: CartItemDeleteInput!): Message!
+  orderCreate: Order!
   productChangeStatus(id: String!, statusInput: StatusInput!): Product!
   productCreate(productInput: ProductInput!): Product!
   productCreateOrUpdateLike(id: String!, likeInput: LikeInput!): Message!
   productDeleteLike(id: String!): Message!
   productUpdate(id: String!, updateProductInput: UpdateProductInput!): Product!
   productUploadImage(id: String!, imageInput: ImageInput!): Image!
+}
+
+type Order {
+  createdAt: DateTime!
+  items: [OrderItem]!
+  totalPrice: Float!
+  updatedAt: DateTime!
+  uuid: String!
+}
+
+type OrderItem {
+  product: Product!
+  quantity: Int!
+  totalPrice: Float!
+  unitPrice: Float!
 }
 
 type Product {
