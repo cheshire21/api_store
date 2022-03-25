@@ -1,5 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
@@ -60,9 +60,6 @@ export class ProductsResolver {
     @Args('id') id: string,
     @Args('imageInput') imageInput: ImageInput,
   ) {
-    console.log(id);
-    console.log(imageInput);
-
     return await this.productService.uploadImage(id, imageInput);
   }
 }

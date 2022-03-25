@@ -2,6 +2,20 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Cart {
+  createdAt: DateTime!
+  items: [CartItem]!
+  totalPrice: Float!
+  updatedAt: DateTime!
+}
+
+type CartItem {
+  product: Product!
+  quantity: Int!
+  totalPrice: Float!
+  unitPrice: Float!
+}
+
 type Category {
   name: String!
   uuid: String!
@@ -54,6 +68,7 @@ input ProductInput {
 }
 
 type Query {
+  cartGet: Cart!
   productGet(id: String!): Product!
 }
 

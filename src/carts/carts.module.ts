@@ -5,10 +5,17 @@ import { RolesGuard } from 'src/auth/guards/role.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CartsController } from './carts.controller';
 import { CartsService } from './carts.service';
+import { CartsResolver } from './carts.resolver';
 
 @Module({
   imports: [AuthModule],
   controllers: [CartsController],
-  providers: [CartsService, PrismaService, JwtAuthGuard, RolesGuard],
+  providers: [
+    CartsService,
+    PrismaService,
+    JwtAuthGuard,
+    RolesGuard,
+    CartsResolver,
+  ],
 })
 export class CartsModule {}
