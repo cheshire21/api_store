@@ -81,7 +81,7 @@ export class ProductsService {
       const dislikes = await this.prisma.like.count({
         where: {
           productId: product.id,
-          like: true,
+          like: false,
         },
       });
       return plainToInstance(ResponseProductImgDto, {
@@ -255,7 +255,7 @@ export class ProductsService {
       const dislikes = await this.prisma.like.count({
         where: {
           productId: product.id,
-          like: true,
+          like: false,
         },
       });
 
@@ -326,7 +326,7 @@ export class ProductsService {
       const dislikes = await this.prisma.like.count({
         where: {
           productId: product.id,
-          like: true,
+          like: false,
         },
       });
 

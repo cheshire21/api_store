@@ -41,10 +41,20 @@ input ImageInput {
   type: String!
 }
 
+input LikeInput {
+  like: Boolean!
+}
+
+type Message {
+  message: String!
+  time: DateTime!
+}
+
 type Mutation {
   cartItemCreateorUpdate(cartItemInput: CartItemInput!): CartItem!
   productChangeStatus(id: String!, statusInput: StatusInput!): Product!
   productCreate(productInput: ProductInput!): Product!
+  productCreateOrUpdateLike(id: String!, likeInput: LikeInput!): Message!
   productUpdate(id: String!, updateProductInput: UpdateProductInput!): Product!
   productUploadImage(id: String!, imageInput: ImageInput!): Image!
 }

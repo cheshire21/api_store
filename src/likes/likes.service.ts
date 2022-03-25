@@ -10,7 +10,7 @@ export class LikesService {
     userId: string,
     productId: string,
     likeDto: LikeDto,
-  ): Promise<void> {
+  ): Promise<Boolean> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { uuid: userId },
@@ -52,6 +52,8 @@ export class LikesService {
           },
         },
       });
+
+      return true;
     } catch (error) {
       throw error;
     }

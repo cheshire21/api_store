@@ -1,12 +1,15 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { GqlGetUser } from 'src/auth/decorators/gql-get-user.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
+import { Message } from 'src/common/dto/input/message.model';
 import { Role } from 'src/common/enums';
 import { LikesService } from 'src/likes/likes.service';
 import { ProductInput } from '../dto/input/create-product.input';
 import { ImageInput } from '../dto/input/image.input';
+import { LikeInput } from '../dto/input/like.dto';
 import { StatusInput } from '../dto/input/status-product.input';
 import { UpdateProductInput } from '../dto/input/update-product.input';
 import { Image } from '../models/image.model';
@@ -61,5 +64,26 @@ export class ProductsResolver {
     @Args('imageInput') imageInput: ImageInput,
   ) {
     return await this.productService.uploadImage(id, imageInput);
+  }
+
+  @Mutation(() => Message)
+  @Roles(Role.manager, Role.client)
+  @UseGuards(GqlJwtGuard, GqlRolesGuard)
+  async productCreateOrUpdateLike(
+    @GqlGetUser() user,
+    @Args('id') id: string,
+    @Args('likeInput') likeInput: LikeInput,
+  ) {
+    const likeExist = await this.likesService.upsertLike(
+      user.uuid,
+      id,
+      likeInput,
+    );
+    if (likeExist) {
+      return {
+        message: 'Like was Created of Updated',
+        time: new Date(),
+      };
+    }
   }
 }
