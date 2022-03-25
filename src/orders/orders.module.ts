@@ -7,6 +7,7 @@ import { ProductsModule } from 'src/products/products.module';
 import { OrdersController } from './orders.controller';
 import { OrdersResolver } from './resolvers/orders.resolver';
 import { OrdersService } from './orders.service';
+import { OrderItemResolver } from './resolvers/order-item.resolver';
 
 @Module({
   imports: [AuthModule, ProductsModule],
@@ -17,6 +18,7 @@ import { OrdersService } from './orders.service';
     JwtAuthGuard,
     RolesGuard,
     OrdersResolver,
+    OrderItemResolver,
   ],
 })
 export class OrdersModule {}
