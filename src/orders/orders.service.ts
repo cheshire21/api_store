@@ -5,6 +5,7 @@ import { Role } from '../common/enums';
 import { PaginationOptionsDto } from '../common/dto/request/pagination-option.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
+import { ResponseOrderDto } from './dto/response/order.dto';
 
 @Injectable()
 export class OrdersService {
@@ -119,7 +120,7 @@ export class OrdersService {
     }
   }
 
-  async create(userId: string) {
+  async create(userId: string): Promise<ResponseOrderDto> {
     try {
       const cart = await this.prisma.cart.findFirst({
         where: {
@@ -186,13 +187,31 @@ export class OrdersService {
           };
         };
 
-      await this.prisma.$transaction([
+      const [order, _, __] = await this.prisma.$transaction([
         this.prisma.order.create({
           data: {
             userId: cart.userId,
             totalPrice: cart.totalPrice,
             orderItem: {
               createMany: await records(),
+            },
+          },
+          select: {
+            uuid: true,
+            totalPrice: true,
+            createdAt: true,
+            orderItem: {
+              select: {
+                quantity: true,
+                unitPrice: true,
+                totalPrice: true,
+                product: {
+                  select: {
+                    uuid: true,
+                    name: true,
+                  },
+                },
+              },
             },
           },
         }),
@@ -212,6 +231,11 @@ export class OrdersService {
           },
         }),
       ]);
+      const { orderItem, ...input } = order;
+      return plainToInstance(ResponseOrderDto, {
+        ...input,
+        items: orderItem,
+      });
     } catch (error) {
       throw error;
     }

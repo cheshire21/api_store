@@ -24,17 +24,17 @@ import { RolesGuard } from 'src/auth/guards/role.guard';
 import { PaginationOptionsDto } from 'src/common/dto/request/pagination-option.dto';
 import { Role } from '../common/enums';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
+import { ResponseOrderDto } from './dto/response/order.dto';
 import { OrdersService } from './orders.service';
 
 @ApiTags('orders')
 @Controller('orders')
-@Roles(Role.client)
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class OrdersController {
   constructor(private ordersService: OrdersService) {}
 
   @Get()
-  @Roles(Role.manager)
+  @Roles(Role.manager, Role.client)
   @ApiResponse({
     status: 200,
     description: "gets a list of client's or clients' orders",
@@ -56,9 +56,9 @@ export class OrdersController {
   }
 
   @Post()
-  @HttpCode(204)
+  @Roles(Role.manager, Role.client)
   @ApiResponse({
-    status: 204,
+    status: 201,
     description: "create a order with the cart's items",
   })
   @ApiBadRequestResponse({
@@ -66,7 +66,7 @@ export class OrdersController {
   })
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   @ApiBearerAuth()
-  async createOrder(@GetUser() user: User): Promise<void> {
+  async createOrder(@GetUser() user: User): Promise<ResponseOrderDto> {
     return await this.ordersService.create(user.uuid);
   }
 }
