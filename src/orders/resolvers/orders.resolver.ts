@@ -6,8 +6,8 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
 import { Role } from 'src/common/enums';
 import { ProductsService } from 'src/products/products.service';
-import { Order } from './models/order.model';
-import { OrdersService } from './orders.service';
+import { Order } from '../models/order.model';
+import { OrdersService } from '../orders.service';
 
 @Resolver(() => Order)
 export class OrdersResolver {

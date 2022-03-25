@@ -5,7 +5,7 @@ import { RolesGuard } from 'src/auth/guards/role.guard';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductsModule } from 'src/products/products.module';
 import { OrdersController } from './orders.controller';
-import { OrdersResolver } from './orders.resolver';
+import { OrdersResolver } from './resolvers/orders.resolver';
 import { OrdersService } from './orders.service';
 
 @Module({
