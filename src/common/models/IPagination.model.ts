@@ -11,7 +11,6 @@ interface IPageInfo {
 }
 
 interface IEdgeType<T> {
-  cursor: string;
   node: T;
 }
 
@@ -23,9 +22,6 @@ export interface IPaginatedType<T> {
 export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-    @Field((type) => String)
-    cursor: string;
-
     @Field((type) => classRef)
     node: T;
   }

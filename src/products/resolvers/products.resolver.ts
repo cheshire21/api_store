@@ -34,7 +34,24 @@ export class ProductsResolver {
   async productGetMany(
     @Args('paginationOptionsProduct')
     paginationOptionsProduct: PaginationOptionsProductInput,
-  ) {}
+  ) {
+    const { products, pagination } = await this.productService.getMany(
+      paginationOptionsProduct,
+    );
+
+    const data = products.map((product) => {
+      return {
+        node: {
+          ...product,
+        },
+      };
+    });
+
+    return {
+      edges: data,
+      pageInfo: pagination,
+    };
+  }
 
   @Mutation(() => Product)
   @Roles(Role.manager)
