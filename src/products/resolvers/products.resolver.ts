@@ -10,10 +10,12 @@ import { LikesService } from 'src/likes/likes.service';
 import { ProductInput } from '../dto/input/create-product.input';
 import { ImageInput } from '../dto/input/image.input';
 import { LikeInput } from '../dto/input/like.dto';
+import { PaginationOptionsProductInput } from '../dto/input/pagination-product.input';
 import { StatusInput } from '../dto/input/status-product.input';
 import { UpdateProductInput } from '../dto/input/update-product.input';
 import { Image } from '../models/image.model';
 import { Product } from '../models/product.model';
+import { PaginatedProduct } from '../models/products.model';
 import { ProductsService } from '../products.service';
 
 @Resolver(() => Product)
@@ -24,9 +26,15 @@ export class ProductsResolver {
   ) {}
 
   @Query(() => Product)
-  async productGet(@Args('id') id: string) {
+  async productGetOne(@Args('id') id: string) {
     return await this.productService.getOne(id);
   }
+
+  @Query(() => PaginatedProduct)
+  async productGetMany(
+    @Args('paginationOptionsProduct')
+    paginationOptionsProduct: PaginationOptionsProductInput,
+  ) {}
 
   @Mutation(() => Product)
   @Roles(Role.manager)

@@ -81,6 +81,26 @@ type OrderItem {
   unitPrice: Float!
 }
 
+type PageInfo {
+  currentPage: Int!
+  itemsPerPage: Int!
+  nextPage: Int
+  previousPage: Int
+  totalItems: Int!
+  totalPages: Int!
+}
+
+type PaginatedProduct {
+  edges: [ProductEdge]!
+  pageInfo: PageInfo!
+}
+
+input PaginationOptionsProductInput {
+  category: String = null
+  page: Float = 1
+  take: Float = 10
+}
+
 type Product {
   category: Category!
   createdAt: DateTime!
@@ -97,6 +117,11 @@ type Product {
   uuid: String!
 }
 
+type ProductEdge {
+  cursor: String!
+  node: Product!
+}
+
 input ProductInput {
   categoryId: String!
   description: String!
@@ -107,7 +132,8 @@ input ProductInput {
 
 type Query {
   cartGet: Cart!
-  productGet(id: String!): Product!
+  productGetMany(paginationOptionsProduct: PaginationOptionsProductInput!): PaginatedProduct!
+  productGetOne(id: String!): Product!
 }
 
 input StatusInput {
