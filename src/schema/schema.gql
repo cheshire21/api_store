@@ -63,7 +63,7 @@ type Mutation {
   productCreateOrUpdateLike(id: String!, likeInput: LikeInput!): Message!
   productDeleteLike(id: String!): Message!
   productUpdate(id: String!, updateProductInput: UpdateProductInput!): Product!
-  productUploadImage(id: String!, imageInput: ImageInput!): Image!
+  productUploadImage(id: String!, imageInput: ImageInput!): UploadImage!
 }
 
 type Order {
@@ -145,4 +145,10 @@ input UpdateProductInput {
   name: String
   price: Float
   stock: Int
+}
+
+type UploadImage {
+  product: Product!
+  url: String!
+  uuid: String!
 }

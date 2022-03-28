@@ -16,6 +16,7 @@ import { UpdateProductInput } from '../dto/input/update-product.input';
 import { Image } from '../models/image.model';
 import { Product } from '../models/product.model';
 import { PaginatedProduct } from '../models/products.model';
+import { UploadImage } from '../models/upload-image.model';
 import { ProductsService } from '../products.service';
 
 @Resolver(() => Product)
@@ -38,6 +39,7 @@ export class ProductsResolver {
     const { products, pagination } = await this.productService.getMany(
       paginationOptionsProduct,
     );
+    console.log(products);
 
     const data = products.map((product) => {
       return {
@@ -81,7 +83,7 @@ export class ProductsResolver {
     return await this.productService.changeStatus(id, status);
   }
 
-  @Mutation(() => Image)
+  @Mutation(() => UploadImage)
   @Roles(Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productUploadImage(

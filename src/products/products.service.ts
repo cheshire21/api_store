@@ -21,6 +21,8 @@ export class ProductsService {
   ) {}
 
   private select = {
+    id: true,
+    image: true,
     uuid: true,
     name: true,
     description: true,
@@ -44,11 +46,7 @@ export class ProductsService {
         where: {
           uuid,
         },
-        select: {
-          id: true,
-          ...this.select,
-          image: true,
-        },
+        select: this.select,
         rejectOnNotFound: false,
       });
 
@@ -124,11 +122,53 @@ export class ProductsService {
       select: this.select,
     });
 
+    const data = await Promise.all(
+      products.map(async (product) => {
+        let urls = [];
+
+        if (product.image?.length) {
+          urls = await Promise.all(
+            product.image.map(async (img) => {
+              return {
+                uuid: img.uuid,
+                url: await this.fileService.generatePresignedUrl(
+                  `${img.uuid}.${img.type}`,
+                ),
+                type: img.type,
+                productId: product.uuid,
+              };
+            }),
+          );
+        }
+
+        const likes = await this.prisma.like.count({
+          where: {
+            productId: product.id,
+            like: true,
+          },
+        });
+
+        const dislikes = await this.prisma.like.count({
+          where: {
+            productId: product.id,
+            like: false,
+          },
+        });
+
+        return {
+          ...product,
+          likes,
+          dislikes,
+          images: urls,
+        };
+      }),
+    );
+
     const nextPage = page === totalPages ? null : page + 1;
     const previousPage = page === 1 ? null : page - 1;
 
     return plainToInstance(ListProductsDto, {
-      products,
+      products: plainToInstance(ResponseProductImgDto, data),
       pagination: {
         totalPages,
         itemsPerPage: take,
@@ -221,11 +261,7 @@ export class ProductsService {
           ...input,
           ...category,
         },
-        select: {
-          ...this.select,
-          id: true,
-          image: true,
-        },
+        select: this.select,
       });
 
       let urls = [];
@@ -292,11 +328,7 @@ export class ProductsService {
           status,
           deletedAt,
         },
-        select: {
-          ...this.select,
-          id: true,
-          image: true,
-        },
+        select: this.select,
       });
 
       let urls = [];
