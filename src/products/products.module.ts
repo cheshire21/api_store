@@ -10,6 +10,7 @@ import { ImagesResolver } from './resolvers/image.resolver';
 import { ProductsController } from './products.controller';
 import { ProductsResolver } from './resolvers/products.resolver';
 import { ProductsService } from './products.service';
+import { UploadImagesResolver } from './resolvers/upload-image.resolver';
 
 @Module({
   imports: [AuthModule, ConfigModule],
@@ -23,6 +24,7 @@ import { ProductsService } from './products.service';
     RolesGuard,
     ProductsResolver,
     ImagesResolver,
+    UploadImagesResolver,
   ],
   exports: [ProductsService],
 })
