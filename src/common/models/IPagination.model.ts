@@ -1,5 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Type } from '@nestjs/common';
+import { PageInfo } from './page-info.model';
 
 interface IPageInfo {
   totalPages: number;
@@ -24,22 +25,6 @@ export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   abstract class EdgeType {
     @Field((type) => classRef)
     node: T;
-  }
-
-  @ObjectType()
-  abstract class PageInfo {
-    @Field(() => Int)
-    totalPages: number;
-    @Field(() => Int)
-    itemsPerPage: number;
-    @Field(() => Int)
-    totalItems: number;
-    @Field(() => Int)
-    currentPage: number;
-    @Field(() => Int)
-    nextPage?: number;
-    @Field(() => Int)
-    previousPage?: number;
   }
 
   @ObjectType({ isAbstract: true })

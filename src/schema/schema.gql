@@ -74,6 +74,10 @@ type Order {
   uuid: String!
 }
 
+type OrderEdge {
+  node: Order!
+}
+
 type OrderItem {
   product: Product!
   quantity: Int!
@@ -90,9 +94,19 @@ type PageInfo {
   totalPages: Int!
 }
 
+type PaginatedOrder {
+  edges: [OrderEdge]!
+  pageInfo: PageInfo!
+}
+
 type PaginatedProduct {
   edges: [ProductEdge]!
   pageInfo: PageInfo!
+}
+
+input PaginationOptionsInput {
+  page: Float = 1
+  take: Float = 10
 }
 
 input PaginationOptionsProductInput {
@@ -131,6 +145,7 @@ input ProductInput {
 
 type Query {
   cartGet: Cart!
+  orderGetMany(paginationOptionsOrder: PaginationOptionsInput!): PaginatedOrder!
   productGetMany(paginationOptionsProduct: PaginationOptionsProductInput!): PaginatedProduct!
   productGetOne(id: String!): Product!
 }
