@@ -63,7 +63,7 @@ describe('LikesService', () => {
         { like: datatype.boolean() },
       );
 
-      expect(result).toBeUndefined();
+      expect(result).toBe(true);
     });
 
     it('should update a like', async () => {
@@ -87,7 +87,7 @@ describe('LikesService', () => {
         { like: datatype.boolean() },
       );
 
-      expect(result).toBeUndefined();
+      expect(result).toBe(true);
     });
 
     it("should return a error if user doesn't exist", async () => {
@@ -129,7 +129,15 @@ describe('LikesService', () => {
 
       expect(
         await likesService.deleteLike(createduser.uuid, product.uuid),
-      ).toBeUndefined();
+      ).toBe(true);
+    });
+
+    it('should return a error if like doesnt exist', async () => {
+      await expect(
+        likesService.deleteLike(createduser.uuid, product.uuid),
+      ).rejects.toThrow(
+        new HttpException('Like no found', HttpStatus.NOT_FOUND),
+      );
     });
 
     it('should return a error if the product doesnt exist', async () => {
