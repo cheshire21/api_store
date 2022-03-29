@@ -3,12 +3,12 @@ import { Product } from './product.model';
 
 @ObjectType()
 export class UploadImage {
-  @Field()
+  @Field({ description: 'Image id' })
   uuid: string;
 
-  @Field()
+  @Field({ description: 'Pre signed url to upload image' })
   url: string;
 
-  @Field((type) => Product)
+  @Field((type) => Product, { description: 'Product to which image belongs' })
   product: Product;
 }

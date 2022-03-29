@@ -26,12 +26,14 @@ export class ProductsResolver {
     private likesService: LikesService,
   ) {}
 
-  @Query(() => Product)
+  @Query(() => Product, { description: 'query that return a specific product' })
   async productGetOne(@Args('id') id: string) {
     return await this.productService.getOne(id);
   }
 
-  @Query(() => PaginatedProduct)
+  @Query(() => PaginatedProduct, {
+    description: 'query that return a list of products',
+  })
   async productGetMany(
     @Args('paginationOptionsProduct')
     paginationOptionsProduct: PaginationOptionsProductInput,
@@ -54,14 +56,14 @@ export class ProductsResolver {
     };
   }
 
-  @Mutation(() => Product)
+  @Mutation(() => Product, { description: 'mutation that create a product' })
   @Roles(Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productCreate(@Args('productInput') productInput: ProductInput) {
     return await this.productService.create(productInput);
   }
 
-  @Mutation(() => Product)
+  @Mutation(() => Product, { description: 'mutation that update a product' })
   @Roles(Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productUpdate(
@@ -71,7 +73,9 @@ export class ProductsResolver {
     return await this.productService.update(id, updateProductInput);
   }
 
-  @Mutation(() => Product)
+  @Mutation(() => Product, {
+    description: 'mutation that change a product status',
+  })
   @Roles(Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productChangeStatus(
@@ -82,7 +86,10 @@ export class ProductsResolver {
     return await this.productService.changeStatus(id, status);
   }
 
-  @Mutation(() => UploadImage)
+  @Mutation(() => UploadImage, {
+    description:
+      'mutation that create a presigne url and return a url to upload image',
+  })
   @Roles(Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productUploadImage(
@@ -92,7 +99,9 @@ export class ProductsResolver {
     return await this.productService.uploadImage(id, imageInput);
   }
 
-  @Mutation(() => Message)
+  @Mutation(() => Message, {
+    description: 'mutation that create or update a like in a product',
+  })
   @Roles(Role.manager, Role.client)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productCreateOrUpdateLike(
@@ -113,7 +122,7 @@ export class ProductsResolver {
     }
   }
 
-  @Mutation(() => Message)
+  @Mutation(() => Message, { description: 'mutation that delete a like' })
   @Roles(Role.manager, Role.client)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async productDeleteLike(@GqlGetUser() user, @Args('id') id: string) {

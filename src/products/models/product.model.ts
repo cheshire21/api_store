@@ -4,44 +4,45 @@ import { Image } from './image.model';
 
 @ObjectType()
 export class Product {
-  @Field()
+  @Field({ description: 'Product uuid' })
   uuid: string;
 
-  @Field()
+  @Field({ description: "Product's name" })
   name: string;
 
-  @Field()
+  @Field({ description: "Product's description" })
   description: string;
 
-  @Field(() => Float)
+  @Field(() => Float, { description: "Product's price" })
   price: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { description: "Product's stock" })
   stock: number;
 
-  @Field(() => Category)
+  @Field(() => Category, { description: "Product's category" })
   category: Category;
 
-  @Field(() => Int)
+  @Field(() => Int, { description: "Product's likes quantity" })
   likes: number;
 
-  @Field(() => Int)
+  @Field(() => Int, { description: "Product's dislikes quantity" })
   dislikes: number;
 
   @Field(() => [Image], {
     nullable: 'items',
+    description: "Product's imagess",
   })
   images: Image[];
 
-  @Field()
+  @Field({ description: "Product's status" })
   status: boolean;
 
-  @Field({ nullable: true })
+  @Field({ nullable: true, description: "Prduct's deleted date" })
   deletedAt: Date;
 
-  @Field()
+  @Field({ description: "Product's updated date " })
   updatedAt: Date;
 
-  @Field()
+  @Field({ description: "Product's created date " })
   createdAt: Date;
 }

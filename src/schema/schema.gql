@@ -3,30 +3,57 @@
 # ------------------------------------------------------
 
 type Cart {
+  """Cart's created date"""
   createdAt: DateTime!
+
+  """Cart items"""
   items: [CartItem]!
+
+  """Cart's total price"""
   totalPrice: Float!
+
+  """Cart's updated date"""
   updatedAt: DateTime!
 }
 
 type CartItem {
+  """Car item's Product information"""
   product: Product!
+
+  """Car item's quantity"""
   quantity: Int!
+
+  """Car item's total price"""
   totalPrice: Float!
+
+  """Car item's unit price"""
   unitPrice: Float!
 }
 
+"""
+Cart Item Delete Input is a input type that has a product id to delete in cart
+"""
 input CartItemDeleteInput {
+  """product id"""
   productId: String!
 }
 
+"""
+Car item input is a input type that has information to create or update a cart item
+"""
 input CartItemInput {
+  """product id that user add or update in cart"""
   productId: String!
+
+  """quantity of product that user add or update"""
   quantity: Int!
 }
 
 type Category {
+  """Category name"""
   name: String!
+
+  """Category id"""
   uuid: String!
 }
 
@@ -36,143 +63,287 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 scalar DateTime
 
 type Image {
+  """Product to which the image belongs"""
   product: Product!
+
+  """Image's url"""
   url: String!
+
+  """Image id"""
   uuid: String!
 }
 
+"""Image Input is input type to capture image type"""
 input ImageInput {
+  """define the image format"""
   type: String!
 }
 
+"""
+Like Input is input type that capture user like to create or update like
+"""
 input LikeInput {
   like: Boolean!
 }
 
+"""
+Message is a object type that is used to send a message about created updated or deleted like or deleted cart item
+"""
 type Message {
+  """message content"""
   message: String!
+
+  """datetime of current action"""
   time: DateTime!
 }
 
 type Mutation {
+  """mutation that create or update a item in cart"""
   cartItemCreateorUpdate(cartItemInput: CartItemInput!): CartItem!
+
+  """mutation that delete a item in cart"""
   cartItemDelete(cartItemDeleteInput: CartItemDeleteInput!): Message!
+
+  """mutation that create a order  """
   orderCreate: Order!
+
+  """mutation that change a product status"""
   productChangeStatus(id: String!, statusInput: StatusInput!): Product!
+
+  """mutation that create a product"""
   productCreate(productInput: ProductInput!): Product!
+
+  """mutation that create or update a like in a product"""
   productCreateOrUpdateLike(id: String!, likeInput: LikeInput!): Message!
+
+  """mutation that delete a like"""
   productDeleteLike(id: String!): Message!
+
+  """mutation that update a product"""
   productUpdate(id: String!, updateProductInput: UpdateProductInput!): Product!
+
+  """mutation that create a presigne url and return a url to upload image"""
   productUploadImage(id: String!, imageInput: ImageInput!): UploadImage!
 }
 
 type Order {
-  client: User!
+  client: User
+
+  """Order's created date"""
   createdAt: DateTime!
+
+  """Order's items"""
   items: [OrderItem]!
   totalPrice: Float!
+
+  """Order's updated date"""
   updatedAt: DateTime!
+
+  """Order id"""
   uuid: String!
 }
 
 type OrderEdge {
+  """Order infomation"""
   node: Order!
 }
 
 type OrderItem {
+  """Product information"""
   product: Product!
+
+  """Order item's quantity"""
   quantity: Int!
+
+  """Order item's total price"""
   totalPrice: Float!
+
+  """Product unit price"""
   unitPrice: Float!
 }
 
 type PageInfo {
+  """current page"""
   currentPage: Int!
+
+  """nodes per page"""
   itemsPerPage: Int!
+
+  """next page"""
   nextPage: Int
+
+  """previous page"""
   previousPage: Int
+
+  """total records"""
   totalItems: Int!
+
+  """total pages"""
   totalPages: Int!
 }
 
 type PaginatedOrder {
   edges: [OrderEdge]!
+
+  """pagination info"""
   pageInfo: PageInfo!
 }
 
 type PaginatedProduct {
   edges: [ProductEdge]!
+
+  """pagination info"""
   pageInfo: PageInfo!
 }
 
+"""
+Pagination Options Input is input type that capture take and page of pagination
+"""
 input PaginationOptionsInput {
   page: Float = 1
   take: Float = 10
 }
 
+"""
+Pagination Options Input is input type that capture pagination options(take and page) and category string to search products with similar category name
+"""
 input PaginationOptionsProductInput {
+  """string to search product that belong to category with similar name"""
   category: String = null
   page: Float = 1
   take: Float = 10
 }
 
 type Product {
+  """Product's category"""
   category: Category!
+
+  """Product's created date """
   createdAt: DateTime!
+
+  """Prduct's deleted date"""
   deletedAt: DateTime
+
+  """Product's description"""
   description: String!
+
+  """Product's dislikes quantity"""
   dislikes: Int!
+
+  """Product's imagess"""
   images: [Image]!
+
+  """Product's likes quantity"""
   likes: Int!
+
+  """Product's name"""
   name: String!
+
+  """Product's price"""
   price: Float!
+
+  """Product's status"""
   status: Boolean!
+
+  """Product's stock"""
   stock: Int!
+
+  """Product's updated date """
   updatedAt: DateTime!
+
+  """Product uuid"""
   uuid: String!
 }
 
 type ProductEdge {
+  """Product infomation"""
   node: Product!
 }
 
+"""
+Product Input is a input type that capture product information necesary to create a product
+"""
 input ProductInput {
+  """Product's category id"""
   categoryId: String!
+
+  """Product's description"""
   description: String!
+
+  """Product's name"""
   name: String!
+
+  """Product's price"""
   price: Float!
+
+  """Product's stock"""
   stock: Int!
 }
 
 type Query {
+  """query that return list of items"""
   cartGet: Cart!
+
+  """query that return a list of orders"""
   orderGetMany(paginationOptionsOrder: PaginationOptionsInput!): PaginatedOrder!
+
+  """query that return a list of products"""
   productGetMany(paginationOptionsProduct: PaginationOptionsProductInput!): PaginatedProduct!
+
+  """query that return a specific product"""
   productGetOne(id: String!): Product!
 }
 
+"""
+Status Input is a input type that capture status value to change status
+"""
 input StatusInput {
+  """status value"""
   status: Boolean!
 }
 
+"""Update Product Input is a input type that """
 input UpdateProductInput {
+  """Category id of product to update"""
   categoryId: String
+
+  """Description of product to update"""
   description: String
+
+  """Name of product to update"""
   name: String
+
+  """Price of product to update"""
   price: Float
+
+  """Stock of product to update"""
   stock: Int
 }
 
 type UploadImage {
+  """Product to which image belongs"""
   product: Product!
+
+  """Pre signed url to upload image"""
   url: String!
+
+  """Image id"""
   uuid: String!
 }
 
 type User {
+  """client's email"""
   email: String!
+
+  """client's first name"""
   firstName: String!
+
+  """client's last name"""
   lastName: String!
+
+  """client's user name"""
   userName: String!
+
+  """client id"""
   uuid: String!
 }
