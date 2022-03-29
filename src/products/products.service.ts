@@ -69,6 +69,7 @@ export class ProductsService {
           }),
         );
       }
+
       const likes = await this.prisma.like.count({
         where: {
           productId: product.id,
