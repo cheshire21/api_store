@@ -39,7 +39,6 @@ export class ProductsResolver {
     const { products, pagination } = await this.productService.getMany(
       paginationOptionsProduct,
     );
-    console.log(products);
 
     const data = products.map((product) => {
       return {
