@@ -6,5 +6,5 @@ import { ResponseOrderDto } from './order.dto';
 export class ClientOrderDto extends PartialType(ResponseOrderDto) {
   @ApiProperty()
   @Expose()
-  user: InfoUserDto;
+  client: InfoUserDto;
 }

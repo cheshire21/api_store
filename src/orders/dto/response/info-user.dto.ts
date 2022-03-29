@@ -23,6 +23,12 @@ export class InfoUserDto {
   lastName: string;
 
   @ApiProperty({
+    example: internet.userName(),
+  })
+  @Expose()
+  userName: string;
+
+  @ApiProperty({
     example: internet.email(),
   })
   @Expose()
