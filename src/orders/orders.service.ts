@@ -6,6 +6,8 @@ import { PaginationOptionsDto } from '../common/dto/request/pagination-option.dt
 import { PrismaService } from '../prisma/prisma.service';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
 import { ResponseOrderDto } from './dto/response/order.dto';
+import { ClientOrderDto } from './dto/response/client-order.dto';
+import { ItemDto } from 'src/products/dto/response/item.dto';
 
 @Injectable()
 export class OrdersService {
@@ -35,20 +37,19 @@ export class OrdersService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
       let where = {};
-      let orderselect = {};
-
-      if (user.role === Role.manager) {
-        orderselect = {
-          user: {
-            select: {
-              uuid: true,
-              firstName: true,
-              lastName: true,
-              email: true,
-            },
+      let orderselect = {
+        user: {
+          select: {
+            uuid: true,
+            firstName: true,
+            lastName: true,
+            userName: true,
+            email: true,
           },
-        };
-      } else {
+        },
+      };
+
+      if (user.role !== Role.manager) {
         where = {
           user: {
             id: foundUser.id,
@@ -101,11 +102,23 @@ export class OrdersService {
         },
       });
 
+      const dataOrders = orders.map((order) => {
+        const { orderItem, user, ...data } = order;
+        return {
+          ...data,
+          client: user,
+          items: plainToInstance(ItemDto, orderItem),
+        };
+      });
+
       const nextPage = page === totalPages ? null : page + 1;
       const previousPage = page === 1 ? null : page - 1;
 
       return plainToInstance(ListOrdersDto, {
-        orders,
+        orders:
+          user.role === Role.manager
+            ? plainToInstance(ClientOrderDto, dataOrders)
+            : plainToInstance(ResponseOrderDto, dataOrders),
         pagination: {
           totalPages,
           itemsPerPage: take,
