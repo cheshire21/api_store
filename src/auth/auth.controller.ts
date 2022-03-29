@@ -7,6 +7,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
+import { ChangePasswordDto } from './dto/request/change-password.dto';
+import { ForgotPasswordDto } from './dto/request/forgot-password.dto';
 import { LoginDto } from './dto/request/login.dto';
 import { SignUpDto } from './dto/request/sign-up.dto';
 import { TokenDto } from './dto/response/token.dto';
@@ -51,5 +53,16 @@ export class AuthController {
   @ApiInternalServerErrorResponse()
   async logout(@Query('token') token: string): Promise<void> {
     return await this.authService.logout(token);
+  }
+
+  @Post('/forgot-password')
+  @HttpCode(204)
+  async forgotPassword(@Body() data: ForgotPasswordDto) {
+    await this.authService.sendEmailChangePassword(data);
+  }
+
+  @Post('/change-password')
+  async changePassword(@Body() data: ChangePasswordDto) {
+    await this.authService.changePassword(data);
   }
 }

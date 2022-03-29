@@ -8,6 +8,10 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PrismaErrorEnum } from '../common/enums';
 import { Prisma, Token } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+import { SendgridService } from 'src/send-emails/send-emails.service';
+import { ForgotPasswordDto } from './dto/request/forgot-password.dto';
+import { ConfigService } from '@nestjs/config';
+import { ChangePasswordDto } from './dto/request/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -15,6 +19,8 @@ export class AuthService {
     private prisma: PrismaService,
     private jwtService: JwtService,
     private userService: UsersService,
+    private sendgridService: SendgridService,
+    private configService: ConfigService,
   ) {}
 
   async signup(signUpDto: SignUpDto): Promise<TokenDto> {
@@ -88,5 +94,39 @@ export class AuthService {
     } catch (e) {
       throw new HttpException('Token is invalid', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async sendEmailChangePassword({ email }: ForgotPasswordDto) {
+    try {
+      const user = await this.userService.findOneByEmail(email);
+
+      if (!user) {
+        throw new HttpException('User no found', HttpStatus.NOT_FOUND);
+      }
+
+      const { accessToken } = this.generateToken(user.uuid);
+
+      const mail = {
+        to: email,
+        subject: 'Change your password',
+        text: 'This email was sent to change your password',
+        html: `<strong>${accessToken}</strong>`,
+      };
+
+      return await this.sendgridService.send(mail);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async changePassword({ token, password }: ChangePasswordDto) {
+    let data;
+    try {
+      data = this.jwtService.verify(token);
+    } catch (error) {
+      throw new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
+    await this.userService.updatePassword(data.sub, password);
   }
 }
