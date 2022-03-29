@@ -211,7 +211,12 @@ describe('OrdersService', () => {
         },
       });
 
-      expect(await ordersService.create(createdUser.uuid)).toBeUndefined();
+      const result = await ordersService.create(createdUser.uuid);
+
+      expect(result).toHaveProperty('createdAt');
+      expect(result).toHaveProperty('items');
+      expect(result).toHaveProperty('totalPrice');
+      expect(result).toHaveProperty('uuid');
     });
 
     it("should return a error if user doesn't exist", async () => {
