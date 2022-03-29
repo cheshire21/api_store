@@ -67,6 +67,7 @@ type Mutation {
 }
 
 type Order {
+  client: User!
   createdAt: DateTime!
   items: [OrderItem]!
   totalPrice: Float!
@@ -165,5 +166,13 @@ input UpdateProductInput {
 type UploadImage {
   product: Product!
   url: String!
+  uuid: String!
+}
+
+type User {
+  email: String!
+  firstName: String!
+  lastName: String!
+  userName: String!
   uuid: String!
 }

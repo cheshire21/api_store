@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Resolver,
+  Query,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { GqlGetUser } from 'src/auth/decorators/gql-get-user.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
@@ -30,6 +37,20 @@ export class OrdersResolver {
     @Args('paginationOptionsOrder')
     paginationOptionsOrder: PaginationOptionsInput,
   ) {
-    return await this.ordersService.getMany(user.uuid, paginationOptionsOrder);
+    const { orders, pagination } = await this.ordersService.getMany(
+      user,
+      paginationOptionsOrder,
+    );
+
+    const edges = orders.map((order) => {
+      return {
+        node: order,
+      };
+    });
+
+    return {
+      edges,
+      pageInfo: pagination,
+    };
   }
 }

@@ -8,9 +8,10 @@ import { OrdersController } from './orders.controller';
 import { OrdersResolver } from './resolvers/orders.resolver';
 import { OrdersService } from './orders.service';
 import { OrderItemResolver } from './resolvers/order-item.resolver';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
-  imports: [AuthModule, ProductsModule],
+  imports: [AuthModule, UsersModule, ProductsModule],
   controllers: [OrdersController],
   providers: [
     OrdersService,
