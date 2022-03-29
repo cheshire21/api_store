@@ -23,7 +23,7 @@ export interface IPaginatedType<T> {
 export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
-    @Field((type) => classRef)
+    @Field((type) => classRef, { description: `${classRef.name} infomation` })
     node: T;
   }
 
@@ -32,7 +32,7 @@ export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
     @Field((type) => [EdgeType], { nullable: 'items' })
     edges: EdgeType[];
 
-    @Field()
+    @Field({ description: 'pagination info' })
     pageInfo: PageInfo;
   }
 
