@@ -230,7 +230,7 @@ describe('CartsService', () => {
 
       expect(
         await cartsService.delete(createduser.uuid, createdProd.uuid),
-      ).toBeUndefined();
+      ).toBe(true);
     });
 
     it("should throw a error if user doesn't exist", async () => {
