@@ -16,14 +16,16 @@ import { Cart } from '../models/cart.model';
 export class CartsResolver {
   constructor(private cartsService: CartsService) {}
 
-  @Query(() => Cart)
+  @Query(() => Cart, { description: 'query that return list of items' })
   @Roles(Role.client)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async cartGet(@GqlGetUser() user) {
     return await this.cartsService.getItems(user.uuid);
   }
 
-  @Mutation(() => CartItem)
+  @Mutation(() => CartItem, {
+    description: 'mutation that create or update a item in cart',
+  })
   @Roles(Role.client)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async cartItemCreateorUpdate(
@@ -32,7 +34,10 @@ export class CartsResolver {
   ) {
     return await this.cartsService.upsertItem(user.uuid, cartItemInput);
   }
-  @Mutation(() => Message)
+
+  @Mutation(() => Message, {
+    description: 'mutation that delete a item in cart',
+  })
   @Roles(Role.client)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async cartItemDelete(

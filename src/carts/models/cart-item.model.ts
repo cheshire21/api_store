@@ -3,15 +3,15 @@ import { Product } from '../../products/models/product.model';
 
 @ObjectType()
 export class CartItem {
-  @Field(() => Int)
+  @Field(() => Int, { description: "Car item's quantity" })
   quantity: number;
 
-  @Field(() => Float)
+  @Field(() => Float, { description: "Car item's unit price" })
   unitPrice: number;
 
-  @Field(() => Float)
+  @Field(() => Float, { description: "Car item's total price" })
   totalPrice: number;
 
-  @Field()
+  @Field({ description: "Car item's Product information" })
   product: Product;
 }
