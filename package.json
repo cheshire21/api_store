@@ -36,6 +36,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "@nestjs/swagger": "^5.2.0",
     "@prisma/client": "^3.10.0",
+    "@sendgrid/mail": "^7.6.2",
     "apollo-server-express": "^3.6.5",
     "aws-sdk": "^2.1092.0",
     "bcryptjs": "^2.4.3",

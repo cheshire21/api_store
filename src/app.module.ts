@@ -9,6 +9,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { GraphQLError } from 'graphql';
+import { SendEmailsModule } from './send-emails/send-emails.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { GraphQLError } from 'graphql';
     ProductsModule,
     CartsModule,
     OrdersModule,
+    SendEmailsModule,
   ],
   providers: [],
 })
