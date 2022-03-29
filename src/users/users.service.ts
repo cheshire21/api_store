@@ -37,7 +37,7 @@ export class UsersService {
 
   async updatePassword(uuid: string, password: string) {
     try {
-      await this.prisma.user.update({
+      const user = await this.prisma.user.update({
         data: {
           password: hashSync(password, 10),
         },
@@ -45,6 +45,15 @@ export class UsersService {
           uuid,
         },
       });
+
+      const mail = {
+        to: user.email,
+        subject: 'Changed Password',
+        text: 'changed Password',
+        html: `<p>Recently, your password has been changed.</p>`,
+      };
+
+      this.sendgridService.send(mail);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
@@ -52,6 +61,7 @@ export class UsersService {
             throw new HttpException('User no found', HttpStatus.NOT_FOUND);
         }
       }
+      throw error;
     }
   }
 
