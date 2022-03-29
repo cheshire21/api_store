@@ -4,21 +4,21 @@ import { OrderItem } from './order-item.model';
 
 @ObjectType()
 export class Order {
-  @Field()
+  @Field({ description: 'Order id' })
   uuid: string;
 
-  @Field()
+  @Field({ nullable: true })
   client: User;
 
   @Field(() => Float)
   totalPrice: number;
 
-  @Field()
+  @Field({ description: "Order's updated date" })
   updatedAt: Date;
 
-  @Field()
+  @Field({ description: "Order's created date" })
   createdAt: Date;
 
-  @Field(() => [OrderItem], { nullable: 'items' })
+  @Field(() => [OrderItem], { nullable: 'items', description: "Order's items" })
   items: OrderItem[];
 }

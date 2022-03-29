@@ -22,14 +22,16 @@ import { OrdersService } from '../orders.service';
 export class OrdersResolver {
   constructor(private ordersService: OrdersService) {}
 
-  @Mutation(() => Order)
+  @Mutation(() => Order, { description: 'mutation that create a order  ' })
   @Roles(Role.client)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async orderCreate(@GqlGetUser() user) {
     return await this.ordersService.create(user.uuid);
   }
 
-  @Query(() => PaginatedOrder)
+  @Query(() => PaginatedOrder, {
+    description: 'query that return a list of orders',
+  })
   @Roles(Role.client, Role.manager)
   @UseGuards(GqlJwtGuard, GqlRolesGuard)
   async orderGetMany(
