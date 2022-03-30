@@ -220,21 +220,15 @@ describe('AuthService', () => {
       const { accessToken } = authService.generateToken(createdUser.uuid);
       userService.updatePassword.mockResolvedValue(true);
 
-      const data = plainToInstance(ChangePasswordDto, {
-        token: accessToken,
-        password: internet.password(),
-      });
-
-      expect(await authService.changePassword(data)).toBeUndefined();
+      expect(
+        await authService.changePassword(accessToken, internet.password()),
+      ).toBeUndefined();
     });
 
     it('should return a error if token is invalid', async () => {
-      const data = plainToInstance(ChangePasswordDto, {
-        token: '123.132.312',
-        password: internet.password(),
-      });
-
-      await expect(authService.changePassword(data)).rejects.toThrow(
+      await expect(
+        authService.changePassword('123.132.312', internet.password()),
+      ).rejects.toThrow(
         new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY),
       );
     });

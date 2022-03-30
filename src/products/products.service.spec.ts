@@ -11,6 +11,7 @@ import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { FilesService } from '../files/file.service';
 import { ProductsService } from './products.service';
 import { ImageType } from '../common/enums';
+import { ImageFactory } from './factories/image.factory';
 
 const MockFilesService = () => ({
   uploadFile: jest.fn(),
@@ -24,6 +25,7 @@ describe('ProductsService', () => {
 
   let productFactory: ProductFactory;
   let categoryFactory: CategoryFactory;
+  let imageFactory: ImageFactory;
 
   let categories: Category[];
   let product: CreateProductDto;
@@ -49,6 +51,7 @@ describe('ProductsService', () => {
 
     productFactory = new ProductFactory(prisma);
     categoryFactory = new CategoryFactory(prisma);
+    imageFactory = new ImageFactory(prisma);
 
     categories = await categoryFactory.makeMany(length);
   });
@@ -78,10 +81,18 @@ describe('ProductsService', () => {
         },
       });
 
+      await imageFactory.make({
+        product: {
+          connect: {
+            id: createdProduct.id,
+          },
+        },
+      });
+
       filesService.generatePresignedUrl.mockResolvedValue(internet.url());
 
       const result = await productsService.getOne(createdProduct.uuid);
-
+      console.log(result.images);
       expect(result).toHaveProperty('name', createdProduct.name);
       expect(result).toHaveProperty('description', createdProduct.description);
       expect(result).toHaveProperty('price', createdProduct.price);
@@ -103,17 +114,28 @@ describe('ProductsService', () => {
   describe('getMany', () => {
     beforeAll(async () => {
       for (let i = 0; i < length; i++) {
-        await productFactory.makeMany(4, {
+        const arr = await productFactory.makeMany(4, {
           category: {
             connect: {
               id: categories[i].id,
             },
           },
         });
+
+        arr.forEach(async (img) => {
+          await imageFactory.make({
+            product: {
+              connect: {
+                id: img.id,
+              },
+            },
+          });
+        });
       }
     });
 
     it('should return a page with a specific take and a specific page', async () => {
+      filesService.generatePresignedUrl.mockResolvedValue('http://example.com');
       const pagination = plainToInstance(PaginationOptionsProduct, {
         take: 5,
         page: 1,
@@ -126,6 +148,7 @@ describe('ProductsService', () => {
     });
 
     it('should return a page with a specific take, a specific page and a specfic category ', async () => {
+      filesService.generatePresignedUrl.mockResolvedValue('http://example.com');
       const pagination = plainToInstance(PaginationOptionsProduct, {
         take: 5,
         page: 1,
@@ -189,6 +212,16 @@ describe('ProductsService', () => {
     });
 
     it('should update and return a product details', async () => {
+      filesService.generatePresignedUrl.mockResolvedValue('http://example.com');
+
+      await imageFactory.make({
+        product: {
+          connect: {
+            id: createdProduct.id,
+          },
+        },
+      });
+
       const result = await productsService.update(createdProduct.uuid, {
         ...product,
       });
@@ -246,6 +279,7 @@ describe('ProductsService', () => {
 
   describe('changeStatus', () => {
     it('should  change status of a product ', async () => {
+      filesService.generatePresignedUrl.mockResolvedValue('http://example.com');
       const createdProduct = await productFactory.make({
         category: {
           connect: {
@@ -253,6 +287,15 @@ describe('ProductsService', () => {
           },
         },
       });
+
+      await imageFactory.make({
+        product: {
+          connect: {
+            id: createdProduct.id,
+          },
+        },
+      });
+
       const expected = datatype.boolean();
 
       const result = await productsService.changeStatus(

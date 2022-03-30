@@ -5,13 +5,6 @@ import { internet } from 'faker';
 
 @Exclude()
 export class ChangePasswordDto {
-  @ApiProperty({
-    description: 'token that was sent by email',
-  })
-  @Expose()
-  @IsNotEmpty()
-  token: string;
-
   @ApiProperty({ description: 'new password' })
   @Expose()
   @IsString()
