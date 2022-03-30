@@ -10,6 +10,11 @@ import { ProductFactory } from '../products/factories/product.factory';
 import { UserFactory } from '../users/factories/user.factory';
 import { OrdersService } from './orders.service';
 import { OrderItemFactory } from './factories/order-item.factory';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+const MockEventEmitter2 = () => ({
+  emit: jest.fn(),
+});
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
@@ -28,14 +33,23 @@ describe('OrdersService', () => {
   let idproducts = [];
   const stock = 5;
   const price = 51;
+  let eventEmitter2;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [OrdersService, PrismaService],
+      providers: [
+        OrdersService,
+        PrismaService,
+        {
+          provide: EventEmitter2,
+          useFactory: MockEventEmitter2,
+        },
+      ],
     }).compile();
 
     ordersService = module.get<OrdersService>(OrdersService);
     prisma = module.get<PrismaService>(PrismaService);
+    eventEmitter2 = module.get<EventEmitter2>(EventEmitter2);
 
     userFactory = new UserFactory(prisma);
     categoryFactory = new CategoryFactory(prisma);
@@ -184,6 +198,8 @@ describe('OrdersService', () => {
 
   describe('create', () => {
     it("should create a order successfully and user's cart should be empty and total price equals to 0", async () => {
+      eventEmitter2.emit.mockResolvedValue(true);
+
       await cartItemFactory.makeMany(
         categoryLength * productsLength,
         {
