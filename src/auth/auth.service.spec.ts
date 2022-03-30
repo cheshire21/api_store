@@ -10,10 +10,18 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/request/sign-up.dto';
 import { User } from '@prisma/client';
 import { UserFactory } from '../users/factories/user.factory';
+import { ChangePasswordDto } from './dto/request/change-password.dto';
+import { SendgridService } from '../send-emails/send-emails.service';
 
 const MockUsersService = () => ({
   create: jest.fn(),
+  findOne: jest.fn(),
   findOneByEmail: jest.fn(),
+  updatePassword: jest.fn(),
+});
+
+const MockSendgridService = () => ({
+  send: jest.fn(),
 });
 
 describe('AuthService', () => {
@@ -23,7 +31,7 @@ describe('AuthService', () => {
   let prisma: PrismaService;
   let userFactory: UserFactory;
   let userService;
-
+  let sendgridService;
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
@@ -41,11 +49,16 @@ describe('AuthService', () => {
           provide: UsersService,
           useFactory: MockUsersService,
         },
+        {
+          provide: SendgridService,
+          useFactory: MockSendgridService,
+        },
       ],
     }).compile();
 
     authService = await module.get<AuthService>(AuthService);
     userService = await module.get<UsersService>(UsersService);
+    sendgridService = await module.get<SendgridService>(SendgridService);
     prisma = await module.get<PrismaService>(PrismaService);
 
     userFactory = new UserFactory(prisma);
@@ -175,6 +188,54 @@ describe('AuthService', () => {
     it('should return a error if token is invalid', async () => {
       await expect(authService.logout(datatype.uuid())).rejects.toThrow(
         new HttpException('Token is invalid', HttpStatus.UNAUTHORIZED),
+      );
+    });
+  });
+  /////////////////////////////////////
+  describe('sendEmailChangePassword', () => {
+    it('should sen email to change password successfully', async () => {
+      const createdUser = await userFactory.make();
+      userService.findOneByEmail.mockResolvedValue(createdUser);
+      sendgridService.send.mockResolvedValue(true);
+
+      expect(
+        await authService.sendEmailChangePassword({ email: createdUser.email }),
+      ).toBeUndefined();
+    });
+
+    it("should return a error if user doesn't exist", async () => {
+      userService.findOneByEmail.mockResolvedValue(null);
+
+      await expect(
+        authService.sendEmailChangePassword({ email: internet.email() }),
+      ).rejects.toThrow(
+        new HttpException('User no found', HttpStatus.NOT_FOUND),
+      );
+    });
+  });
+
+  describe('changePassword', () => {
+    it('should logout successfully', async () => {
+      const createdUser = await userFactory.make();
+      const { accessToken } = authService.generateToken(createdUser.uuid);
+      userService.updatePassword.mockResolvedValue(true);
+
+      const data = plainToInstance(ChangePasswordDto, {
+        token: accessToken,
+        password: internet.password(),
+      });
+
+      expect(await authService.changePassword(data)).toBeUndefined();
+    });
+
+    it('should return a error if token is invalid', async () => {
+      const data = plainToInstance(ChangePasswordDto, {
+        token: '123.132.312',
+        password: internet.password(),
+      });
+
+      await expect(authService.changePassword(data)).rejects.toThrow(
+        new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY),
       );
     });
   });

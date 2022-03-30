@@ -8,9 +8,8 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PrismaErrorEnum } from '../common/enums';
 import { Prisma, Token } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { SendgridService } from 'src/send-emails/send-emails.service';
+import { SendgridService } from '../send-emails/send-emails.service';
 import { ForgotPasswordDto } from './dto/request/forgot-password.dto';
-import { ConfigService } from '@nestjs/config';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 
 @Injectable()
@@ -20,7 +19,6 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsersService,
     private sendgridService: SendgridService,
-    private configService: ConfigService,
   ) {}
 
   async signup(signUpDto: SignUpDto): Promise<TokenDto> {
@@ -113,7 +111,7 @@ export class AuthService {
         html: `<strong>${accessToken}</strong>`,
       };
 
-      return await this.sendgridService.send(mail);
+      await this.sendgridService.send(mail);
     } catch (error) {
       throw error;
     }
