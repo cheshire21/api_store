@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Prisma, User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { Role } from '../common/enums';
@@ -11,7 +12,10 @@ import { ItemDto } from '../products/dto/response/item.dto';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private eventEmitter: EventEmitter2,
+  ) {}
 
   itemsData = {
     quantity: true,
@@ -244,7 +248,11 @@ export class OrdersService {
           },
         }),
       ]);
+
+      this.eventEmitter.emit('order.created', cart.cartItem);
+
       const { orderItem, ...input } = order;
+
       return plainToInstance(ResponseOrderDto, {
         ...input,
         items: orderItem,
