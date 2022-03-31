@@ -61,11 +61,11 @@ export class AuthController {
     await this.authService.sendEmailChangePassword(data);
   }
 
-  @Post('/change-password')
-  async changePassword(
+  @Post('/reset-password')
+  async resetPassword(
     @Query('token') token: string,
     @Body() data: ChangePasswordDto,
   ) {
-    await this.authService.changePassword(token, data.password);
+    await this.authService.resetPassword(token, data.password);
   }
 }

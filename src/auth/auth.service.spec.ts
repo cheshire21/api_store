@@ -214,20 +214,20 @@ describe('AuthService', () => {
     });
   });
 
-  describe('changePassword', () => {
+  describe('resetPassword', () => {
     it('should logout successfully', async () => {
       const createdUser = await userFactory.make();
       const { accessToken } = authService.generateToken(createdUser.uuid);
       userService.updatePassword.mockResolvedValue(true);
 
       expect(
-        await authService.changePassword(accessToken, internet.password()),
+        await authService.resetPassword(accessToken, internet.password()),
       ).toBeUndefined();
     });
 
     it('should return a error if token is invalid', async () => {
       await expect(
-        authService.changePassword('123.132.312', internet.password()),
+        authService.resetPassword('123.132.312', internet.password()),
       ).rejects.toThrow(
         new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY),
       );
