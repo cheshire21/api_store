@@ -13,7 +13,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "postinstall": "npx prisma generate && npm run build",
+    "postinstall": "npx prisma migrate deploy && npx prisma generate && npm run build",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "dotenv -e .env.test -- jest --runInBand",
     "test:watch": "dotenv -e .env.test -- jest --watch --runInBand",
