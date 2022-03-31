@@ -21,6 +21,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema/schema.gql'),
       sortSchema: true,
+      introspection: true,
       playground: true,
       formatError: (error) => {
         const graphQLFormattedError = {
