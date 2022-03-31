@@ -56,7 +56,7 @@ export class OrdersController {
   }
 
   @Post()
-  @Roles(Role.manager, Role.client)
+  @Roles(Role.client)
   @ApiResponse({
     status: 201,
     description: "create a order with the cart's items",
