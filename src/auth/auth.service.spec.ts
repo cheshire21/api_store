@@ -10,8 +10,8 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from './dto/request/sign-up.dto';
 import { User } from '@prisma/client';
 import { UserFactory } from '../users/factories/user.factory';
-import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { SendgridService } from '../send-emails/send-emails.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 const MockUsersService = () => ({
   create: jest.fn(),
@@ -24,6 +24,10 @@ const MockSendgridService = () => ({
   send: jest.fn(),
 });
 
+const MockConfigService = () => ({
+  get: jest.fn(),
+});
+
 describe('AuthService', () => {
   let mockUser;
 
@@ -32,6 +36,8 @@ describe('AuthService', () => {
   let userFactory: UserFactory;
   let userService;
   let sendgridService;
+  let configService: ConfigService;
+
   beforeAll(async () => {
     const module = await Test.createTestingModule({
       imports: [
@@ -40,6 +46,9 @@ describe('AuthService', () => {
           signOptions: {
             expiresIn: parseInt(process.env.JWT_EXPIRE_TIME, 10),
           },
+        }),
+        ConfigModule.forRoot({
+          envFilePath: '.env.test',
         }),
       ],
       providers: [
@@ -57,9 +66,10 @@ describe('AuthService', () => {
     }).compile();
 
     authService = await module.get<AuthService>(AuthService);
+    prisma = await module.get<PrismaService>(PrismaService);
     userService = await module.get<UsersService>(UsersService);
     sendgridService = await module.get<SendgridService>(SendgridService);
-    prisma = await module.get<PrismaService>(PrismaService);
+    configService = await module.get<ConfigService>(ConfigService);
 
     userFactory = new UserFactory(prisma);
 
@@ -221,13 +231,19 @@ describe('AuthService', () => {
       userService.updatePassword.mockResolvedValue(true);
 
       expect(
-        await authService.resetPassword(accessToken, internet.password()),
+        await authService.resetPassword({
+          token: accessToken,
+          password: internet.password(),
+        }),
       ).toBeUndefined();
     });
 
     it('should return a error if token is invalid', async () => {
       await expect(
-        authService.resetPassword('123.132.312', internet.password()),
+        authService.resetPassword({
+          token: '123.132.312',
+          password: internet.password(),
+        }),
       ).rejects.toThrow(
         new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY),
       );

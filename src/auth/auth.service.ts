@@ -7,10 +7,11 @@ import { compareSync } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrismaErrorEnum } from '../common/enums';
 import { Prisma, Token } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
 import { SendgridService } from '../send-emails/send-emails.service';
 import { ForgotPasswordDto } from './dto/request/forgot-password.dto';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +20,7 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UsersService,
     private sendgridService: SendgridService,
+    private configService: ConfigService,
   ) {}
 
   async signup(signUpDto: SignUpDto): Promise<TokenDto> {
@@ -51,10 +53,21 @@ export class AuthService {
     return this.generateToken(token.jti);
   }
 
-  generateToken(sub: string): TokenDto {
-    const accessToken = this.jwtService.sign({
-      sub,
-    });
+  generateToken(sub: string, options: JwtSignOptions = null): TokenDto {
+    let accessToken;
+
+    if (options) {
+      accessToken = this.jwtService.sign(
+        {
+          sub,
+        },
+        options,
+      );
+    } else {
+      accessToken = this.jwtService.sign({
+        sub,
+      });
+    }
 
     return {
       accessToken,
@@ -102,7 +115,14 @@ export class AuthService {
         throw new HttpException('User no found', HttpStatus.NOT_FOUND);
       }
 
-      const { accessToken } = this.generateToken(user.uuid);
+      console.log(this.configService.get('JWT_EXPIRE_TIME_RESET_PASSWORD'));
+
+      const { accessToken } = this.generateToken(user.uuid, {
+        expiresIn: parseInt(
+          this.configService.get('JWT_EXPIRE_TIME_RESET_PASSWORD'),
+          10,
+        ),
+      });
 
       const mail = {
         to: email,
@@ -121,7 +141,7 @@ export class AuthService {
     const { token, password } = changePasswordDto;
     let data;
     try {
-      data = this.jwtService.verify(token);
+      data = this.jwtService.verify(token, { ignoreExpiration: false });
     } catch (error) {
       throw new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY);
     }

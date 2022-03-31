@@ -92,7 +92,7 @@ describe('ProductsService', () => {
       filesService.generatePresignedUrl.mockResolvedValue(internet.url());
 
       const result = await productsService.getOne(createdProduct.uuid);
-      console.log(result.images);
+
       expect(result).toHaveProperty('name', createdProduct.name);
       expect(result).toHaveProperty('description', createdProduct.description);
       expect(result).toHaveProperty('price', createdProduct.price);
