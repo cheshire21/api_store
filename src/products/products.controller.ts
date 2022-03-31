@@ -36,7 +36,6 @@ import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { StatusProductDto } from './dto/request/status-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
-import { ResponseProductImgDto } from './dto/response/product-img.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
 import { LikesService } from '../likes/likes.service';
 import { ProductsService } from './products.service';
@@ -103,7 +102,7 @@ export class ProductsController {
   @ApiInternalServerErrorResponse({ description: 'Internal Server Error' })
   async getProduct(
     @Param() idProductDto: IdProductDto,
-  ): Promise<ResponseProductImgDto> {
+  ): Promise<ResponseProductDto> {
     return await this.productsService.getOne(idProductDto.id);
   }
 
@@ -120,7 +119,7 @@ export class ProductsController {
   @ApiBearerAuth()
   async createProduct(
     @Body() createProductDto: CreateProductDto,
-  ): Promise<ResponseProductImgDto> {
+  ): Promise<ResponseProductDto> {
     return await this.productsService.create(createProductDto);
   }
 

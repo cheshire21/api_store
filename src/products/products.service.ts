@@ -6,10 +6,9 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductDto } from './dto/request/create-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
-import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
+import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
 import { FilesService } from '../files/file.service';
-import { ResponseProductImgDto } from './dto/response/product-img.dto';
 import { ImageDto } from './dto/request/image.dto';
 import { ResponseImageUrlDto } from './dto/response/image-url.dto';
 
@@ -40,7 +39,7 @@ export class ProductsService {
     createdAt: true,
   };
 
-  async getOne(uuid: string): Promise<ResponseProductImgDto> {
+  async getOne(uuid: string): Promise<ResponseProductDto> {
     try {
       const product = await this.prisma.product.findUnique({
         where: {
@@ -83,7 +82,7 @@ export class ProductsService {
           like: false,
         },
       });
-      return plainToInstance(ResponseProductImgDto, {
+      return plainToInstance(ResponseProductDto, {
         ...product,
         likes,
         dislikes,
@@ -183,7 +182,7 @@ export class ProductsService {
     const previousPage = page === 1 ? null : page - 1;
 
     return plainToInstance(ListProductsDto, {
-      products: plainToInstance(ResponseProductImgDto, data),
+      products: plainToInstance(ResponseProductDto, data),
       pagination: {
         totalPages,
         itemsPerPage: take,
@@ -197,7 +196,7 @@ export class ProductsService {
 
   async create(
     createProductDto: CreateProductDto,
-  ): Promise<ResponseProductImgDto> {
+  ): Promise<ResponseProductDto> {
     try {
       const { categoryId, ...input } = createProductDto;
 
@@ -213,7 +212,7 @@ export class ProductsService {
         select: this.select,
       });
 
-      return plainToInstance(ResponseProductImgDto, {
+      return plainToInstance(ResponseProductDto, {
         ...product,
         likes: 0,
         dislikes: 0,
@@ -234,7 +233,7 @@ export class ProductsService {
   async update(
     uuid: string,
     updateProductDto: UpdateProductDto,
-  ): Promise<ResponseProductImgDto> {
+  ): Promise<ResponseProductDto> {
     try {
       const { categoryId, ...input } = updateProductDto;
       const oldpProduct = await this.prisma.product.findUnique({
@@ -310,7 +309,7 @@ export class ProductsService {
         },
       });
 
-      return plainToInstance(ResponseProductImgDto, {
+      return plainToInstance(ResponseProductDto, {
         ...product,
         likes,
         dislikes,
@@ -331,7 +330,7 @@ export class ProductsService {
   async changeStatus(
     uuid: string,
     status: boolean,
-  ): Promise<ResponseProductImgDto> {
+  ): Promise<ResponseProductDto> {
     try {
       const deletedAt = status ? null : new Date();
 
@@ -377,7 +376,7 @@ export class ProductsService {
         },
       });
 
-      return plainToInstance(ResponseProductImgDto, {
+      return plainToInstance(ResponseProductDto, {
         ...product,
         likes,
         dislikes,

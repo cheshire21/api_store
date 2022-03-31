@@ -60,6 +60,7 @@ export class OrdersController {
   @ApiResponse({
     status: 201,
     description: "create a order with the cart's items",
+    type: ResponseOrderDto,
   })
   @ApiBadRequestResponse({
     description: 'Quantity of some product is out of range',

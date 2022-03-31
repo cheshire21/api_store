@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
 import { datatype, name } from 'faker';
 import { CategoryDetails } from './category-details.dto';
+import { ImageDto } from './image.dto';
 
 @Exclude()
 export class ResponseProductDto {
@@ -56,6 +57,9 @@ export class ResponseProductDto {
   })
   @Expose()
   status: boolean;
+
+  @Expose()
+  images: ImageDto;
 
   @ApiProperty({
     example: null,
