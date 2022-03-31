@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsEnum, IsNotEmpty, IsString, Length } from 'class-validator';
 import { address, internet, name } from 'faker';
 import { Role } from '../../../common/enums';
 
@@ -51,6 +51,7 @@ export class SignUpDto {
   @Expose()
   @IsNotEmpty()
   @IsString()
+  @Length(8, 20)
   password: string;
 
   @ApiProperty()
