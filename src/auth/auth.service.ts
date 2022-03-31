@@ -117,7 +117,8 @@ export class AuthService {
     }
   }
 
-  async resetPassword(token: string, password: string) {
+  async resetPassword(changePasswordDto: ChangePasswordDto) {
+    const { token, password } = changePasswordDto;
     let data;
     try {
       data = this.jwtService.verify(token);
