@@ -115,8 +115,6 @@ export class AuthService {
         throw new HttpException('User no found', HttpStatus.NOT_FOUND);
       }
 
-      console.log(this.configService.get('JWT_EXPIRE_TIME_RESET_PASSWORD'));
-
       const { accessToken } = this.generateToken(user.uuid, {
         expiresIn: parseInt(
           this.configService.get('JWT_EXPIRE_TIME_RESET_PASSWORD'),
