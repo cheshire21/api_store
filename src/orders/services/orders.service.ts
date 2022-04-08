@@ -2,13 +2,13 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Prisma, User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { Role } from '../common/enums';
-import { PaginationOptionsDto } from '../common/dto/request/pagination-option.dto';
-import { PrismaService } from '../prisma/prisma.service';
-import { ListOrdersDto } from './dto/response/list-orders.dto';
-import { ResponseOrderDto } from './dto/response/order.dto';
-import { ClientOrderDto } from './dto/response/client-order.dto';
-import { ItemDto } from '../products/dto/response/item.dto';
+import { Role } from '../../common/enums';
+import { PaginationOptionsDto } from '../../common/dto/request/pagination-option.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { ListOrdersDto } from '../dto/response/list-orders.dto';
+import { ResponseOrderDto } from '../dto/response/order.dto';
+import { ClientOrderDto } from '../dto/response/client-order.dto';
+import { ItemDto } from '../../products/dto/response/item.dto';
 
 @Injectable()
 export class OrdersService {
@@ -41,7 +41,7 @@ export class OrdersService {
         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
       let where = {};
-      let orderselect = {
+      const orderselect = {
         user: {
           select: {
             uuid: true,

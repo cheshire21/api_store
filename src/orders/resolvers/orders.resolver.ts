@@ -13,10 +13,9 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
 import { PaginationOptionsInput } from 'src/common/dto/input/pagination-options.input';
 import { Role } from 'src/common/enums';
-import { ProductsService } from 'src/products/products.service';
 import { Order } from '../models/order.model';
 import { PaginatedOrder } from '../models/orders.model';
-import { OrdersService } from '../orders.service';
+import { OrdersService } from '../services/orders.service';
 
 @Resolver(() => Order)
 export class OrdersResolver {

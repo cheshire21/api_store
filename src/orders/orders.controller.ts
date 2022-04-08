@@ -2,7 +2,6 @@ import {
   Controller,
   DefaultValuePipe,
   Get,
-  HttpCode,
   ParseIntPipe,
   Post,
   Query,
@@ -25,7 +24,7 @@ import { PaginationOptionsDto } from 'src/common/dto/request/pagination-option.d
 import { Role } from '../common/enums';
 import { ListOrdersDto } from './dto/response/list-orders.dto';
 import { ResponseOrderDto } from './dto/response/order.dto';
-import { OrdersService } from './orders.service';
+import { OrdersService } from './services/orders.service';
 
 @ApiTags('orders')
 @Controller('orders')

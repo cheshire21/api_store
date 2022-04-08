@@ -6,12 +6,12 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { ProductsModule } from 'src/products/products.module';
 import { OrdersController } from './orders.controller';
 import { OrdersResolver } from './resolvers/orders.resolver';
-import { OrdersService } from './orders.service';
+import { OrdersService } from './services/orders.service';
 import { OrderItemResolver } from './resolvers/order-item.resolver';
 import { UsersModule } from 'src/users/users.module';
 import { OrderCreatedListener } from './listeners/order-created.listener';
 import { SendEmailsModule } from 'src/send-emails/send-emails.module';
-import { FilesService } from 'src/files/file.service';
+import { FilesService } from 'src/common/services/file.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

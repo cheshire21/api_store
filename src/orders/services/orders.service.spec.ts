@@ -2,14 +2,14 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Cart, Category, User } from '@prisma/client';
 import { datatype } from 'faker';
-import { Role } from '../common/enums';
-import { PrismaService } from '../prisma/prisma.service';
-import { CartItemFactory } from '../carts/factories/cart-item.factory';
-import { CategoryFactory } from '../products/factories/category.factory';
-import { ProductFactory } from '../products/factories/product.factory';
-import { UserFactory } from '../users/factories/user.factory';
+import { Role } from '../../common/enums';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CartItemFactory } from '../../carts/factories/cart-item.factory';
+import { CategoryFactory } from '../../products/factories/category.factory';
+import { ProductFactory } from '../../products/factories/product.factory';
+import { UserFactory } from '../../users/factories/user.factory';
 import { OrdersService } from './orders.service';
-import { OrderItemFactory } from './factories/order-item.factory';
+import { OrderItemFactory } from '../factories/order-item.factory';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const MockEventEmitter2 = () => ({
