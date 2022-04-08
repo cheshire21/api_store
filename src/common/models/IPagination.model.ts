@@ -19,7 +19,8 @@ export interface IPaginatedType<T> {
   edges: IEdgeType<T>[];
   pageInfo: IPageInfo;
 }
-
+//mixen function
+//uso de genericos
 export function Paginated<T>(classRef: Type<T>): Type<IPaginatedType<T>> {
   @ObjectType(`${classRef.name}Edge`)
   abstract class EdgeType {
