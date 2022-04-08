@@ -3,15 +3,15 @@ import { Test } from '@nestjs/testing';
 import { Category, Product } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { commerce, datatype, internet } from 'faker';
-import { PrismaService } from '../prisma/prisma.service';
-import { CategoryFactory } from './factories/category.factory';
-import { ProductFactory } from './factories/product.factory';
-import { CreateProductDto } from './dto/request/create-product.dto';
-import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
-import { FilesService } from '../files/file.service';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CategoryFactory } from '../factories/category.factory';
+import { ProductFactory } from '../factories/product.factory';
+import { CreateProductDto } from '../dto/request/create-product.dto';
+import { PaginationOptionsProduct } from '../dto/request/pag-product.dto';
+import { FilesService } from '../../common/services/file.service';
 import { ProductsService } from './products.service';
-import { ImageType } from '../common/enums';
-import { ImageFactory } from './factories/image.factory';
+import { ImageType } from '../../common/enums';
+import { ImageFactory } from '../factories/image.factory';
 
 const MockFilesService = () => ({
   uploadFile: jest.fn(),

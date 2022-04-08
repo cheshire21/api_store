@@ -1,6 +1,6 @@
 import { Resolver, ResolveField, Parent } from '@nestjs/graphql';
 import { UploadImage } from '../models/upload-image.model';
-import { ProductsService } from '../products.service';
+import { ProductsService } from '../services/products.service';
 
 @Resolver(() => UploadImage)
 export class UploadImagesResolver {

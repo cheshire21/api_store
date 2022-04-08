@@ -17,7 +17,7 @@ import { Image } from '../models/image.model';
 import { Product } from '../models/product.model';
 import { PaginatedProduct } from '../models/products.model';
 import { UploadImage } from '../models/upload-image.model';
-import { ProductsService } from '../products.service';
+import { ProductsService } from '../services/products.service';
 
 @Resolver(() => Product)
 export class ProductsResolver {

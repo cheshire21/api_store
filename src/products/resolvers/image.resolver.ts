@@ -1,6 +1,6 @@
 import { Resolver, ResolveField, Parent } from '@nestjs/graphql';
 import { Image } from '../models/image.model';
-import { ProductsService } from '../products.service';
+import { ProductsService } from '../services/products.service';
 
 @Resolver(() => Image)
 export class ImagesResolver {

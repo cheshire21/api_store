@@ -1,16 +1,16 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
-import { PrismaErrorEnum } from '../common/enums';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/request/create-product.dto';
-import { UpdateProductDto } from './dto/request/update-product.dto';
-import { ResponseProductDto } from './dto/response/product.dto';
-import { ListProductsDto } from './dto/response/list-products.dto';
-import { PaginationOptionsProduct } from './dto/request/pag-product.dto';
-import { FilesService } from '../files/file.service';
-import { ImageDto } from './dto/request/image.dto';
-import { ResponseImageUrlDto } from './dto/response/image-url.dto';
+import { PrismaErrorEnum } from '../../common/enums';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CreateProductDto } from '../dto/request/create-product.dto';
+import { UpdateProductDto } from '../dto/request/update-product.dto';
+import { ResponseProductDto } from '../dto/response/product.dto';
+import { ListProductsDto } from '../dto/response/list-products.dto';
+import { PaginationOptionsProduct } from '../dto/request/pag-product.dto';
+import { FilesService } from '../../common/services/file.service';
+import { ImageDto } from '../dto/request/image.dto';
+import { ResponseImageUrlDto } from '../dto/response/image-url.dto';
 
 @Injectable()
 export class ProductsService {

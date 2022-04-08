@@ -38,7 +38,7 @@ import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
 import { LikesService } from '../likes/likes.service';
-import { ProductsService } from './products.service';
+import { ProductsService } from './services/products.service';
 import { ImageDto } from './dto/request/image.dto';
 import { ResponseImageUrlDto } from './dto/response/image-url.dto';
 import { JwtAuthGuard } from 'src/auth/guards/auth-jwt.guard';
