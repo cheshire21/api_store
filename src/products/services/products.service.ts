@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { PrismaErrorEnum } from '../../common/enums';
@@ -49,8 +54,7 @@ export class ProductsService {
         rejectOnNotFound: false,
       });
 
-      if (!product)
-        throw new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND);
+      if (!product) throw new NotFoundException("Product doesn't exist");
 
       let urls = [];
 
@@ -126,7 +130,7 @@ export class ProductsService {
     }
 
     if (page > totalPages) {
-      throw new HttpException('page is out of range', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('page is out of range');
     }
 
     const products = await this.prisma.product.findMany({
@@ -222,7 +226,7 @@ export class ProductsService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Category not found');
         }
       }
 
@@ -260,11 +264,11 @@ export class ProductsService {
       }
 
       if (!oldpProduct) {
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('Product not found');
       }
 
       if (oldpProduct.deletedAt) {
-        throw new HttpException('Product is disable ', HttpStatus.UNAUTHORIZED);
+        throw new UnauthorizedException('Product is disable ');
       }
 
       const product = await this.prisma.product.update({
@@ -319,7 +323,7 @@ export class ProductsService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('Category not found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Category not found');
         }
       }
 
@@ -386,7 +390,7 @@ export class ProductsService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Product not found');
         }
       }
       throw error;
@@ -407,7 +411,7 @@ export class ProductsService {
       });
 
       if (!product) {
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('Product not found');
       }
 
       const createdImage = await this.prisma.image.create({

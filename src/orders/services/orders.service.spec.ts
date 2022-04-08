@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Cart, Category, User } from '@prisma/client';
 import { datatype } from 'faker';
@@ -178,9 +178,7 @@ describe('OrdersService', () => {
           take: 5,
           page: 5,
         }),
-      ).rejects.toThrow(
-        new HttpException('Page is out of range', HttpStatus.BAD_REQUEST),
-      );
+      ).rejects.toThrow(new BadRequestException('Page is out of range'));
     });
 
     it("should throw a error if user doesn't exist", async () => {
@@ -190,9 +188,7 @@ describe('OrdersService', () => {
           take: 5,
           page: 1,
         }),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.BAD_REQUEST),
-      );
+      ).rejects.toThrow(new BadRequestException('User not found'));
     });
   });
 
@@ -237,13 +233,13 @@ describe('OrdersService', () => {
 
     it("should return a error if user doesn't exist", async () => {
       await expect(ordersService.create(datatype.uuid())).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
+        new NotFoundException('User not found'),
       );
     });
 
     it("should return a error it user's cart don't have items", async () => {
       await expect(ordersService.create(createdUser.uuid)).rejects.toThrow(
-        new HttpException('Cart is empty', HttpStatus.BAD_REQUEST),
+        new BadRequestException('Cart is empty'),
       );
     });
 
@@ -265,10 +261,7 @@ describe('OrdersService', () => {
       );
 
       await expect(ordersService.create(createdUser.uuid)).rejects.toThrow(
-        new HttpException(
-          'Quantity of some product is out of range',
-          HttpStatus.BAD_REQUEST,
-        ),
+        new BadRequestException('Quantity of some product is out of range'),
       );
     });
   });

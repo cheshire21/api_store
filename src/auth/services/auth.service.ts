@@ -1,4 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+  UnprocessableEntityException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { UsersService } from '../../users/services/users.service';
 import { LoginDto } from '../dto/request/login.dto';
 import { SignUpDto } from '../dto/request/sign-up.dto';
@@ -27,7 +34,7 @@ export class AuthService {
     const { email } = signUpDto;
 
     if (await this.userService.findOneByEmail(email))
-      throw new HttpException('Email already exists', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Email already exists');
 
     const user = await this.userService.create(signUpDto);
 
@@ -40,13 +47,11 @@ export class AuthService {
     const { email, password } = loginDto;
     const user = await this.userService.findOneByEmail(email);
 
-    if (!user)
-      throw new HttpException("Email doesn't exist ", HttpStatus.UNAUTHORIZED);
+    if (!user) throw new UnauthorizedException("Email doesn't exist ");
 
     const isValid = compareSync(password, user.password);
 
-    if (!isValid)
-      throw new HttpException('Password is incorrect', HttpStatus.UNAUTHORIZED);
+    if (!isValid) throw new UnauthorizedException('Password is incorrect');
 
     const token = await this.createToken(user.id);
 
@@ -86,7 +91,7 @@ export class AuthService {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         switch (e.code) {
           case PrismaErrorEnum.FOREIGN_KEY_CONSTRAINT:
-            throw new HttpException('User no found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('User no found');
         }
       }
 
@@ -103,7 +108,7 @@ export class AuthService {
         },
       });
     } catch (e) {
-      throw new HttpException('Token is invalid', HttpStatus.BAD_REQUEST);
+      throw new BadRequestException('Token is invalid');
     }
   }
 
@@ -112,7 +117,7 @@ export class AuthService {
       const user = await this.userService.findOneByEmail(email);
 
       if (!user) {
-        throw new HttpException('User no found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('User no found');
       }
 
       const { accessToken } = this.generateToken(user.uuid, {
@@ -141,7 +146,7 @@ export class AuthService {
     try {
       data = this.jwtService.verify(token, { ignoreExpiration: false });
     } catch (error) {
-      throw new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY);
+      throw new UnprocessableEntityException('Invalid token');
     }
 
     await this.userService.updatePassword(data.sub, password);

@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CartItem, Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
@@ -138,10 +142,7 @@ describe('CartsService', () => {
           quantity: 6,
         }),
       ).rejects.toThrow(
-        new HttpException(
-          'Quantity is bigger than stock',
-          HttpStatus.BAD_REQUEST,
-        ),
+        new BadRequestException('Quantity is bigger than stock'),
       );
     });
 
@@ -151,9 +152,7 @@ describe('CartsService', () => {
           productId: products[random(productstLength)].uuid,
           quantity: stock,
         }),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('User not found'));
     });
 
     it("should throw a error if product doesn't exist", async () => {
@@ -162,9 +161,7 @@ describe('CartsService', () => {
           productId: datatype.uuid(),
           quantity: stock,
         }),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
 
     it('should return a error if product is disable', async () => {
@@ -185,10 +182,7 @@ describe('CartsService', () => {
           quantity: 5,
         }),
       ).rejects.toThrow(
-        new HttpException(
-          'Product is in disable status',
-          HttpStatus.UNAUTHORIZED,
-        ),
+        new UnauthorizedException('Product is in disable status'),
       );
     });
   });
@@ -239,17 +233,13 @@ describe('CartsService', () => {
           datatype.uuid(),
           products[random(productstLength)].uuid,
         ),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('User not found'));
     });
 
     it("should throw a error if product doesn't exist", async () => {
       await expect(
         cartsService.delete(createduser.uuid, datatype.uuid()),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
   });
 });

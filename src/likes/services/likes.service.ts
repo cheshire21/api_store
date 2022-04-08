@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { NotFoundException, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaErrorEnum } from '../../common/enums';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -19,16 +19,14 @@ export class LikesService {
         select: { id: true },
         rejectOnNotFound: false,
       });
-      if (!user)
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      if (!user) throw new NotFoundException('User not found');
 
       const product = await this.prisma.product.findUnique({
         where: { uuid: productId },
         select: { id: true },
         rejectOnNotFound: false,
       });
-      if (!product)
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      if (!product) throw new NotFoundException('Product not found');
 
       await this.prisma.like.upsert({
         create: {
@@ -68,16 +66,14 @@ export class LikesService {
         select: { id: true },
         rejectOnNotFound: false,
       });
-      if (!user)
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      if (!user) throw new NotFoundException('User not found');
 
       const product = await this.prisma.product.findUnique({
         where: { uuid: productId },
         select: { id: true },
         rejectOnNotFound: false,
       });
-      if (!product)
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      if (!product) throw new NotFoundException('Product not found');
 
       await this.prisma.like.delete({
         where: {
@@ -93,7 +89,7 @@ export class LikesService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('Like no found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('Like no found');
         }
       }
       throw error;

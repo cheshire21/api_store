@@ -7,7 +7,7 @@ import { Role } from '../../common/enums';
 import { SignUpDto } from '../../auth/dto/request/sign-up.dto';
 import { hashSync } from 'bcryptjs';
 import { SendgridService } from '../../common/services/send-emails.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 
 const MockSendgridService = () => ({
   send: jest.fn(),
@@ -126,9 +126,7 @@ describe('UsersService', () => {
     it('should return error if the user doesnt exist', async () => {
       await expect(
         userService.updatePassword(datatype.uuid(), 'newpassword'),
-      ).rejects.toThrow(
-        new HttpException('User no found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('User no found'));
     });
   });
 });

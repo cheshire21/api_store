@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Category, Product, User } from '@prisma/client';
 import { datatype } from 'faker';
@@ -95,9 +95,7 @@ describe('LikesService', () => {
         likesService.upsertLike(datatype.uuid(), product.uuid, {
           like: datatype.boolean(),
         }),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('User not found'));
     });
 
     it("should return a error if product doesn't exist", async () => {
@@ -105,9 +103,7 @@ describe('LikesService', () => {
         likesService.upsertLike(createduser.uuid, datatype.uuid(), {
           like: datatype.boolean(),
         }),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
   });
 
@@ -135,25 +131,19 @@ describe('LikesService', () => {
     it('should return a error if like doesnt exist', async () => {
       await expect(
         likesService.deleteLike(createduser.uuid, product.uuid),
-      ).rejects.toThrow(
-        new HttpException('Like no found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Like no found'));
     });
 
     it('should return a error if the product doesnt exist', async () => {
       await expect(
         likesService.deleteLike(createduser.uuid, datatype.uuid()),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
 
     it('should return a error if the user doesnt exist', async () => {
       await expect(
         likesService.deleteLike(datatype.uuid(), product.uuid),
-      ).rejects.toThrow(
-        new HttpException('User not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('User not found'));
     });
   });
 });

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
@@ -87,7 +92,7 @@ describe('AuthService', () => {
     it('should throw error if email already exist', async () => {
       userService.findOneByEmail.mockResolvedValue(true);
       await expect(authService.signup(mockUser)).rejects.toThrow(
-        new HttpException('Email already exists', HttpStatus.BAD_REQUEST),
+        new BadRequestException('Email already exists'),
       );
       expect(userService.findOneByEmail).toHaveBeenCalled();
     });
@@ -121,9 +126,7 @@ describe('AuthService', () => {
           email: internet.email(),
           password: internet.password(),
         }),
-      ).rejects.toThrow(
-        new HttpException("Email doesn't exist ", HttpStatus.UNAUTHORIZED),
-      );
+      ).rejects.toThrow(new UnauthorizedException("Email doesn't exist "));
       expect(userService.findOneByEmail).toHaveBeenCalled();
     });
 
@@ -134,9 +137,7 @@ describe('AuthService', () => {
 
       await expect(
         authService.login({ email, password: internet.password() }),
-      ).rejects.toThrow(
-        new HttpException('Password is incorrect', HttpStatus.UNAUTHORIZED),
-      );
+      ).rejects.toThrow(new UnauthorizedException('Password is incorrect'));
     });
 
     it('should return a token if user login sucessfully', async () => {
@@ -167,7 +168,7 @@ describe('AuthService', () => {
 
     it("should throw error if user doesn't exist", async () => {
       await expect(authService.createToken(datatype.number())).rejects.toThrow(
-        new HttpException('User no found', HttpStatus.NOT_FOUND),
+        new NotFoundException('User no found'),
       );
     });
   });
@@ -191,7 +192,7 @@ describe('AuthService', () => {
 
     it('should return a error if token is invalid', async () => {
       await expect(authService.logout(datatype.uuid())).rejects.toThrow(
-        new HttpException('Token is invalid', HttpStatus.UNAUTHORIZED),
+        new UnauthorizedException('Token is invalid'),
       );
     });
   });
@@ -212,9 +213,7 @@ describe('AuthService', () => {
 
       await expect(
         authService.sendEmailChangePassword({ email: internet.email() }),
-      ).rejects.toThrow(
-        new HttpException('User no found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('User no found'));
     });
   });
 
@@ -238,9 +237,7 @@ describe('AuthService', () => {
           token: '123.132.312',
           password: internet.password(),
         }),
-      ).rejects.toThrow(
-        new HttpException('Invalid token', HttpStatus.UNPROCESSABLE_ENTITY),
-      );
+      ).rejects.toThrow(new UnprocessableEntityException('Invalid token'));
     });
   });
 });

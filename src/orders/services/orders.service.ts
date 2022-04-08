@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Prisma, User } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
@@ -37,8 +41,7 @@ export class OrdersService {
         rejectOnNotFound: false,
       });
 
-      if (!foundUser)
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      if (!foundUser) throw new NotFoundException('User not found');
 
       let where = {};
       const orderselect = {
@@ -80,7 +83,7 @@ export class OrdersService {
       }
 
       if (page > totalPages) {
-        throw new HttpException('Page is out of range', HttpStatus.BAD_REQUEST);
+        throw new BadRequestException('Page is out of range');
       }
 
       const orders = await this.prisma.order.findMany({
@@ -165,20 +168,19 @@ export class OrdersService {
       });
 
       if (!cart) {
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException('User not found');
       }
 
       if (!cart.cartItem?.length) {
-        throw new HttpException('Cart is empty', HttpStatus.BAD_REQUEST);
+        throw new BadRequestException('Cart is empty');
       }
 
       const cartItemLength = cart.cartItem.length;
 
       for (let i = 0; i < cartItemLength; i++) {
         if (cart.cartItem[i].quantity > cart.cartItem[i].product.stock) {
-          throw new HttpException(
+          throw new BadRequestException(
             'Quantity of some product is out of range',
-            HttpStatus.BAD_REQUEST,
           );
         }
       }

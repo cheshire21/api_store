@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
 import { PrismaErrorEnum } from '../../common/enums';
@@ -58,7 +58,7 @@ export class UsersService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         switch (error.code) {
           case PrismaErrorEnum.NOT_FOUND:
-            throw new HttpException('User no found', HttpStatus.NOT_FOUND);
+            throw new NotFoundException('User no found');
         }
       }
       throw error;

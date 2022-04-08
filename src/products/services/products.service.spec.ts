@@ -1,4 +1,8 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+  BadRequestException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Test } from '@nestjs/testing';
 import { Category, Product } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
@@ -106,7 +110,7 @@ describe('ProductsService', () => {
 
     it("should throw a error if product doesn't exist", async () => {
       await expect(productsService.getOne(datatype.uuid())).rejects.toThrow(
-        new HttpException("Product doesn't exist", HttpStatus.NOT_FOUND),
+        new NotFoundException("Product doesn't exist"),
       );
     });
   });
@@ -168,7 +172,7 @@ describe('ProductsService', () => {
       });
 
       await expect(productsService.getMany(pagination)).rejects.toThrow(
-        new HttpException('page is out of range', HttpStatus.BAD_REQUEST),
+        new BadRequestException('page is out of range'),
       );
     });
   });
@@ -193,9 +197,7 @@ describe('ProductsService', () => {
           ...product,
           categoryId: datatype.uuid(),
         }),
-      ).rejects.toThrow(
-        new HttpException('Category not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Category not found'));
     });
   });
 
@@ -250,9 +252,7 @@ describe('ProductsService', () => {
         productsService.update(createdProduct.uuid, {
           ...product,
         }),
-      ).rejects.toThrow(
-        new HttpException('Product is disable ', HttpStatus.UNAUTHORIZED),
-      );
+      ).rejects.toThrow(new UnauthorizedException('Product is disable '));
     });
 
     it("should throw a error if product doesn't exist", async () => {
@@ -260,9 +260,7 @@ describe('ProductsService', () => {
         productsService.update(datatype.uuid(), {
           ...product,
         }),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
 
     it("should throw a error if product's category doesn't exist ", async () => {
@@ -271,9 +269,7 @@ describe('ProductsService', () => {
           ...product,
           categoryId: datatype.uuid(),
         }),
-      ).rejects.toThrow(
-        new HttpException('Category not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Category not found'));
     });
   });
 
@@ -316,9 +312,7 @@ describe('ProductsService', () => {
     it("should throw a error if product doesn't exist ", async () => {
       await expect(
         productsService.changeStatus(datatype.uuid(), datatype.boolean()),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
   });
 
@@ -347,9 +341,7 @@ describe('ProductsService', () => {
         productsService.uploadImage(datatype.uuid(), {
           type: ImageType.jpg,
         }),
-      ).rejects.toThrow(
-        new HttpException('Product not found', HttpStatus.NOT_FOUND),
-      );
+      ).rejects.toThrow(new NotFoundException('Product not found'));
     });
   });
 });

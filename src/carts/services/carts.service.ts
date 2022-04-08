@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateCartItemDto } from '../dto/request/create-cart-item.dto';
@@ -67,20 +72,13 @@ export class CartsService {
         rejectOnNotFound: false,
       });
 
-      if (!product)
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      if (!product) throw new NotFoundException('Product not found');
 
       if (product.deletedAt)
-        throw new HttpException(
-          'Product is in disable status',
-          HttpStatus.UNAUTHORIZED,
-        );
+        throw new UnauthorizedException('Product is in disable status');
 
       if (quantity > product.stock) {
-        throw new HttpException(
-          'Quantity is bigger than stock',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new BadRequestException('Quantity is bigger than stock');
       }
 
       const user = await this.prisma.user.findUnique({
@@ -94,8 +92,7 @@ export class CartsService {
         rejectOnNotFound: false,
       });
 
-      if (!user)
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      if (!user) throw new NotFoundException('User not found');
 
       const cartItem = await this.prisma.cartItem.findUnique({
         where: {
@@ -185,8 +182,7 @@ export class CartsService {
         rejectOnNotFound: false,
       });
 
-      if (!product)
-        throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+      if (!product) throw new NotFoundException('Product not found');
 
       const user = await this.prisma.user.findUnique({
         where: {
@@ -198,8 +194,7 @@ export class CartsService {
         rejectOnNotFound: false,
       });
 
-      if (!user)
-        throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+      if (!user) throw new NotFoundException('User not found');
 
       const cartItem = await this.prisma.cartItem.findUnique({
         where: {
