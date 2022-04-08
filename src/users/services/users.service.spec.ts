@@ -1,12 +1,12 @@
 import { Test } from '@nestjs/testing';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { UsersService } from './users.service';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address, datatype } from 'faker';
-import { Role } from '../common/enums';
-import { SignUpDto } from '../auth/dto/request/sign-up.dto';
+import { Role } from '../../common/enums';
+import { SignUpDto } from '../../auth/dto/request/sign-up.dto';
 import { hashSync } from 'bcryptjs';
-import { SendgridService } from '../send-emails/send-emails.service';
+import { SendgridService } from '../../send-emails/send-emails.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 const MockSendgridService = () => ({
