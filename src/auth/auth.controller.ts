@@ -6,7 +6,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
+import { AuthService } from './services/auth.service';
 import { ChangePasswordDto } from './dto/request/change-password.dto';
 import { ForgotPasswordDto } from './dto/request/forgot-password.dto';
 import { LoginDto } from './dto/request/login.dto';

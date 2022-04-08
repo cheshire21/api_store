@@ -3,14 +3,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
 import { plainToInstance } from 'class-transformer';
 import { name, internet, address, datatype } from 'faker';
-import { Role } from '../common/enums';
-import { PrismaService } from '../prisma/prisma.service';
-import { UsersService } from '../users/users.service';
+import { Role } from '../../common/enums';
+import { PrismaService } from '../../prisma/prisma.service';
+import { UsersService } from '../../users/services/users.service';
 import { AuthService } from './auth.service';
-import { SignUpDto } from './dto/request/sign-up.dto';
+import { SignUpDto } from '../dto/request/sign-up.dto';
 import { User } from '@prisma/client';
-import { UserFactory } from '../users/factories/user.factory';
-import { SendgridService } from '../send-emails/send-emails.service';
+import { UserFactory } from '../../users/factories/user.factory';
+import { SendgridService } from '../../send-emails/send-emails.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 const MockUsersService = () => ({
