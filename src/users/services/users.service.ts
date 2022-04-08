@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 import { hashSync } from 'bcryptjs';
 import { PrismaErrorEnum } from '../../common/enums';
-import { SendgridService } from '../../send-emails/send-emails.service';
+import { SendgridService } from '../../common/services/send-emails.service';
 import { SignUpDto } from '../../auth/dto/request/sign-up.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 

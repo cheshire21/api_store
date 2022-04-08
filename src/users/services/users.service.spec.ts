@@ -6,7 +6,7 @@ import { name, internet, address, datatype } from 'faker';
 import { Role } from '../../common/enums';
 import { SignUpDto } from '../../auth/dto/request/sign-up.dto';
 import { hashSync } from 'bcryptjs';
-import { SendgridService } from '../../send-emails/send-emails.service';
+import { SendgridService } from '../../common/services/send-emails.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 const MockSendgridService = () => ({

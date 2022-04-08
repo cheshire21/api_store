@@ -8,7 +8,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { PrismaErrorEnum } from '../../common/enums';
 import { Prisma, Token } from '@prisma/client';
 import { JwtService, JwtSignOptions } from '@nestjs/jwt';
-import { SendgridService } from '../../send-emails/send-emails.service';
+import { SendgridService } from '../../common/services/send-emails.service';
 import { ForgotPasswordDto } from '../dto/request/forgot-password.dto';
 import { ChangePasswordDto } from '../dto/request/change-password.dto';
 import { ConfigService } from '@nestjs/config';

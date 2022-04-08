@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { SendEmailsModule } from 'src/send-emails/send-emails.module';
+import { SendgridService } from '../common/services/send-emails.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { UsersModule } from '../users/users.module';
 import { AuthController } from './auth.controller';
@@ -11,7 +11,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    SendEmailsModule,
     UsersModule,
     ConfigModule,
     PassportModule,
@@ -27,7 +26,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
   ],
   controllers: [AuthController],
-  providers: [PrismaService, AuthService, JwtStrategy],
+  providers: [PrismaService, AuthService, SendgridService, JwtStrategy],
   exports: [AuthService],
 })
 export class AuthModule {}

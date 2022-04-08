@@ -1,6 +1,6 @@
 import { Like, Prisma } from '@prisma/client';
 import { datatype } from 'faker';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { Abstractfactory } from '../../common/factories/abstract.factory';
 
 type LikeInput = Prisma.LikeCreateInput;

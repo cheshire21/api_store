@@ -10,7 +10,7 @@ import { AuthService } from './auth.service';
 import { SignUpDto } from '../dto/request/sign-up.dto';
 import { User } from '@prisma/client';
 import { UserFactory } from '../../users/factories/user.factory';
-import { SendgridService } from '../../send-emails/send-emails.service';
+import { SendgridService } from '../../common/services/send-emails.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 const MockUsersService = () => ({

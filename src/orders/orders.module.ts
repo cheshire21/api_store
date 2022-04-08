@@ -10,23 +10,18 @@ import { OrdersService } from './services/orders.service';
 import { OrderItemResolver } from './resolvers/order-item.resolver';
 import { UsersModule } from 'src/users/users.module';
 import { OrderCreatedListener } from './listeners/order-created.listener';
-import { SendEmailsModule } from 'src/send-emails/send-emails.module';
 import { FilesService } from 'src/common/services/file.service';
 import { ConfigModule } from '@nestjs/config';
+import { SendgridService } from '../common/services/send-emails.service';
 
 @Module({
-  imports: [
-    AuthModule,
-    UsersModule,
-    ProductsModule,
-    SendEmailsModule,
-    ConfigModule,
-  ],
+  imports: [AuthModule, UsersModule, ProductsModule, ConfigModule],
   controllers: [OrdersController],
   providers: [
     OrdersService,
     PrismaService,
     FilesService,
+    SendgridService,
     JwtAuthGuard,
     RolesGuard,
     OrdersResolver,
