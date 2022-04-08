@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsPositive } from 'class-validator';
 
 @Exclude()
 export class PaginationOptionsDto {

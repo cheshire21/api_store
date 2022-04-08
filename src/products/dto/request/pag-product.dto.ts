@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { PaginationOptionsDto } from '../../../common/dto/request/pagination-option.dto';
 
 @Exclude()

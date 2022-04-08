@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-inferrable-types */
 import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 

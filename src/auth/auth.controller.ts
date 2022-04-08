@@ -1,10 +1,10 @@
 import { Body, Controller, Get, HttpCode, Post, Query } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
-  ApiInternalServerErrorResponse,
-  ApiResponse,
   ApiTags,
+  ApiResponse,
+  ApiBadRequestResponse,
   ApiUnauthorizedResponse,
+  ApiInternalServerErrorResponse,
 } from '@nestjs/swagger';
 import { AuthService } from './services/auth.service';
 import { ChangePasswordDto } from './dto/request/change-password.dto';

@@ -30,7 +30,7 @@ export class LikesService {
       if (!product)
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
-      const like = await this.prisma.like.upsert({
+      await this.prisma.like.upsert({
         create: {
           user: {
             connect: {
@@ -79,7 +79,7 @@ export class LikesService {
       if (!product)
         throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
 
-      const like = await this.prisma.like.delete({
+      await this.prisma.like.delete({
         where: {
           userId_productId: {
             userId: user.id,

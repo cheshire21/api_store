@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Exclude, Expose } from 'class-transformer';
-import { IsInt, IsNumber, IsPositive, IsString } from 'class-validator';
+import { IsInt, IsPositive, IsString } from 'class-validator';
 import { datatype } from 'faker';
 
 @Exclude()

@@ -1,12 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  Mutation,
-  Resolver,
-  Query,
-  ResolveField,
-  Parent,
-} from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { GqlGetUser } from 'src/auth/decorators/gql-get-user.decorator';
 import { Roles } from 'src/auth/decorators/role.decorator';
 import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';

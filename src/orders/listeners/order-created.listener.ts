@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { CartItem } from '@prisma/client';
 import { FilesService } from 'src/common/services/file.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { SendgridService } from 'src/common/services/send-emails.service';

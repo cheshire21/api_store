@@ -11,7 +11,7 @@ import { SignUpDto } from '../dto/request/sign-up.dto';
 import { User } from '@prisma/client';
 import { UserFactory } from '../../users/factories/user.factory';
 import { SendgridService } from '../../common/services/send-emails.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 
 const MockUsersService = () => ({
   create: jest.fn(),
@@ -32,7 +32,6 @@ describe('AuthService', () => {
   let userFactory: UserFactory;
   let userService;
   let sendgridService;
-  let configService: ConfigService;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -65,7 +64,6 @@ describe('AuthService', () => {
     prisma = await module.get<PrismaService>(PrismaService);
     userService = await module.get<UsersService>(UsersService);
     sendgridService = await module.get<SendgridService>(SendgridService);
-    configService = await module.get<ConfigService>(ConfigService);
 
     userFactory = new UserFactory(prisma);
 
