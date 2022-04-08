@@ -22,7 +22,7 @@ import { Roles } from 'src/auth/decorators/role.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/auth-jwt.guard';
 import { RolesGuard } from 'src/auth/guards/role.guard';
 import { Role } from '../common/enums';
-import { CartsService } from './carts.service';
+import { CartsService } from './services/carts.service';
 import { CreateCartItemDto } from './dto/request/create-cart-item.dto';
 import { DeleteCartItemDto } from './dto/request/delete-cart-item.dto';
 import { CartItemsDto } from './dto/response/cart-items.dto';

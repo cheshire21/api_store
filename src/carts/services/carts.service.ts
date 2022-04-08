@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateCartItemDto } from './dto/request/create-cart-item.dto';
-import { CartItemsDto } from './dto/response/cart-items.dto';
-import { ResponseCartDto } from './dto/response/response-cart-item.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { CreateCartItemDto } from '../dto/request/create-cart-item.dto';
+import { CartItemsDto } from '../dto/response/cart-items.dto';
+import { ResponseCartDto } from '../dto/response/response-cart-item.dto';
 
 @Injectable()
 export class CartsService {
@@ -171,7 +171,7 @@ export class CartsService {
     }
   }
 
-  async delete(userId: string, productId: string): Promise<Boolean> {
+  async delete(userId: string, productId: string): Promise<boolean> {
     try {
       const product = await this.prisma.product.findUnique({
         where: {

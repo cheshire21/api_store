@@ -6,7 +6,7 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
 import { Message } from 'src/common/dto/input/message.model';
 import { Role } from 'src/common/enums';
-import { CartsService } from '../carts.service';
+import { CartsService } from '../services/carts.service';
 import { CartItemInput } from '../dto/input/create-cart-item.input';
 import { CartItemDeleteInput } from '../dto/input/delete-item.input';
 import { CartItem } from '../models/cart-item.model';
