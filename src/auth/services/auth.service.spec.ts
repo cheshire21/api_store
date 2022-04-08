@@ -24,10 +24,6 @@ const MockSendgridService = () => ({
   send: jest.fn(),
 });
 
-const MockConfigService = () => ({
-  get: jest.fn(),
-});
-
 describe('AuthService', () => {
   let mockUser;
 

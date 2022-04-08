@@ -3,6 +3,8 @@
 .env.test
 /*.env
 
+/.github
+
 # compiled output
 /dist
 /node_modules
