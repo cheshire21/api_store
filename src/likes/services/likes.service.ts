@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { PrismaErrorEnum } from '../common/enums';
-import { PrismaService } from '../prisma/prisma.service';
-import { LikeDto } from '../products/dto/request/like.dto';
+import { PrismaErrorEnum } from '../../common/enums';
+import { PrismaService } from '../../prisma/prisma.service';
+import { LikeDto } from '../../products/dto/request/like.dto';
 
 @Injectable()
 export class LikesService {
@@ -12,7 +12,7 @@ export class LikesService {
     userId: string,
     productId: string,
     likeDto: LikeDto,
-  ): Promise<Boolean> {
+  ): Promise<boolean> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { uuid: userId },
@@ -61,7 +61,7 @@ export class LikesService {
     }
   }
 
-  async deleteLike(userId: string, productId: string): Promise<Boolean> {
+  async deleteLike(userId: string, productId: string): Promise<boolean> {
     try {
       const user = await this.prisma.user.findUnique({
         where: { uuid: userId },
