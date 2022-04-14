@@ -37,7 +37,7 @@ import { StatusProductDto } from './dto/request/status-product.dto';
 import { UpdateProductDto } from './dto/request/update-product.dto';
 import { ListProductsDto } from './dto/response/list-products.dto';
 import { ResponseProductDto } from './dto/response/product.dto';
-import { LikesService } from '../likes/likes.service';
+import { LikesService } from '../likes/services/likes.service';
 import { ProductsService } from './services/products.service';
 import { ImageDto } from './dto/request/image.dto';
 import { ResponseImageUrlDto } from './dto/response/image-url.dto';

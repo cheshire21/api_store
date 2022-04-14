@@ -6,7 +6,7 @@ import { GqlJwtGuard } from 'src/auth/guards/gql-jwt.guard';
 import { GqlRolesGuard } from 'src/auth/guards/gql-role.guard';
 import { Message } from 'src/common/dto/input/message.model';
 import { Role } from 'src/common/enums';
-import { LikesService } from 'src/likes/likes.service';
+import { LikesService } from 'src/likes/services/likes.service';
 import { ProductInput } from '../dto/input/create-product.input';
 import { ImageInput } from '../dto/input/image.input';
 import { LikeInput } from '../dto/input/like.dto';
